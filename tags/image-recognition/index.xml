@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Image Recognition on Andy Wang&#39;s Profile</title>
+    <link>https://wang-jian-an.github.io/tags/image-recognition/</link>
+    <description>Recent content in Image Recognition on Andy Wang&#39;s Profile</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-tw</language>
+    <lastBuildDate>Tue, 11 Apr 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://wang-jian-an.github.io/tags/image-recognition/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Job Description and Contribution in AcuSense</title>
+      <link>https://wang-jian-an.github.io/blogs/acusense/</link>
+      <pubDate>Tue, 11 Apr 2023 00:00:00 +0000</pubDate>
+      
+      <guid>https://wang-jian-an.github.io/blogs/acusense/</guid>
+      <description>待撰寫 </description>
+    </item>
+    
+    <item>
+      <title>網路內容 AI 法遵查核工具</title>
+      <link>https://wang-jian-an.github.io/blogs/ai-content-detection/</link>
+      <pubDate>Tue, 11 Apr 2023 00:00:00 +0000</pubDate>
+      
+      <guid>https://wang-jian-an.github.io/blogs/ai-content-detection/</guid>
+      <description>來源 2022法律科技黑客松 背景 在網路時代，資訊流通無所不在，網路上的內容種類繁多，其中不乏違法、不良的內容，如：色情、暴力、恐怖主義等。這些內容容易引發社會問題，對青少年的成長及網路安全產生威脅。因此，為了打擊這些不良內容，許多國家制定了相應的法律法規，要求網路內容必須符合相關規定。 然而，網路內容龐大，人工檢查成本高昂且耗時，且難以保證檢查的全面性與準確性。以台灣為例，台灣有關色情、暴力等網路內容受到 iWAN 規範，它是由國家通訊委員會委託的組織，每當 iWAN 接收到違法訴求，該網站聘任人員就需要上網逐一尋找可能違法的內容，並一一加以記錄以利追蹤與證據，執行流程最起碼需要 15 分鐘，且耗費時間會隨著內容多寡成指數成長，因此需要一種快速、自動的檢測工具協助聘任人員克服此問題。
+目標受眾 本產品的主要目標受眾為網路內容的審查人員、政府部門、社區管理者以及任何需要審查網路內容的個人或組織。
+具體利益 - 快速：使用者可透過本產品快速檢測網站是否符合法律法規，節省大量的時間與人力成本。- 準確：本產品透過 AI 技術分析內容，能夠提高檢測的準確性，減少誤判的風險。- 全面：本產品能夠對文字、圖片、影片等多種元素進行分析，確保檢測的全面性。商業應用與價值 - 政府部門：政府部門需要對網路內容進行監管，而網路內容 AI 法遵查核工具能夠快速、準確地檢測網路內容是否符合法律法規，為政府部門提供更加全面、精確的監管手段。- 社交媒體平台：社交媒體平台需要對用戶發布的內容進行審查，以確保用戶的帳號不會被封禁或違反法律法規。而網路內容 AI 法遵查核工具能夠協助社交媒體平台更加高效地進行內容審查，提高審查準確率和效率。- 網路內容企業：網路內容企業需要對自己的內容進行內部管理，確保內容符合法律法規。網路內容 AI 法遵查核工具可以為網路內容企業提供全面、快速、準確的內容審查，減少人力成本和提高審查效率。- 網路安全企業：網路安全企業需要提供對網路內容的監管和管理服務，而網路內容 AI 法遵查核工具能夠提高網路安全企業的內容審查能力，為企業提供更加高效、準確的內容審查服務。更多精彩分享 https://docs.google.com/presentation/d/1scLXabu4RCPVmMoBewtdjli9NhHD2x2f/edit#slide=id.p1 </description>
+    </item>
+    
+  </channel>
+</rss>
