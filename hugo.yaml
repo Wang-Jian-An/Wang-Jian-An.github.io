@@ -12,11 +12,11 @@ languages:
       label: English
       title: "Andy's Blog"
       weight: 1
-  bn:
+  zh-tw:
     params:
-      locale: bn
-      label: বাংলা
-      title: জনের ব্লগ
+      locale: zh-tw
+      label: 繁體中文
+      title: 王健安個人網頁
       weight: 2
 
 params:
