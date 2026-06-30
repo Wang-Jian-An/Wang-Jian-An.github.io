@@ -44,3 +44,4 @@ jobs:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         publish_branch: gh-pages
         publish_dir: ./public
+        force_orphan: true  # 保持這個，它會建立全新的提交
