@@ -1,46 +1,59 @@
 name: Deploy to Github Pages
 
-# run when a commit is pushed to "source" branch
 on:
   push:
     branches:
-    - main
+      - main
+
+# 這是官方 Actions 部署必須具備的權限設定
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# 確保同一時間只有一個部署在執行
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
 
 jobs:
   deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
-    # checkout to the commit that has been pushed
-    - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-    - name: Setup Hugo
-      uses: peaceiris/actions-hugo@v3
-      with:
-        hugo-version: 'latest'
-        extended: true
+      - name: Setup Hugo
+        uses: peaceiris/actions-hugo@v3
+        with:
+          hugo-version: 'latest'
+          extended: true
 
-    - name: Update Hugo Modules
-      run: hugo mod tidy
+      - name: Update Hugo Modules
+        run: hugo mod tidy
 
-    - name: Setup Node
-      uses: actions/setup-node@v4
-      with:
-        node-version: 20
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
 
-    - name: Install node modules
-      run: |
-        hugo mod npm pack
-        npm install
+      - name: Install node modules
+        run: |
+          hugo mod npm pack
+          npm install
 
-    - name: Build
-      run: hugo --minify
+      - name: Build
+        run: hugo --minify
 
-    # push the generated content into the `gh-pages` branch.
-    - name: Deploy
-      uses: peaceiris/actions-gh-pages@v4
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_branch: gh-pages
-        publish_dir: ./public
-        force_orphan: true
-        allow_empty_commit: true
+      # --- 關鍵修正 1：上傳編譯後的靜態檔案到 GitHub 雲端 ---
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./public
+
+      # --- 關鍵修正 2：直接發布網站（不透過任何分支） ---
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
