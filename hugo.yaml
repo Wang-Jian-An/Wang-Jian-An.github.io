@@ -45,5 +45,3 @@ params:
       enable: true
     copyCodeButton:
       enable: true
-
-# 其他設定維持原樣即可，但請檢查是否有多餘的空格或縮排不一致
