@@ -7,17 +7,20 @@ module:
 
 languages:
   en:
+    languageName: English
+    weight: 1
     params:
       locale: en
       label: English
       title: "Andy's Blog"
-      weight: 1
-  bn:
+      
+  zh-tw:
+    languageName: 繁體中文
+    weight: 2
     params:
-      locale: bn
-      label: বাংলা
-      title: জনের ব্লগ
-      weight: 2
+      locale: zh-tw
+      label: 繁體中文
+      title: 王健安個人網頁
 
 params:
   # 確保這些路徑是相對於 /static/
