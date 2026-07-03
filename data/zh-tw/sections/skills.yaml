@@ -1,6 +1,6 @@
 # section information
 section:
-  name: দক্ষতা
+  name: 技能
   id: skills
   enable: true
   weight: 2
@@ -12,11 +12,6 @@ section:
 # Your Skills.
 # Give a summary of you each skill in the summary section.
 skills:
-- name: Kubernetes
-  logo: "/images/sections/skills/kubernetes.png"
-  summary: "আমি Kubernetes এ অ্যাপ্লিকেশান পরিচালনা করতে সক্ষম । আমার  Kubernetes এ CRD এর জন্য কন্ট্রোলার লিখার অভিজ্ঞতা আছে ।"
-  url: "https://kubernetes.io/"
-
 - name: Go ডেভেলপমেন্ট
   logo: "/images/sections/skills/go.png"
   summary: "ডেভেলপমেন্টের জন্য প্রধান ভাষা হিসেবে ব্যবহার করছি। টেস্ট যোগ্য,  রক্ষণাবেক্ষণ যোগ্য কোড লিখতে সক্ষম।"
@@ -45,6 +40,6 @@ skills:
   summary: "গিট ভিত্তিক ডেভেলপমেন্টের অভিজ্ঞতা আছে। বেশির ভাগ ক্ষেতরেই GitHub ব্যবহার করি তবে GitLab ব্যবহারেরও অভিজ্ঞতা আছে।"
   url: "https://git-scm.com/"
 
-- name: C++
-  logo: "/images/sections/skills/c++.png"
-  summary: "বেসিক C/C++ প্রোগ্রামিং জানি । প্রব্লেম সল্ভিং এবং কন্টেস্ট এর জন্য ব্যবহার করেছি।"
+- name: Python
+  logo: /images/sections/skills/python-logo.jpg
+  summary: "Python"

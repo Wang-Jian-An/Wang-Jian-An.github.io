@@ -25,12 +25,6 @@ buttons:
 # Your Skills.
 # Give a summary of you each skill in the summary section.
 skills:
-- name: Kubernetes
-  logo: /images/sections/skills/kubernetes.png
-  summary: "Capable of deploying, managing application on Kubernetes. Experienced in writing Kubernetes controllers for CRDs."
-  categories: ["container"]
-  url: "https://kubernetes.io/"
-
 - name: Go Development
   logo: /images/sections/skills/go.png
   summary: "Using as the main language for professional development. Capable of writing scalable, testable, and maintainable program."
@@ -65,7 +59,7 @@ skills:
   categories: ["basic"]
   url: "https://git-scm.com/"
 
-- name: C++
-  logo: /images/sections/skills/c++.png
-  summary: "Know basic C/C++ programming. Used for contest programming and problem solving."
+- name: Python
+  logo: /images/sections/skills/python-logo.jpg
+  summary: "Python"
   categories: ["basic", "language"]

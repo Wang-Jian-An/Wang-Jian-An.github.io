@@ -41,10 +41,10 @@ params:
     portfolio:
       enable: true
     blog:
-      enable: true
+      enable: false
     notes:
-      enable: true
+      enable: false
     toc:
-      enable: true
+      enable: false
     copyCodeButton:
-      enable: true
+      enable: false
