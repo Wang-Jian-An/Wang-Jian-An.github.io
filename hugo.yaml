@@ -13,6 +13,9 @@ languages:
       locale: en
       label: English
       title: "Andy's Blog"
+      features:
+        docs:
+          enable: false
       
   zh-tw:
     languageName: 繁體中文
@@ -21,6 +24,9 @@ languages:
       locale: zh-tw
       label: 繁體中文
       title: 王健安個人網頁
+      features:
+        docs:
+          enable: false
 
 params:
   # 確保這些路徑是相對於 /static/
