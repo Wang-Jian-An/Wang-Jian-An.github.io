@@ -46,5 +46,7 @@ params:
       enable: false
     toc:
       enable: false
+    docs:
+      enable: false
     copyCodeButton:
       enable: false
