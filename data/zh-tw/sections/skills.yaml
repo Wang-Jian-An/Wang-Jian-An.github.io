@@ -12,34 +12,53 @@ section:
 # Your Skills.
 # Give a summary of you each skill in the summary section.
 skills:
-- name: Go ডেভেলপমেন্ট
+- name: Go 後端開發
   logo: "/images/sections/skills/go.png"
-  summary: "ডেভেলপমেন্টের জন্য প্রধান ভাষা হিসেবে ব্যবহার করছি। টেস্ট যোগ্য,  রক্ষণাবেক্ষণ যোগ্য কোড লিখতে সক্ষম।"
+  summary: "熟悉 Go 與 Gin 框架，具備 RESTful API 開發經驗，並能運用 Goroutine 與 Channel 建構高效能的並行服務。"
   url: "https://golang.org/"
 
-- name: ক্লাউড কম্পিউটিং
-  logo: "/images/sections/skills/cloud.png"
-  summary: "GCP, AWS, Azure গুলোর মত বেশিরভাগ বড় বড় ক্লাউড নিয়ে কাজর অভিজ্ঞতা আছে।"
+- name: SQL
+  logo: ""
+  summary: ""
+
+- name: AWS雲端架構
+  logo: "/images/sections/skills/aws-logo.png"
+  summary: "熟悉 AWS 核心雲端服務，具備運算、網路、儲存與 AI 應用部署經驗，能設計可擴展的雲端系統架構。"
+  url: https://aws.amazon.com/cn/free/webapps/?trk=9d5c4709-8a98-47b7-ab9b-b09c92e9ee25&sc_channel=ps&ef_id=EAIaIQobChMImJbd26q5lQMVuOUWBR0lex6GEAAYASAAEgLLJvD_BwE&gads_camp=23533257979&gads_ag=198422390531&gads_ad=795925071305&gads_kw=aws%20cloud&gads_matchtype=e&gads_network=g&gads_device=c&gads_geo=9198554&gad_campaignid=23533257979&gbraid=0AAAAADjHtp8oDhkcEFLEVe_1huyOukYsL&gclid=EAIaIQobChMImJbd26q5lQMVuOUWBR0lex6GEAAYASAAEgLLJvD_BwE
+
+- name: Azure雲端架構
+  logo: "/images/sections/skills/Microsoft_Azure.png"
+  summary: ""
 
 - name: Docker
   logo: "/images/sections/skills/docker.svg"
-  summary: "বেশির ভাগ প্রোগ্রামেরই  Docker কন্টেইনার তৈরি করি। মাল্টি স্টেজ এবং মাল্টি আর্কিটেকচার কন্টেইনার নিয়ে অভিজ্ঞতা আছে।"
+  summary: ""
   url: "https://www.docker.com/"
 
-- name: Prometheus
-  logo: "/images/sections/skills/prometheus.png"
-  summary: "Prometheus metrics সেটআপ ও কনফিগার করতে সক্ষম। PromQL, AlertManager নিয়ে অভিজ্ঞতা আছে। Metric exporters লিখাতেও অভিজ্ঞতা আছে।"
-  url: "https://prometheus.io/"
+- name: 統計分析
+  logo: "/images/sections/skills/statistical-logo.jpg"
+  summary: ""
 
-- name: লিনাক্স
+- name: Linux
   logo: "/images/sections/skills/linux.png"
-  summary: "প্রধান অপারেটিং সিস্টেম হিসেবে ব্যবহার করছি। bash/shell scripts লিখতে সক্ষম।"
+  summary: ""
 
-- name: গিট
+- name: Git
   logo: "/images/sections/skills/git.png"
-  summary: "গিট ভিত্তিক ডেভেলপমেন্টের অভিজ্ঞতা আছে। বেশির ভাগ ক্ষেতরেই GitHub ব্যবহার করি তবে GitLab ব্যবহারেরও অভিজ্ঞতা আছে।"
+  summary: ""
   url: "https://git-scm.com/"
 
 - name: Python
   logo: /images/sections/skills/python-logo.jpg
   summary: "Python"
+
+- name: 系統設計
+  summary: 系統設計
+
+- name: n8n
+  logo: /images/sections/skills/n8n-logo.png
+  summary: 
+
+- name: Google Looker Studio
+  logo: /images/sections/skills/ic_data_studio.png
+  summary: 
