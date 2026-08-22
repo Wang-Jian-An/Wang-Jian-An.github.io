@@ -11,9 +11,11 @@ description: 王健安的個人簡歷與部落格。
 
 # specify the list of custom menus that you want to show in the top navbar.
 # they will be separated by a divider from the main menus.
-# customMenus:
-# - name: ডকুমেন্টেশন
-#   url: https://toha-docs.hugo-themes.com/posts/
+customMenus:
+- name: 授課講義
+  url: /zh-tw/slides/
+  hideFromNavbar: false
+  showOnFooter: false
 
 # Specify OpenGraph Headers
 openGraph:
