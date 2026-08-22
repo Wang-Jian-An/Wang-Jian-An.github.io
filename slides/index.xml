@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Slides on</title><link>https://wang-jian-an.github.io/slides/</link><description>Recent content in Slides on</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Sat, 22 Aug 2026 00:00:00 +0000</lastBuildDate><atom:link href="https://wang-jian-an.github.io/slides/index.xml" rel="self" type="application/rss+xml"/><item><title>條件判斷</title><link>https://wang-jian-an.github.io/slides/coding-basics/if/</link><pubDate>Sat, 22 Aug 2026 00:00:00 +0000</pubDate><guid>https://wang-jian-an.github.io/slides/coding-basics/if/</guid><description/></item><item><title>Ch1: Introduction to Pandas</title><link>https://wang-jian-an.github.io/slides/data-analysis/ch01-pandas/</link><pubDate>Wed, 19 Aug 2026 00:00:00 +0000</pubDate><guid>https://wang-jian-an.github.io/slides/data-analysis/ch01-pandas/</guid><description>&lt;h2 id="what-is-pandas"&gt;What is Pandas?&lt;/h2&gt;
+&lt;p&gt;Pandas is a Python library for data manipulation and analysis. It provides data structures like DataFrame and Series.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"&gt;&lt;code class="language-python" data-lang="python"&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;&lt;span style="color:#f92672"&gt;import&lt;/span&gt; pandas &lt;span style="color:#66d9ef"&gt;as&lt;/span&gt; pd
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;df &lt;span style="color:#f92672"&gt;=&lt;/span&gt; pd&lt;span style="color:#f92672"&gt;.&lt;/span&gt;read_csv(&lt;span style="color:#e6db74"&gt;&amp;#34;data.csv&amp;#34;&lt;/span&gt;)
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;df&lt;span style="color:#f92672"&gt;.&lt;/span&gt;head()
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id="dataframe-structure"&gt;DataFrame Structure&lt;/h2&gt;
+&lt;div style="background: #e8f5e9; border-radius: 8px; padding: 1.5rem; margin: 2rem 0; overflow-x: auto;"&gt;
+&lt;h3 style="margin-top:0;"&gt;Demo: DataFrame Visualization&lt;/h3&gt;
+&lt;table id="df-demo" style="border-collapse: collapse; font-family: monospace; font-size: 0.9rem;"&gt;
+&lt;thead&gt;
+&lt;tr style="background: #4caf50; color: white;"&gt;
+&lt;th style="padding: 8px; border: 1px solid #ddd;"&gt;&lt;/th&gt;
+&lt;th style="padding: 8px; border: 1px solid #ddd;"&gt;name&lt;/th&gt;
+&lt;th style="padding: 8px; border: 1px solid #ddd;"&gt;age&lt;/th&gt;
+&lt;th style="padding: 8px; border: 1px solid #ddd;"&gt;score&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody id="df-body"&gt;&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;script&gt;
+(function() {
+const data = [
+['Alice', 25, 88], ['Bob', 30, 92],
+['Carol', 22, 79], ['Dave', 28, 95]
+];
+const tbody = document.getElementById('df-body');
+let row = 0;
+function addRow() {
+if (row &lt; data.length) {
+const tr = document.createElement('tr');
+tr.style.opacity = '0';
+tr.style.transition = 'opacity 0.5s';
+tr.innerHTML = `&lt;td style="padding:8px;border:1px solid #ddd;font-weight:bold;"&gt;${row}&lt;/td&gt;` +
+data[row].map(v =&gt; `&lt;td style="padding:8px;border:1px solid #ddd;"&gt;${v}&lt;/td&gt;`).join('');
+tbody.appendChild(tr);
+requestAnimationFrame(() =&gt; tr.style.opacity = '1');
+row++;
+setTimeout(addRow, 600);
+}
+}
+addRow();
+})();
+&lt;/script&gt;
+&lt;/div&gt;
+&lt;h2 id="basic-operations"&gt;Basic Operations&lt;/h2&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"&gt;&lt;code class="language-python" data-lang="python"&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;&lt;span style="color:#75715e"&gt;# Select a column&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;df[&lt;span style="color:#e6db74"&gt;&amp;#34;name&amp;#34;&lt;/span&gt;]
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;&lt;span style="color:#75715e"&gt;# Filter rows&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;df[df[&lt;span style="color:#e6db74"&gt;&amp;#34;age&amp;#34;&lt;/span&gt;] &lt;span style="color:#f92672"&gt;&amp;gt;&lt;/span&gt; &lt;span style="color:#ae81ff"&gt;25&lt;/span&gt;]
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;&lt;span style="color:#75715e"&gt;# Summary statistics&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;df&lt;span style="color:#f92672"&gt;.&lt;/span&gt;describe()
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;</description></item><item><title>Ch1: Python 簡介、變數定義、輸入輸出及其格式化</title><link>https://wang-jian-an.github.io/slides/python-basics/ch01-intro/</link><pubDate>Wed, 19 Aug 2026 00:00:00 +0000</pubDate><guid>https://wang-jian-an.github.io/slides/python-basics/ch01-intro/</guid><description/></item><item><title>Ch2: Variables &amp; Data Types</title><link>https://wang-jian-an.github.io/slides/python-basics/ch02-variables/</link><pubDate>Wed, 19 Aug 2026 00:00:00 +0000</pubDate><guid>https://wang-jian-an.github.io/slides/python-basics/ch02-variables/</guid><description/></item><item><title>Switch Condition</title><link>https://wang-jian-an.github.io/slides/coding-basics/switch/</link><pubDate>Wed, 19 Aug 2026 00:00:00 +0000</pubDate><guid>https://wang-jian-an.github.io/slides/coding-basics/switch/</guid><description/></item></channel></rss>
