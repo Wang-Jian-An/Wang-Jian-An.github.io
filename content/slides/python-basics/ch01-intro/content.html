@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Python 程式設計講義 - 1. 變數定義、輸入、輸出及其格式化輸出</title>
+
+<!-- Tailwind CSS & Prism Syntax Highlighting -->
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-solarizedlight.min.css"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+
+<style>
+/* 暖色系主題 (Warm Palette) 與列印優化 */
+html { 
+  -webkit-print-color-adjust: exact; 
+  print-color-adjust: exact; 
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, Arial, sans-serif;
+  color: #292524; /* 暖石深灰，比純黑更溫和且具備高對比度 */
+  background-color: #faf6f0; /* 暖白麥稈色底色 */
+  line-height: 1.65;
+}
+
+/* 講義主要容器 */
+.lecture-container {
+  max-width: 980px;
+  margin: 2rem auto;
+  background: #ffffff;
+  padding: 3rem;
+  box-shadow: 0 10px 30px rgba(180, 83, 9, 0.05), 0 1px 3px rgba(0,0,0,0.03);
+  border-radius: 16px;
+  border: 1px solid #f1e7d8;
+}
+
+/* 程式碼區塊 - 暖碳黑高對比樣式 */
+.code-block {
+  background: #1c1917 !important; /* 暖深碳黑 */
+  border-radius: 10px !important;
+  padding: 1.25em !important;
+  font-size: 0.92rem;
+  margin: 0.9em 0;
+  border: 1px solid #44403c;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.3);
+}
+
+.code-block code {
+  color: #f5f5f4 !important;
+  text-shadow: none !important;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace !important;
+}
+
+/* 直譯器運作邏輯圖形化動畫實驗室 (暖色調風格) */
+.engine-lab {
+  border: 1px solid #e7d8c5;
+  border-radius: 14px;
+  background: #fffcf8;
+  margin: 2em 0;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(217, 119, 6, 0.06);
+}
+
+.engine-header {
+  background: #431407; /* 深琥珀暖褐 */
+  color: #fef3c7; /* 明亮琥珀金 */
+  padding: 0.95rem 1.35rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.9rem;
+  font-weight: 700;
+  border-bottom: 2px solid #b45309;
+}
+
+.engine-stage {
+  padding: 1.5rem;
+  background: #fffdfa;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+/* 動畫畫布容器 - 滿版自適應與溫暖亮色背景 */
+.anim-canvas-box {
+  position: relative;
+  width: 100%;
+  min-height: 230px;
+  background: #fefcf9;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1.5px solid #ebdccb;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem;
+  box-sizing: border-box;
+}
+
+/* 視覺動態粒子與節點 */
+.anim-packet {
+  position: absolute;
+  padding: 7px 16px;
+  border-radius: 20px;
+  font-family: ui-monospace, monospace;
+  font-size: 0.85rem;
+  font-weight: 700;
+  box-shadow: 0 4px 12px rgba(217, 119, 6, 0.2);
+  transition: all 0.7s cubic-bezier(0.34, 1.3, 0.64, 1);
+  z-index: 20;
+  white-space: nowrap;
+}
+
+/* SVG 連線 */
+.svg-connector {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.svg-path {
+  stroke-dasharray: 6;
+  animation: dash 1.5s linear infinite;
+  transition: all 0.6s ease;
+}
+
+@keyframes dash {
+  to { stroke-dashoffset: -12; }
+}
+
+/* 動畫管道 track */
+.pipeline-track {
+  position: absolute;
+  height: 8px;
+  background: #e7d8c5;
+  border-radius: 4px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 1;
+}
+
+/* 運作步驟說明日誌區塊 */
+.exec-log-box {
+  background: #292524; /* 高對比暖深石色 */
+  color: #fde047; /* 高亮金黃文字 */
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.88rem;
+  padding: 1.1rem 1.3rem;
+  border-radius: 10px;
+  line-height: 1.65;
+  border-left: 5px solid #ea580c; /* 亮赤橙邊框 */
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
+}
+
+/* 列印與 PDF 匯出優化 */
+@media print {
+  .no-print { display: none !important; }
+  body { background: #ffffff !important; color: #000000 !important; }
+  .lecture-container {
+    box-shadow: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    max-width: 100% !important;
+    border: none !important;
+  }
+  .engine-lab { break-inside: avoid; border: 1px solid #d6c4b0 !important; }
+  pre, code, .anim-canvas-box { break-inside: avoid; }
+}
+</style>
+</head>
+
+<body>
+<div class="lecture-container">
+
+  <!-- 頂部功能按鈕 (螢幕瀏覽顯示，列印時隱藏) -->
+  <div class="no-print flex justify-end mb-4">
+    <button onclick="window.print()" class="bg-orange-700 hover:bg-orange-800 text-white px-4 py-2 rounded-lg font-medium text-xs transition flex items-center gap-2 shadow-sm">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+      匯出 PDF / 列印講義
+    </button>
+  </div>
+
+  <!-- 講義標題區 -->
+  <header class="border-b-2 border-amber-100 pb-5 mb-8">
+    <div class="inline-block bg-amber-100 text-amber-900 text-xs font-bold px-3 py-1 rounded-full mb-2">Python 程式設計核心基礎</div>
+    <h1 class="text-3xl font-extrabold text-stone-900 tracking-tight mb-2">1. 變數定義、輸入、輸出及其格式化輸出</h1>
+    <p class="text-xs text-stone-500">課程專用教材 ｜ 涵蓋 Python 直譯器底層執行機制與記憶體物件模型</p>
+  </header>
+
+  <!-- 第一章：輸出 -->
+  <section class="mb-12">
+    <h2 class="text-xl font-bold text-stone-800 border-l-4 border-amber-600 pl-3 my-4">一、輸出：<code>print()</code> 函數與標準輸出流</h2>
+    
+    <h3 class="text-base font-semibold text-stone-800 mt-4">1. <code>print()</code> 函數運作機制</h3>
+    <p class="text-stone-700 text-sm my-2">
+      <code>print()</code> 是 Python 用於將資料寫入標準輸出流（Standard Output Stream, <code>sys.stdout</code>）的內建函數。執行時，Python 直譯器會依據下列步驟處理：
+    </p>
+    <ol class="list-decimal list-inside text-sm text-stone-700 space-y-1.5 ml-2 bg-amber-50/60 p-3.5 rounded-lg border border-amber-200/80">
+      <li><strong>引數求值（Argument Evaluation）</strong>：對括號內的運算式或變數進行求值，從記憶體取得對應資料。</li>
+      <li><strong>字串化轉換（String Conversion）</strong>：隱式呼叫物件的 <code>__str__()</code> 方法將資料轉換為字元流。</li>
+      <li><strong>緩衝區輸出與刷新（Buffer & Flush）</strong>：將字元推送到 <code>sys.stdout</code> 緩衝區，並根據 <code>sep</code> 參數分隔多個引數，最後附加 <code>end</code> 參數（預設為換行符 <code>\n</code>）並輸出至終端機。</li>
+    </ol>
+
+    <h4 class="font-semibold text-stone-800 text-sm mt-4">完整函數簽名與預設參數：</h4>
+    <pre class="code-block"><code class="language-python">print(*objects, sep=' ', end='\n', file=sys.stdout, flush=False)</code></pre>
+    
+    <ul class="list-disc list-inside text-xs text-stone-600 space-y-1 mt-2 pl-2">
+      <li><code>*objects</code>：可接收多個輸出物件，物件之間預設以 <code>sep</code> 分隔。</li>
+      <li><code>sep</code>：多個引數之間的分隔字串，預設為一個空格 <code>' '</code>。</li>
+      <li><code>end</code>：輸出結束時自動附加的字串，預設為換行符 <code>'\n'</code>。</li>
+    </ul>
+
+    <!-- 直譯器運作邏輯圖形化動畫實驗室: print -->
+    <div class="engine-lab" id="lab-print">
+      <div class="engine-header">
+        <span>⚙️ 直譯器執行邏輯圖解：print() 資料流寫入 sys.stdout 流程</span>
+        <div class="no-print flex gap-2">
+          <button onclick="changeStep('lab-print', -1)" class="bg-amber-900 hover:bg-amber-800 text-amber-100 px-3 py-1 rounded text-xs font-semibold">⟵ 上一步</button>
+          <button onclick="changeStep('lab-print', 1)" class="bg-amber-600 hover:bg-amber-500 text-white px-3.5 py-1 rounded text-xs font-bold shadow">下一步 ➔</button>
+          <button onclick="resetLab('lab-print')" class="bg-amber-950 hover:bg-amber-900 text-amber-200 px-2.5 py-1 rounded text-xs">↺ 重設</button>
+        </div>
+      </div>
+      
+      <div class="engine-stage">
+        <!-- 排版修復：彈性動態寬度畫布 -->
+        <div class="anim-canvas-box">
+          <!-- 左側：程式碼發射源 -->
+          <div class="w-2/5 p-3 bg-stone-900 border border-stone-700 rounded-lg text-xs font-mono text-stone-300 z-10 shadow-sm">
+            <div class="text-[10px] text-amber-400 font-bold border-b border-stone-800 pb-1 mb-1.5">SOURCE CODE</div>
+            <div id="print-code-line1" class="p-1.5 rounded bg-amber-900/80 text-amber-200 font-bold mb-1 border border-amber-600/50">L1: print("Hello World")</div>
+            <div id="print-code-line2" class="p-1.5 rounded text-stone-500">L2: name = "Alice"; print(name)</div>
+          </div>
+
+          <!-- 中央：數據傳輸通道軌道 -->
+          <div class="pipeline-track" style="left: 42%; width: 22%;"></div>
+
+          <!-- 動態資料封包粒子 (動態定位) -->
+          <div id="print-data-packet" class="anim-packet bg-amber-600 text-white border border-amber-300" style="left: 43%; top: 50%; transform: translateY(-50%);">
+            "Hello World"
+          </div>
+
+          <!-- 右側：sys.stdout 終端機 Console (高對比暖黑) -->
+          <div class="w-2/5 h-36 bg-stone-950 border-2 border-stone-800 rounded-lg p-3 font-mono text-xs flex flex-col justify-between shadow-md z-10">
+            <div class="text-[10px] text-stone-400 border-b border-stone-800 pb-1 flex justify-between">
+              <span>TERMINAL (sys.stdout)</span>
+              <span class="animate-pulse text-amber-400">● LIVE</span>
+            </div>
+            <div id="print-terminal-screen" class="text-amber-300 font-bold text-sm my-auto pl-1">
+              Hello World<span class="animate-ping text-orange-500">_</span>
+            </div>
+            <div class="text-[9px] text-amber-500 bg-stone-900 p-1 rounded border border-stone-800">
+              [Buffer]: Auto-flushed with '\n'
+            </div>
+          </div>
+        </div>
+
+        <!-- 步驟日誌說明 -->
+        <div class="exec-log-box" id="lab-print-log">
+          [Step 1/2]: 直譯器讀取常數面額 (Literal) "Hello World" ➔ 轉換為字元流封包，沿 sys.stdout 管道推送 ➔ 附加預設 end='\n' 換行符後刷新輸出至控制台。
+        </div>
+      </div>
+    </div>
+
+    <!-- 範例區塊 -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 my-4">
+      <div class="bg-amber-50/40 p-4 rounded-xl border border-amber-200/80">
+        <h4 class="font-bold text-stone-800 text-xs mb-1.5">範例 1：簡單的字串輸出</h4>
+        <pre class="code-block my-1"><code class="language-python">print("Hello World")</code></pre>
+        <p class="text-xs text-stone-600 mt-2">控制台輸出結果：<code class="text-amber-800 font-bold bg-amber-100/80 px-1.5 py-0.5 rounded">Hello World</code></p>
+      </div>
+
+      <div class="bg-amber-50/40 p-4 rounded-xl border border-amber-200/80">
+        <h4 class="font-bold text-stone-800 text-xs mb-1.5">範例 2：輸出變數引數與多引數分隔</h4>
+        <pre class="code-block my-1"><code class="language-python">name = "Alice"
+age = 20
+print(name, age, sep=" : ")  # 自訂分隔符</code></pre>
+        <p class="text-xs text-stone-600 mt-2">控制台輸出結果：<code class="text-amber-800 font-bold bg-amber-100/80 px-1.5 py-0.5 rounded">Alice : 20</code></p>
+      </div>
+    </div>
+  </section>
+
+  <hr class="my-8 border-amber-200/60"/>
+
+  <!-- 第二章：變數定義 -->
+  <section class="mb-12">
+    <h2 class="text-xl font-bold text-stone-800 border-l-4 border-amber-600 pl-3 my-4">二、變數定義與記憶體模型</h2>
+    
+    <h3 class="text-base font-semibold text-stone-800 mt-4">1. 變數本質：識別碼與堆疊記憶體參照</h3>
+    <p class="text-stone-700 text-sm my-2">
+      在 Python 中，變數並不是裝載資料的實體容器，而是一個<strong>識別碼（Identifier）</strong>。當執行賦值敘述（如 <code>x = 10</code>）時，直譯器會遵循以下順序處理：
+    </p>
+    <ol class="list-decimal list-inside text-sm text-stone-700 space-y-1.5 ml-2 bg-amber-50/60 p-3.5 rounded-lg border border-amber-200/80">
+      <li><strong>右式求值（Right-Hand Side Evaluation）</strong>：首先在堆疊記憶體（Heap Memory）中建立值為 <code>10</code> 的 <code>int</code> 物件，並分配一個獨一無二的記憶體位址（如 <code>0x10A4</code>）。</li>
+      <li><strong>識別碼繫結（Identifier Binding）</strong>：在當前命名空間（Namespace）的<strong>符號表（Symbol Table）</strong>中建立識別碼 <code>x</code>，並將其指標（Pointer）指向位址 <code>0x10A4</code>。</li>
+    </ol>
+
+    <!-- 直譯器運作邏輯圖形化動畫實驗室: 變數與記憶體結構 -->
+    <div class="engine-lab" id="lab-var">
+      <div class="engine-header">
+        <span>⚙️ 直譯器執行邏輯圖解：符號表 (Symbol Table) 與堆疊記憶體參照 (Heap Reference)</span>
+        <div class="no-print flex gap-2">
+          <button onclick="changeStep('lab-var', -1)" class="bg-amber-900 hover:bg-amber-800 text-amber-100 px-3 py-1 rounded text-xs font-semibold">⟵ 上一步</button>
+          <button onclick="changeStep('lab-var', 1)" class="bg-amber-600 hover:bg-amber-500 text-white px-3.5 py-1 rounded text-xs font-bold shadow">下一步 ➔</button>
+          <button onclick="resetLab('lab-var')" class="bg-amber-950 hover:bg-amber-900 text-amber-200 px-2.5 py-1 rounded text-xs">↺ 重設</button>
+        </div>
+      </div>
+      
+      <div class="engine-stage">
+        <!-- 排版修復：滿版 SVG 與動態座標計算法繪製 -->
+        <div class="anim-canvas-box" id="var-canvas-box">
+          <!-- SVG 指向連線畫布 -->
+          <svg class="svg-connector" id="var-svg-canvas">
+            <defs>
+              <marker id="arrow" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                <path d="M 0 0 L 10 5 L 0 10 z" fill="#ea580c"/>
+              </marker>
+            </defs>
+            <path id="var-pointer-line" class="svg-path" d="M 0 0 L 0 0" stroke="#ea580c" stroke-width="3" fill="none" marker-end="url(#arrow)"/>
+          </svg>
+
+          <!-- 左側: 符號表 (Symbol Table) -->
+          <div class="w-1/3 bg-stone-900 border border-stone-700 rounded-lg p-3 text-xs font-mono text-stone-200 z-10 shadow-sm">
+            <div class="text-[10px] text-amber-400 font-bold border-b border-stone-800 pb-1 mb-2">SYMBOL TABLE (Names)</div>
+            <div id="sym-node-x" class="p-2 rounded bg-amber-950/80 border border-amber-600/80 font-bold text-amber-200 flex justify-between items-center">
+              <span>x</span>
+              <span id="sym-addr-val" class="text-[10px] text-orange-300 font-normal">➔ 0x10A4</span>
+            </div>
+          </div>
+
+          <!-- 右側: 堆疊記憶體物件區 (Heap Memory) -->
+          <div class="w-1/2 space-y-2.5 text-xs font-mono z-10">
+            <div id="heap-obj-1" class="p-3 bg-stone-900 border-2 border-amber-500 rounded-lg transition-all duration-500 shadow-sm">
+              <div class="flex justify-between text-[10px] text-stone-400 border-b border-stone-800 pb-1">
+                <span>Addr: 0x10A4</span><span class="text-amber-400 font-bold">Type: int</span>
+              </div>
+              <div class="font-bold text-amber-200 text-sm mt-1">Value: 10</div>
+              <div id="heap-ref-1" class="text-[9px] text-emerald-400 mt-1">ref_count: 1</div>
+            </div>
+
+            <div id="heap-obj-2" class="p-3 bg-stone-900 border border-stone-800 rounded-lg opacity-35 transition-all duration-500">
+              <div class="flex justify-between text-[10px] text-stone-400 border-b border-stone-800 pb-1">
+                <span>Addr: 0x20B8</span><span class="text-orange-400 font-bold">Type: str</span>
+              </div>
+              <div class="font-bold text-orange-200 text-sm mt-1">Value: "Hello"</div>
+              <div id="heap-ref-2" class="text-[9px] text-stone-500 mt-1">ref_count: 0</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 步驟日誌說明 -->
+        <div class="exec-log-box" id="lab-var-log">
+          [Step 1/3]: 執行 x = 10 ➔ 堆疊記憶體配置 int 物件 (10) 於位址 0x10A4 ➔ 符號表建立識別碼 'x' 並指向位址 0x10A4 (ref_count: 1)。
+        </div>
+      </div>
+    </div>
+
+    <h3 class="text-base font-semibold text-stone-800 mt-5">2. 變數命名規範與語法約束</h3>
+    <ul class="list-disc list-inside text-stone-700 text-sm my-2 space-y-1.5 bg-amber-50/50 p-3.5 rounded-lg border border-amber-200/80">
+      <li><strong>組成字元限制</strong>：僅能包含大小寫英文字母（A-Z, a-z）、數字（0-9）與底線（<code>_</code>）。</li>
+      <li><strong>開頭字元限制</strong>：識別碼<strong>嚴禁以數字開頭</strong>（例如 <code>1num = 5</code> 會引發 <code>SyntaxError</code>）。</li>
+      <li><strong>保留字迴避</strong>：不可使用 Python 保留關鍵字（Reserved Keywords，如 <code>if</code>, <code>def</code>, <code>class</code>, <code>for</code>, <code>import</code>）。</li>
+      <li><strong>大小寫敏感（Case-Sensitivity）</strong>：<code>age</code> 與 <code>Age</code> 在符號表中被視為兩個截然獨立的識別碼。</li>
+    </ul>
+
+    <div class="space-y-4 my-4">
+      <div class="bg-amber-50/40 p-4 rounded-xl border border-amber-200/80">
+        <h4 class="font-bold text-stone-800 text-xs mb-1.5">範例 3：合法與非法變數命名示範</h4>
+        <pre class="code-block my-1"><code class="language-python"># 合法命名 (Valid Identifiers)
+user_age = 25
+_sys_status = 1
+total_score_2 = 98.5
+
+# 非法命名 (SyntaxError 語法錯誤)
+# 2nd_user = "Alice"  # 錯誤：不可以數字開頭
+# class = "Math"      # 錯誤：佔用 Python 保留關鍵字 'class'</code></pre>
+      </div>
+
+      <div class="bg-amber-50/40 p-4 rounded-xl border border-amber-200/80">
+        <h4 class="font-bold text-stone-800 text-xs mb-1.5">範例 4 ~ 6：多重賦值、連鎖賦值與動態型別 (Dynamic Typing)</h4>
+        <pre class="code-block my-1"><code class="language-python"># 1. 多重賦值 (Tuple Unpacking 元組解構)
+x, y, z = 10, 20, 30  # 同時建立 3 個物件並繫結至相應識別碼
+
+# 2. 連鎖賦值 (Shared Reference 記憶體位址共用)
+a = b = c = 100       # a, b, c 三個識別碼皆指向同一個整數物件 100 (id(a) == id(b))
+
+# 3. 動態型別重新綁定 (Dynamic Re-binding)
+data = 10             # data 參照 int 物件 (0x10A4)
+data = "Hello"        # data 重新指向 str 物件 (0x20B8)，原 int 物件引用計數歸零觸發 GC (Garbage Collection)</code></pre>
+      </div>
+    </div>
+  </section>
+
+  <hr class="my-8 border-amber-200/60"/>
+
+  <!-- 第三章：輸入 -->
+  <section class="mb-12">
+    <h2 class="text-xl font-bold text-stone-800 border-l-4 border-amber-600 pl-3 my-4">三、輸入與型別轉換</h2>
+    
+    <h3 class="text-base font-semibold text-stone-800 mt-4">1. <code>input()</code> 阻塞式輸入與顯式型別轉換</h3>
+    <p class="text-stone-700 text-sm my-2">
+      <code>input()</code> 執行時會暫停 Python 直譯器執行緒（進入阻塞狀態 Blocked State），並等待標準輸入流（<code>sys.stdin</code>）接收使用者敲擊鍵盤輸入的 ASCII/Unicode 字元流。
+    </p>
+    <div class="bg-amber-50/70 p-3.5 rounded-lg border-l-4 border-amber-600 text-xs text-stone-800 my-2 space-y-1">
+      <p class="font-bold text-amber-900">⚠️ 核心關鍵要點：</p>
+      <p>無論使用者輸入何種內容（即便輸入數字 <code>25</code>），<code>input()</code> 擷取後<strong>一律封裝為字串型態（<code>str</code>）</strong>。若直接對字串進行算術運算（如 <code>"25" + 1</code>），直譯器會拋出 <code>TypeError</code>。必須呼叫 <code>int()</code> 或 <code>float()</code> 進行<strong>顯式型別轉換（Explicit Typecasting）</strong>。</p>
+    </div>
+
+    <!-- 直譯器運作邏輯圖形化動畫實驗室: input & int 轉換流水線 -->
+    <div class="engine-lab" id="lab-input">
+      <div class="engine-header">
+        <span>⚙️ 直譯器執行邏輯圖解：sys.stdin 字元流與 int() 顯式型別轉換過程</span>
+        <div class="no-print flex gap-2">
+          <button onclick="changeStep('lab-input', -1)" class="bg-amber-900 hover:bg-amber-800 text-amber-100 px-3 py-1 rounded text-xs font-semibold">⟵ 上一步</button>
+          <button onclick="changeStep('lab-input', 1)" class="bg-amber-600 hover:bg-amber-500 text-white px-3.5 py-1 rounded text-xs font-bold shadow">下一步 ➔</button>
+          <button onclick="resetLab('lab-input')" class="bg-amber-950 hover:bg-amber-900 text-amber-200 px-2.5 py-1 rounded text-xs">↺ 重設</button>
+        </div>
+      </div>
+      
+      <div class="engine-stage">
+        <!-- 排版修復：分離式三階段流水線，防止粒子遮擋引擎文字 -->
+        <div class="anim-canvas-box flex justify-between items-center px-4 py-6">
+          <!-- 1. stdin 流水線區塊 -->
+          <div class="w-[28%] p-3 bg-stone-900 border border-stone-700 rounded-lg font-mono text-xs text-stone-300 z-10 shadow-sm h-28 flex flex-col justify-between">
+            <div class="text-[10px] text-amber-400 font-bold border-b border-stone-800 pb-1">1. sys.stdin</div>
+            <div>
+              <div class="text-stone-400 text-[10px]">Buffer Input:</div>
+              <div class="text-amber-300 font-bold text-sm">'2','5'</div>
+            </div>
+            <div id="input-step1-tag" class="text-[9px] text-amber-500 bg-amber-950/80 px-1.5 py-0.5 rounded border border-amber-800/60">
+              Encapsulated as str
+            </div>
+          </div>
+
+          <!-- 通道 1 -->
+          <div class="flex-1 relative h-2 bg-stone-800 mx-2 rounded">
+            <div id="input-track1-packet" class="absolute -top-3 left-1/2 -translate-x-1/2 bg-amber-500 text-stone-950 text-[10px] font-bold px-2 py-0.5 rounded shadow transition-all duration-300">
+              str: "25"
+            </div>
+          </div>
+
+          <!-- 2. int() 轉換解析引擎 -->
+          <div id="int-machine-box" class="w-[34%] h-28 bg-stone-900 border-2 border-stone-700 rounded-xl p-2.5 font-mono text-xs flex flex-col justify-between transition-all duration-500 z-10 shadow-md">
+            <div class="text-[10px] text-amber-400 font-bold border-b border-stone-800 pb-1 flex justify-between items-center">
+              <span>2. int() Engine</span>
+              <span id="int-machine-badge" class="text-[9px] bg-stone-800 text-stone-400 px-1 rounded">Idle</span>
+            </div>
+            <div id="int-machine-status" class="text-[11px] text-stone-300 font-bold text-center my-auto">
+              Parsing ASCII '2','5'
+            </div>
+            <div id="int-machine-sub" class="text-[9px] text-stone-500 text-center">
+              Numeric Parser Ready
+            </div>
+          </div>
+
+          <!-- 通道 2 -->
+          <div class="flex-1 relative h-2 bg-stone-800 mx-2 rounded">
+            <div id="input-track2-packet" class="absolute -top-3 left-1/2 -translate-x-1/2 bg-amber-600 text-white text-[10px] font-bold px-2 py-0.5 rounded shadow transition-all duration-300 opacity-0">
+              int: 25
+            </div>
+          </div>
+
+          <!-- 3. 運算結果區塊 -->
+          <div class="w-[28%] p-3 bg-stone-900 border border-stone-700 rounded-lg font-mono text-xs text-stone-300 z-10 shadow-sm h-28 flex flex-col justify-between">
+            <div class="text-[10px] text-amber-400 font-bold border-b border-stone-800 pb-1">3. Arithmetic (+1)</div>
+            <div id="input-final-res" class="text-red-400 font-bold my-auto text-xs">
+              "25" + 1 ➔ TypeError
+            </div>
+            <div id="input-res-sub" class="text-[9px] text-stone-500">
+              Type mismatch
+            </div>
+          </div>
+        </div>
+
+        <!-- 步驟日誌說明 -->
+        <div class="exec-log-box" id="lab-input-log">
+          [Step 1/3]: input() 從 sys.stdin 擷取 ASCII 字元流並封裝為 str 物件 "25" ➔ 若直接與數字 1 相加，會因型別不符引發 TypeError。
+        </div>
+      </div>
+    </div>
+
+    <!-- 範例 7 & 8 -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 my-4">
+      <div class="bg-amber-50/40 p-4 rounded-xl border border-amber-200/80">
+        <h4 class="font-bold text-stone-800 text-xs mb-1.5">範例 7：字串輸入與字串拼接</h4>
+        <pre class="code-block my-1"><code class="language-python">name = input("請輸入您的名字: ")
+print("Hello, " + name + "!")</code></pre>
+      </div>
+
+      <div class="bg-amber-50/40 p-4 rounded-xl border border-amber-200/80">
+        <h4 class="font-bold text-stone-800 text-xs mb-1.5">範例 8：輸入轉型與算術運算</h4>
+        <pre class="code-block my-1"><code class="language-python">age_str = input("請輸入年齡: ")
+age = int(age_str)  # 顯式型別轉換為 int 物件
+print("明年年齡:", age + 1)</code></pre>
+      </div>
+    </div>
+  </section>
+
+  <hr class="my-8 border-amber-200/60"/>
+
+  <!-- 第四章：格式化輸出 -->
+  <section class="mb-8">
+    <h2 class="text-xl font-bold text-stone-800 border-l-4 border-amber-600 pl-3 my-4">四、格式化輸出</h2>
+    <p class="text-stone-700 text-sm my-2">
+      格式化字串用於將多個不同資料型態的變數整合為特定結構的字串。Python 3.6+ 推行的 <code>f-string</code>（Formatted String Literals）會在執行期（Runtime）將大括號 <code>{}</code> 內的運算式進行求值與<strong>變數內插替換（Variable Interpolation）</strong>，執行效率優於傳統的 <code>%</code> 與 <code>str.format()</code> 方法。
+    </p>
+
+    <!-- 直譯器運作邏輯圖形化動畫實驗室: f-string 執行期變數內插 -->
+    <div class="engine-lab" id="lab-fstring">
+      <div class="engine-header">
+        <span>⚙️ 直譯器執行邏輯圖解：f-string 執行期變數內插 (Variable Interpolation) 過程</span>
+        <div class="no-print flex gap-2">
+          <button onclick="changeStep('lab-fstring', -1)" class="bg-amber-900 hover:bg-amber-800 text-amber-100 px-3 py-1 rounded text-xs font-semibold">⟵ 上一步</button>
+          <button onclick="changeStep('lab-fstring', 1)" class="bg-amber-600 hover:bg-amber-500 text-white px-3.5 py-1 rounded text-xs font-bold shadow">下一步 ➔</button>
+          <button onclick="resetLab('lab-fstring')" class="bg-amber-950 hover:bg-amber-900 text-amber-200 px-2.5 py-1 rounded text-xs">↺ 重設</button>
+        </div>
+      </div>
+      
+      <div class="engine-stage">
+        <!-- 排版修復：滿版佈局 -->
+        <div class="anim-canvas-box">
+          <!-- 變數源點粒子 -->
+          <div id="fstring-orb-1" class="anim-packet bg-amber-700 text-white border border-amber-300" style="left: 6%; top: 25%; opacity: 0;">
+            "Alice"
+          </div>
+          <div id="fstring-orb-2" class="anim-packet bg-orange-700 text-white border border-orange-300" style="left: 6%; top: 65%; opacity: 0;">
+            21
+          </div>
+
+          <!-- f-string 模板插槽 (居中滿版卡片) -->
+          <div class="w-full mx-auto h-32 bg-stone-900 border-2 border-amber-600/70 rounded-xl p-4 font-mono text-sm flex items-center justify-center text-stone-200 gap-2 shadow-md z-10">
+            <span class="text-amber-400">f"名字:</span>
+            <span id="f-slot-1" class="px-3 py-1.5 border-2 border-dashed border-amber-400 rounded bg-amber-950/80 text-amber-200 font-bold transition-all duration-500">{name}</span>
+            <span class="text-amber-400">, 明年:</span>
+            <span id="f-slot-2" class="px-3 py-1.5 border-2 border-dashed border-orange-400 rounded bg-orange-950/80 text-orange-200 font-bold transition-all duration-500">{age + 1}</span>
+            <span class="text-amber-400">"</span>
+          </div>
+        </div>
+
+        <!-- 步驟日誌說明 -->
+        <div class="exec-log-box" id="lab-fstring-log">
+          [Step 1/3]: 直譯器剖析 f-string 結構 ➔ 識別出靜態字串片段與兩個動態運算式插槽 {name} 與 {age + 1}。
+        </div>
+      </div>
+    </div>
+
+    <!-- 範例 9 & 10 -->
+    <div class="bg-amber-50/40 p-4 rounded-xl border border-amber-200/80 my-4">
+      <h4 class="font-bold text-stone-800 text-xs mb-1.5">範例 9 & 10：格式化寫法對比 (str.format 與 f-string)</h4>
+      <pre class="code-block my-2"><code class="language-python">name = "Alice"
+age = 20
+
+# 寫法 1：str.format() 方法
+print("名字:{}, 年齡:{}".format(name, age))
+
+# 寫法 2：f-string 變數內插 (推薦：執行效率最佳且語法最直觀)
+print(f"名字:{name}, 明年:{age + 1}")
+
+# 寫法 3：格式化控制符 (例如浮點數保留兩位小數)
+pi = 3.14159
+print(f"圓周率: {pi:.2f}")  # 輸出: 圓周率: 3.14</code></pre>
+    </div>
+
+    <!-- 綜合實作與課後作業區塊 -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-8">
+      <div class="bg-amber-50/60 p-4 rounded-xl border border-amber-200">
+        <h4 class="font-bold text-stone-900 text-sm mb-2 flex items-center gap-1.5">
+          <span>📝</span> 課堂實作練習
+        </h4>
+        <ol class="list-decimal list-inside text-xs text-stone-700 space-y-2">
+          <li>撰寫程式讀取兩個數字輸入，計算並輸出兩數相加之浮點數結果。</li>
+          <li>輸入名字與出生年份，使用 <code>f-string</code> 格式化顯示計算出的當前年齡。</li>
+        </ol>
+      </div>
+
+      <div class="bg-amber-50/60 p-4 rounded-xl border border-amber-200">
+        <h4 class="font-bold text-stone-900 text-sm mb-2 flex items-center gap-1.5">
+          <span>🎯</span> 課後作業
+        </h4>
+        <ol class="list-decimal list-inside text-xs text-stone-700 space-y-2">
+          <li>撰寫程式接收使用者姓名與出生年份，計算並輸出其滿幾歲。</li>
+          <li>接收兩個數值，計算其乘積與差值，並使用 <code>f-string</code> 格式化輸出結果。</li>
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <!-- 頁尾 -->
+  <footer class="border-t border-amber-200/60 pt-5 text-center text-xs text-stone-500 mt-10">
+    <p>Python 程式設計課程講義 ｜ 版權所有 嚴禁未經授權複製與轉載</p>
+  </footer>
+
+</div>
+
+<script>
+/* 直譯器底層執行邏輯動態視覺化狀態機 (修復滿版與自適應動態座標錨定) */
+
+// 動態繪製 lab-var 的 SVG 指標連線
+function updateVarPointer(targetObjId) {
+  const canvasBox = document.getElementById('var-canvas-box');
+  const symNode = document.getElementById('sym-node-x');
+  const targetObj = document.getElementById(targetObjId);
+  const path = document.getElementById('var-pointer-line');
+
+  if (!canvasBox || !symNode || !targetObj || !path) return;
+
+  const canvasRect = canvasBox.getBoundingClientRect();
+  const symRect = symNode.getBoundingClientRect();
+  const targetRect = targetObj.getBoundingClientRect();
+
+  // 計算相對於 Canvas 容器的絕對座標點
+  const x1 = symRect.right - canvasRect.left;
+  const y1 = symRect.top + (symRect.height / 2) - canvasRect.top;
+  const x2 = targetRect.left - canvasRect.left;
+  const y2 = targetRect.top + (targetRect.height / 2) - canvasRect.top;
+
+  const controlX = x1 + (x2 - x1) * 0.45;
+  path.setAttribute('d', `M ${x1} ${y1} C ${controlX} ${y1}, ${controlX} ${y2}, ${x2 - 8} ${y2}`);
+}
+
+const labStates = {
+  'lab-print': {
+    step: 1,
+    max: 2,
+    logs: [
+      "[Step 1/2]: 直譯器求值常數面額 \"Hello World\" ➔ 轉換為字元流，沿 sys.stdout 管道推送 ➔ 附加預設 end='\\n' 換行符後刷新輸出至控制台。",
+      "[Step 2/2]: 直譯器讀取識別碼 'name' ➔ 於符號表尋找記憶體位址 (0x20B8) 取得 \"Alice\" ➔ 封裝字元流推送至 sys.stdout。"
+    ],
+    render(step) {
+      const line1 = document.getElementById('print-code-line1');
+      const line2 = document.getElementById('print-code-line2');
+      const packet = document.getElementById('print-data-packet');
+      const screen = document.getElementById('print-terminal-screen');
+
+      if (step === 1) {
+        line1.className = "p-1.5 rounded bg-amber-900/80 text-amber-200 font-bold mb-1 border border-amber-600/50";
+        line2.className = "p-1.5 rounded text-stone-500";
+        packet.innerText = '"Hello World"';
+        packet.style.left = '43%';
+        screen.innerHTML = 'Hello World<span class="animate-ping text-orange-500">_</span>';
+      } else {
+        line1.className = "p-1.5 rounded text-stone-500 mb-1";
+        line2.className = "p-1.5 rounded bg-amber-900/80 text-amber-200 font-bold border border-amber-600/50";
+        packet.innerText = '"Alice"';
+        packet.style.left = '43%';
+        screen.innerHTML = 'Alice<span class="animate-ping text-orange-500">_</span>';
+      }
+    }
+  },
+
+  'lab-var': {
+    step: 1,
+    max: 3,
+    logs: [
+      "[Step 1/3]: 執行 x = 10 ➔ 堆疊記憶體配置 int 物件 (10) 於位址 0x10A4 ➔ 符號表 'x' 指向 0x10A4 (ref_count: 1)。",
+      "[Step 2/3]: 執行 x = 'Hello' ➔ 堆疊配置 str 物件 (\"Hello\") 於 0x20B8 ➔ 'x' 指向折轉至 0x20B8 ➔ 原 0x10A4 ref_count 降為 0 (標記 GC 垃圾回收)。",
+      "[Step 3/3]: 執行 a = b = c = 100 ➔ 僅於 0x30C2 建立單一 int 物件 (100) ➔ 符號表 a, b, c 皆指向 0x30C2 (記憶體位址共用)。"
+    ],
+    render(step) {
+      const addrVal = document.getElementById('sym-addr-val');
+      const obj1 = document.getElementById('heap-obj-1');
+      const obj2 = document.getElementById('heap-obj-2');
+      const ref1 = document.getElementById('heap-ref-1');
+      const ref2 = document.getElementById('heap-ref-2');
+
+      if (step === 1) {
+        addrVal.innerText = '➔ 0x10A4';
+        obj1.className = 'p-3 bg-stone-900 border-2 border-amber-500 rounded-lg transition-all duration-500 shadow-sm';
+        obj2.className = 'p-3 bg-stone-900 border border-stone-800 rounded-lg opacity-35 transition-all duration-500';
+        ref1.innerText = 'ref_count: 1'; ref2.innerText = 'ref_count: 0';
+        setTimeout(() => updateVarPointer('heap-obj-1'), 20);
+      } else if (step === 2) {
+        addrVal.innerText = '➔ 0x20B8';
+        obj1.className = 'p-3 bg-stone-900 border border-red-900/60 rounded-lg opacity-40 transition-all duration-500';
+        obj2.className = 'p-3 bg-stone-900 border-2 border-orange-500 rounded-lg transition-all duration-500 shadow-sm';
+        ref1.innerText = 'ref_count: 0 (GC 待回收)'; ref2.innerText = 'ref_count: 1';
+        setTimeout(() => updateVarPointer('heap-obj-2'), 20);
+      } else if (step === 3) {
+        addrVal.innerText = '➔ 0x30C2';
+        obj1.className = 'p-3 bg-stone-900 border-2 border-emerald-500 rounded-lg transition-all duration-500 shadow-sm';
+        obj2.className = 'p-3 bg-stone-900 border border-stone-800 rounded-lg opacity-25 transition-all duration-500';
+        ref1.innerText = 'ref_count: 3 (共用參照)'; ref2.innerText = 'ref_count: 0';
+        setTimeout(() => updateVarPointer('heap-obj-1'), 20);
+      }
+    }
+  },
+
+  'lab-input': {
+    step: 1,
+    max: 3,
+    logs: [
+      "[Step 1/3]: input() 從 sys.stdin 擷取 ASCII 字元流並封裝為 str 物件 \"25\" ➔ 若直接與數字 1 相加，會因型別不符引發 TypeError。",
+      "[Step 2/3]: 將 str 物件傳入 int() 函數 ➔ 啟動 Numeric Parser 數字解析引擎 ➔ 進行 ASCII 字元校驗與轉換。",
+      "[Step 3/3]: 解析成功 ➔ 產出 int 數值物件 25 ➔ 順利執行 25 + 1 算術加法運算 (產出 26)。"
+    ],
+    render(step) {
+      const p1 = document.getElementById('input-track1-packet');
+      const p2 = document.getElementById('input-track2-packet');
+      const machine = document.getElementById('int-machine-box');
+      const badge = document.getElementById('int-machine-badge');
+      const status = document.getElementById('int-machine-status');
+      const sub = document.getElementById('int-machine-sub');
+      const finalRes = document.getElementById('input-final-res');
+      const resSub = document.getElementById('input-res-sub');
+
+      if (step === 1) {
+        p1.style.opacity = '1';
+        p2.style.opacity = '0';
+        machine.className = 'w-[34%] h-28 bg-stone-900 border-2 border-stone-700 rounded-xl p-2.5 font-mono text-xs flex flex-col justify-between transition-all duration-500 z-10 shadow-md';
+        badge.innerText = 'Idle';
+        badge.className = 'text-[9px] bg-stone-800 text-stone-400 px-1 rounded';
+        status.innerText = 'Parsing ASCII \'2\',\'5\'';
+        sub.innerText = 'Numeric Parser Ready';
+        finalRes.className = 'text-red-400 font-bold my-auto text-xs';
+        finalRes.innerText = '"25" + 1 ➔ TypeError';
+        resSub.innerText = 'Type mismatch';
+      } else if (step === 2) {
+        p1.style.opacity = '0.4';
+        p2.style.opacity = '0';
+        machine.className = 'w-[34%] h-28 bg-amber-950 border-2 border-amber-500 rounded-xl p-2.5 font-mono text-xs flex flex-col justify-between transition-all duration-500 animate-pulse z-10 shadow-md';
+        badge.innerText = 'Active';
+        badge.className = 'text-[9px] bg-amber-600 text-white px-1 rounded font-bold';
+        status.innerText = 'Converting "25" ➔ 25';
+        sub.innerText = 'Validating numeric characters';
+        finalRes.className = 'text-stone-500 font-bold my-auto text-xs';
+        finalRes.innerText = 'Processing...';
+        resSub.innerText = 'Waiting for typecast';
+      } else if (step === 3) {
+        p1.style.opacity = '0.2';
+        p2.style.opacity = '1';
+        machine.className = 'w-[34%] h-28 bg-stone-900 border-2 border-emerald-500 rounded-xl p-2.5 font-mono text-xs flex flex-col justify-between transition-all duration-500 z-10 shadow-md';
+        badge.innerText = 'Success';
+        badge.className = 'text-[9px] bg-emerald-600 text-white px-1 rounded font-bold';
+        status.innerText = 'Typecast Complete';
+        sub.innerText = 'Output: int(25)';
+        finalRes.className = 'text-emerald-400 font-bold my-auto text-xs';
+        finalRes.innerText = '25 + 1 = 26';
+        resSub.innerText = 'Arithmetic Success';
+      }
+    }
+  },
+
+  'lab-fstring': {
+    step: 1,
+    max: 3,
+    logs: [
+      "[Step 1/3]: 直譯器剖析 f-string 結構 ➔ 識別出靜態字串片段與兩個動態運算式插槽 {name} 與 {age + 1}。",
+      "[Step 2/3]: 執行期求值 ➔ 變數內插粒子飛入插槽 ➔ 解碼 name 取得 \"Alice\"，計算 age + 1 (20 + 1) 取得 21。",
+      "[Step 3/3]: 呼叫字串拼接引擎 ➔ 插槽鎖定替換 ➔ 產出最終 str 物件 \"名字:Alice, 明年:21\"。"
+    ],
+    render(step) {
+      const orb1 = document.getElementById('fstring-orb-1');
+      const orb2 = document.getElementById('fstring-orb-2');
+      const slot1 = document.getElementById('f-slot-1');
+      const slot2 = document.getElementById('f-slot-2');
+
+      if (step === 1) {
+        orb1.style.opacity = '0'; orb1.style.left = '6%';
+        orb2.style.opacity = '0'; orb2.style.left = '6%';
+        slot1.innerText = '{name}'; slot1.className = 'px-3 py-1.5 border-2 border-dashed border-amber-400 rounded bg-amber-950/80 text-amber-200 font-bold transition-all duration-500';
+        slot2.innerText = '{age + 1}'; slot2.className = 'px-3 py-1.5 border-2 border-dashed border-orange-400 rounded bg-orange-950/80 text-orange-200 font-bold transition-all duration-500';
+      } else if (step === 2) {
+        orb1.style.opacity = '1'; orb1.style.left = '32%'; orb1.style.top = '25%';
+        orb2.style.opacity = '1'; orb2.style.left = '62%'; orb2.style.top = '25%';
+        slot1.innerText = '"Alice"';
+        slot2.innerText = '21';
+      } else if (step === 3) {
+        orb1.style.opacity = '0';
+        orb2.style.opacity = '0';
+        slot1.className = 'px-3 py-1.5 bg-amber-600 text-white rounded font-bold shadow-md';
+        slot2.className = 'px-3 py-1.5 bg-orange-600 text-white rounded font-bold shadow-md';
+      }
+    }
+  }
+};
+
+function changeStep(labId, delta) {
+  const lab = labStates[labId];
+  const newStep = lab.step + delta;
+  if (newStep >= 1 && newStep <= lab.max) {
+    lab.step = newStep;
+    document.getElementById(labId + '-log').innerText = lab.logs[lab.step - 1];
+    lab.render(lab.step);
+  }
+}
+
+function resetLab(labId) {
+  const lab = labStates[labId];
+  lab.step = 1;
+  document.getElementById(labId + '-log').innerText = lab.logs[0];
+  lab.render(1);
+}
+
+// 頁面載入與視窗調整時自動更新 SVG 座標
+window.addEventListener('resize', () => {
+  if (labStates['lab-var']) {
+    labStates['lab-var'].render(labStates['lab-var'].step);
+  }
+});
+
+window.addEventListener('DOMContentLoaded', () => {
+  if (window.Prism) { Prism.highlightAll(); }
+  resetLab('lab-print');
+  resetLab('lab-var');
+  resetLab('lab-input');
+  resetLab('lab-fstring');
+});
+</script>
+</body>
+</html>

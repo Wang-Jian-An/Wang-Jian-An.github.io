@@ -1,0 +1,57 @@
+<h2>Variables</h2>
+<p>A variable is a name that refers to a value stored in memory.</p>
+
+<pre><code class="language-python">name = "Alice"
+age = 25
+height = 165.5
+is_student = True</code></pre>
+
+<h2>Data Types</h2>
+<table>
+  <thead>
+    <tr><th>Type</th><th>Example</th><th>Description</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>str</code></td><td><code>"hello"</code></td><td>Text</td></tr>
+    <tr><td><code>int</code></td><td><code>42</code></td><td>Integer</td></tr>
+    <tr><td><code>float</code></td><td><code>3.14</code></td><td>Decimal</td></tr>
+    <tr><td><code>bool</code></td><td><code>True</code></td><td>Boolean</td></tr>
+  </tbody>
+</table>
+
+<h2>Type Conversion</h2>
+<div style="background: #fff3e0; border-radius: 8px; padding: 1.5rem; margin: 2rem 0;">
+  <h3 style="margin-top:0;">Demo: Type Conversion Flow</h3>
+  <div id="type-flow" style="display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;">
+    <div style="padding: 0.8rem 1.2rem; border: 2px solid #ff9800; border-radius: 6px; font-family: monospace;">
+      <span>"42"</span>
+      <div style="font-size: 0.75rem; color: #666;">str</div>
+    </div>
+    <div style="font-size: 1.5rem; animation: bounce 1s infinite;">→</div>
+    <div style="padding: 0.5rem 1rem; background: #ff9800; color: white; border-radius: 4px; font-family: monospace;">
+      int()
+    </div>
+    <div style="font-size: 1.5rem; animation: bounce 1s infinite 0.3s;">→</div>
+    <div style="padding: 0.8rem 1.2rem; border: 2px solid #4caf50; border-radius: 6px; font-family: monospace;">
+      <span>42</span>
+      <div style="font-size: 0.75rem; color: #666;">int</div>
+    </div>
+  </div>
+  <style>
+    @keyframes bounce {
+      0%, 100% { transform: translateX(0); }
+      50% { transform: translateX(5px); }
+    }
+  </style>
+</div>
+
+<h2>Practice</h2>
+<p>Try the following in your Python interpreter:</p>
+<pre><code class="language-python">x = "100"
+y = int(x)
+print(y + 50)  # What do you expect?</code></pre>
+
+<script>
+  // 你可以在這裡自由加入任何 JS 動畫
+  console.log("Ch2 slide loaded!");
+</script>
