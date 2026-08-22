@@ -45,6 +45,19 @@ jobs:
       - name: Build site
         run: hugo --minify
 
+      - name: Encrypt private slides with Staticrypt
+        run: |
+          npm install staticrypt
+          # Find all HTML files under public/slides/ that contain data-access="private"
+          find public/slides -name "*.html" -exec grep -l 'data-access="private"' {} \; | while read file; do
+            npx staticrypt "$file" -p "${{ secrets.SLIDES_PASSWORD }}" \
+              --template-title "🔒 Protected Content" \
+              --template-instructions "Please enter the password to access this slide." \
+              --template-color-primary "#4a90d9" \
+              --template-color-secondary "#e8f0fe" \
+              -o "$file"
+          done
+
       - name: Upload GitHub Pages artifact
         uses: actions/upload-pages-artifact@v4
         with:
