@@ -1,0 +1,106 @@
+{{ define "navbar" }}
+    {{ partial "navigators/navbar.html" . }}
+{{ end }}
+
+{{ define "sidebar" }}
+  <section class="sidebar-section" id="sidebar-section">
+    <div class="sidebar-holder">
+      <div class="sidebar" id="sidebar">
+        <form class="mx-auto" method="get" action="{{ "search" | relLangURL }}">
+          <input type="text" name="keyword" value="" placeholder="{{ i18n "search" }}" data-search="" id="search-box" />
+        </form>
+        <div class="sidebar-tree">
+          <ul class="tree" id="tree">
+            <li id="list-heading"><a href="{{ "slides" | relLangURL }}" data-filter="all">{{ .Title }}</a></li>
+            <div class="subtree">
+              {{ range .Sections }}
+              <li>
+                <i data-feather="folder"></i>
+                <a class="list-link" href="{{ .RelPermalink }}">{{ .Title }}</a>
+              </li>
+              {{ end }}
+            </div>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+{{ end }}
+
+{{ define "content" }}
+<section class="content-section" id="content-section">
+  <div class="content container-fluid" id="content">
+    <div class="container-fluid post-card-holder" id="post-card-holder">
+      {{ $slides := .RegularPagesRecursive }}
+      {{ $slides = where $slides "Params.hidden" "!=" true }}
+      {{ $numShow := site.Params.features.pagination.maxPostsPerPage | default 12 }}
+      {{ $paginator := .Paginate $slides $numShow }}
+      {{ range $paginator.Pages }}
+      <div class="post-card">
+        <div class="card">
+          <div class="card-head">
+            <a href="{{ .RelPermalink }}" class="post-card-link">
+              {{ $hero := "" }}
+              {{ $heroResource := .Resources.GetMatch "{hero.*,thumbnail.*}" }}
+              {{ if $heroResource }}
+                {{ $hero = $heroResource }}
+              {{ end }}
+              {{ if $hero }}
+              <img class="card-img-top" src='{{ $hero.RelPermalink }}' alt="Hero Image" loading="lazy">
+              {{ else }}
+              <div class="card-img-top d-flex align-items-center justify-content-center" style="height: 180px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                <span style="font-size: 2.5rem; color: white;">📖</span>
+              </div>
+              {{ end }}
+            </a>
+          </div>
+          <div class="card-body">
+            <a href="{{ .RelPermalink }}" class="post-card-link">
+              <h5 class="card-title">{{ .Title }}</h5>
+              <p class="card-text post-summary">{{ .Summary | plainify }}</p>
+            </a>
+            {{ if .Params.categories }}
+            <div style="margin-top: 0.5rem;">
+              {{ range .Params.categories }}
+              <span class="badge bg-secondary" style="font-size: 0.75rem;">{{ . }}</span>
+              {{ end }}
+            </div>
+            {{ end }}
+          </div>
+          <div class="card-footer">
+            <span class="float-start">
+              {{ if .Date }}{{ .Date | time.Format ":date_full" }}{{ end }}
+              {{ if eq .Params.access "public" }}
+                · <span style="color: #2e7d32;">Public</span>
+              {{ else }}
+                · <span style="color: #e65100;">🔒 Private</span>
+              {{ end }}
+            </span>
+            <a href="{{ .RelPermalink }}" class="float-end btn btn-outline-info btn-sm">{{ i18n "read" | default "Read" }}</a>
+          </div>
+        </div>
+      </div>
+      {{ end }}
+    </div>
+    <div class="paginator">
+      {{ if gt $paginator.TotalPages 1 }}
+      <nav aria-label="Page navigation">
+        <ul class="pagination justify-content-center">
+          {{ if .Paginator.HasPrev }}
+          <li class="page-item"><a class="page-link" href="{{ .Paginator.Prev.URL }}">«</a></li>
+          {{ end }}
+          {{ range .Paginator.Pagers }}
+          <li class="page-item {{ if eq . $.Paginator }}active{{ end }}">
+            <a class="page-link" href="{{ .URL }}">{{ .PageNumber }}</a>
+          </li>
+          {{ end }}
+          {{ if .Paginator.HasNext }}
+          <li class="page-item"><a class="page-link" href="{{ .Paginator.Next.URL }}">»</a></li>
+          {{ end }}
+        </ul>
+      </nav>
+      {{ end }}
+    </div>
+  </div>
+</section>
+{{ end }}
