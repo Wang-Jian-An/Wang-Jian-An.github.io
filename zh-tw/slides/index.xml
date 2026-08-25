@@ -1,4 +1,58 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>授課講義 on</title><link>https://wang-jian-an.github.io/zh-tw/slides/</link><description>Recent content in 授課講義 on</description><generator>Hugo -- gohugo.io</generator><language>zh-tw</language><lastBuildDate>Sat, 22 Aug 2026 00:00:00 +0000</lastBuildDate><atom:link href="https://wang-jian-an.github.io/zh-tw/slides/index.xml" rel="self" type="application/rss+xml"/><item><title>Switch邏輯</title><link>https://wang-jian-an.github.io/zh-tw/slides/coding-basics/switch/</link><pubDate>Sat, 22 Aug 2026 00:00:00 +0000</pubDate><guid>https://wang-jian-an.github.io/zh-tw/slides/coding-basics/switch/</guid><description/></item><item><title>物件導向程式設計簡介</title><link>https://wang-jian-an.github.io/zh-tw/slides/coding-basics/oop/</link><pubDate>Sat, 22 Aug 2026 00:00:00 +0000</pubDate><guid>https://wang-jian-an.github.io/zh-tw/slides/coding-basics/oop/</guid><description/></item><item><title>條件判斷</title><link>https://wang-jian-an.github.io/zh-tw/slides/coding-basics/if/</link><pubDate>Sat, 22 Aug 2026 00:00:00 +0000</pubDate><guid>https://wang-jian-an.github.io/zh-tw/slides/coding-basics/if/</guid><description/></item><item><title>Ch1: Introduction to Pandas</title><link>https://wang-jian-an.github.io/zh-tw/slides/data-analysis/ch01-pandas/</link><pubDate>Wed, 19 Aug 2026 00:00:00 +0000</pubDate><guid>https://wang-jian-an.github.io/zh-tw/slides/data-analysis/ch01-pandas/</guid><description>&lt;h2 id="what-is-pandas"&gt;What is Pandas?&lt;/h2&gt;
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>授課講義 on</title><link>https://wang-jian-an.github.io/zh-tw/slides/</link><description>Recent content in 授課講義 on</description><generator>Hugo -- gohugo.io</generator><language>zh-tw</language><lastBuildDate>Tue, 25 Aug 2026 00:00:00 +0000</lastBuildDate><atom:link href="https://wang-jian-an.github.io/zh-tw/slides/index.xml" rel="self" type="application/rss+xml"/><item><title>範例：Markdown 搭配嵌入 HTML 網頁</title><link>https://wang-jian-an.github.io/zh-tw/slides/sample-projects/demo-embed/</link><pubDate>Tue, 25 Aug 2026 00:00:00 +0000</pubDate><guid>https://wang-jian-an.github.io/zh-tw/slides/sample-projects/demo-embed/</guid><description>&lt;h2 id="簡介"&gt;簡介&lt;/h2&gt;
+&lt;p&gt;這是一個範例頁面，展示如何在 &lt;strong&gt;Markdown 內容&lt;/strong&gt; 中同時嵌入 &lt;code&gt;static/&lt;/code&gt; 資料夾內的互動式 HTML 網頁。&lt;/p&gt;
+&lt;p&gt;你可以在這裡正常撰寫 Markdown — 標題、清單、程式碼區塊、連結、圖片 — 任何你需要的內容。&lt;/p&gt;
+&lt;h2 id="嵌入投影片if-條件判斷"&gt;嵌入投影片：If 條件判斷&lt;/h2&gt;
+&lt;p&gt;以下是直接嵌入在此 Markdown 頁面中的「If 條件判斷」互動投影片：&lt;/p&gt;
+&lt;div class="embed-html-container" style="position: relative; width: 100%; margin: 1.5rem 0;"&gt;
+&lt;div style="display: flex; justify-content: flex-end; margin-bottom: 0.5rem;"&gt;
+&lt;button class="embed-fullscreen-btn" onclick="toggleEmbedFullscreen('embed-iframe-18da448c1fc5fbac49d356be820ac974')" aria-label="全螢幕切換" style="background: #4a5568; color: #fff; border: none; border-radius: 6px; padding: 8px 14px; font-size: 0.85rem; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: background 0.2s;"&gt;
+&lt;svg class="embed-icon-expand" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" style="width:16px;height:16px;fill:currentColor;"&gt;&lt;path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/&gt;&lt;/svg&gt;
+&lt;svg class="embed-icon-compress" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" style="width:16px;height:16px;fill:currentColor;display:none;"&gt;&lt;path d="M5 16h3v3h2v-5H5v2zm3-8H5v2h5V5H8v3zm6 11h2v-3h3v-2h-5v5zm2-11V5h-2v5h5V8h-3z"/&gt;&lt;/svg&gt;
+&lt;span class="embed-btn-text"&gt;全螢幕&lt;/span&gt;
+&lt;/button&gt;
+&lt;/div&gt;
+&lt;iframe id="embed-iframe-18da448c1fc5fbac49d356be820ac974" src="https://wang-jian-an.github.io/slides-html/coding-basics/if/index.html" style="width: 100%; height: 600px; border: 1px solid #e0e0e0; border-radius: 8px;" loading="lazy" allowfullscreen&gt;&lt;/iframe&gt;
+&lt;/div&gt;
+&lt;script&gt;
+(function() {
+if (window._embedFullscreenInit) return;
+window._embedFullscreenInit = true;
+window.toggleEmbedFullscreen = function(iframeId) {
+var iframe = document.getElementById(iframeId);
+if (!iframe) return;
+if (!document.fullscreenElement) {
+if (iframe.requestFullscreen) iframe.requestFullscreen();
+else if (iframe.webkitRequestFullscreen) iframe.webkitRequestFullscreen();
+else if (iframe.msRequestFullscreen) iframe.msRequestFullscreen();
+} else {
+if (document.exitFullscreen) document.exitFullscreen();
+else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+else if (document.msExitFullscreen) document.msExitFullscreen();
+}
+};
+document.addEventListener('fullscreenchange', function() {
+var containers = document.querySelectorAll('.embed-html-container');
+containers.forEach(function(container) {
+var expandIcon = container.querySelector('.embed-icon-expand');
+var compressIcon = container.querySelector('.embed-icon-compress');
+var btnText = container.querySelector('.embed-btn-text');
+if (!expandIcon || !compressIcon || !btnText) return;
+var iframe = container.querySelector('iframe');
+if (document.fullscreenElement === iframe) {
+expandIcon.style.display = 'none';
+compressIcon.style.display = 'block';
+btnText.textContent = '退出全螢幕';
+} else {
+expandIcon.style.display = 'block';
+compressIcon.style.display = 'none';
+btnText.textContent = '全螢幕';
+}
+});
+});
+})();
+&lt;/script&gt;
+&lt;h2 id="繼續撰寫-markdown-內容"&gt;繼續撰寫 Markdown 內容&lt;/h2&gt;
+&lt;p&gt;如你所見，嵌入的 HTML 網頁會與其他內容一起排列顯示。你可以在嵌入區塊後繼續撰寫。&lt;/p&gt;</description></item><item><title>Switch邏輯</title><link>https://wang-jian-an.github.io/zh-tw/slides/coding-basics/switch/</link><pubDate>Sat, 22 Aug 2026 00:00:00 +0000</pubDate><guid>https://wang-jian-an.github.io/zh-tw/slides/coding-basics/switch/</guid><description/></item><item><title>物件導向程式設計簡介</title><link>https://wang-jian-an.github.io/zh-tw/slides/coding-basics/oop/</link><pubDate>Sat, 22 Aug 2026 00:00:00 +0000</pubDate><guid>https://wang-jian-an.github.io/zh-tw/slides/coding-basics/oop/</guid><description/></item><item><title>條件判斷</title><link>https://wang-jian-an.github.io/zh-tw/slides/coding-basics/if/</link><pubDate>Sat, 22 Aug 2026 00:00:00 +0000</pubDate><guid>https://wang-jian-an.github.io/zh-tw/slides/coding-basics/if/</guid><description/></item><item><title>Ch1: Introduction to Pandas</title><link>https://wang-jian-an.github.io/zh-tw/slides/data-analysis/ch01-pandas/</link><pubDate>Wed, 19 Aug 2026 00:00:00 +0000</pubDate><guid>https://wang-jian-an.github.io/zh-tw/slides/data-analysis/ch01-pandas/</guid><description>&lt;h2 id="what-is-pandas"&gt;What is Pandas?&lt;/h2&gt;
 &lt;p&gt;Pandas is a Python library for data manipulation and analysis. It provides data structures like DataFrame and Series.&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"&gt;&lt;code class="language-python" data-lang="python"&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;&lt;span style="color:#f92672"&gt;import&lt;/span&gt; pandas &lt;span style="color:#66d9ef"&gt;as&lt;/span&gt; pd
 &lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;
