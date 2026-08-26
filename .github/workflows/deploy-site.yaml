@@ -46,8 +46,14 @@ jobs:
         run: hugo --minify
 
       - name: Encrypt private slides with Staticrypt
+        env:
+          STATICRYPT_PASSWORD: ${{ secrets.SLIDES_PASSWORD }}
         run: |
           npm install staticrypt
+          
+          # Shared salt ensures all pages use the same localStorage hash
+          # so iframe auto-decrypts after parent page is unlocked
+          SALT="cd5edeb37d30a951d73b7f8eef871654"
           
           # Find all HTML files under public/ that are slide pages marked as private (all languages)
           PRIVATE_FILES=$(find public -path "*/slides/*" -name "*.html" -exec grep -l "data-access=private" {} +)
@@ -57,10 +63,11 @@ jobs:
           for file in $PRIVATE_FILES; do
             echo "Encrypting: $file"
             dir=$(dirname "$file")
-            filename=$(basename "$file")
-            npx staticrypt "$file" -p "${{ secrets.SLIDES_PASSWORD }}" \
+            npx staticrypt "$file" \
               --short \
               --config false \
+              --remember 1 \
+              -s "$SALT" \
               -d "$dir" \
               --template-title "🔒 Protected Content" \
               --template-instructions "Please enter the password to access this slide." \
@@ -78,9 +85,11 @@ jobs:
             if [ -f "$target" ]; then
               echo "Encrypting iframe: $target"
               dir=$(dirname "$target")
-              npx staticrypt "$target" -p "${{ secrets.SLIDES_PASSWORD }}" \
+              npx staticrypt "$target" \
                 --short \
                 --config false \
+                --remember 1 \
+                -s "$SALT" \
                 -d "$dir" \
                 --template-title "🔒 Protected Content" \
                 --template-instructions "Please enter the password to access this slide." \
