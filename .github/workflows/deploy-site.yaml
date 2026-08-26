@@ -57,6 +57,7 @@ jobs:
           for file in $PRIVATE_FILES; do
             echo "Encrypting: $file"
             npx staticrypt "$file" -p "${{ secrets.SLIDES_PASSWORD }}" \
+              --short \
               --template-title "🔒 Protected Content" \
               --template-instructions "Please enter the password to access this slide." \
               --template-color-primary "#4a90d9" \
@@ -74,6 +75,7 @@ jobs:
             if [ -f "$target" ]; then
               echo "Encrypting iframe: $target"
               npx staticrypt "$target" -p "${{ secrets.SLIDES_PASSWORD }}" \
+                --short \
                 --template-title "🔒 Protected Content" \
                 --template-instructions "Please enter the password to access this slide." \
                 --template-color-primary "#4a90d9" \
