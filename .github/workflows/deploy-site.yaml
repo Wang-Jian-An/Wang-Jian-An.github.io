@@ -46,6 +46,8 @@ jobs:
         run: hugo --minify
 
       - name: Encrypt private slides with Staticrypt
+        env:
+          STATICRYPT_PASSWORD: ${{ secrets.SLIDES_PASSWORD }}
         run: |
           npm install staticrypt
           
@@ -58,7 +60,7 @@ jobs:
             echo "Encrypting: $file"
             dir=$(dirname "$file")
             filename=$(basename "$file")
-            npx staticrypt "$file" -p "${{ secrets.SLIDES_PASSWORD }}" \
+            npx staticrypt "$file" \
               --short \
               --config false \
               -d "$dir" \
@@ -78,7 +80,7 @@ jobs:
             if [ -f "$target" ]; then
               echo "Encrypting iframe: $target"
               dir=$(dirname "$target")
-              npx staticrypt "$target" -p "${{ secrets.SLIDES_PASSWORD }}" \
+              npx staticrypt "$target" \
                 --short \
                 --config false \
                 -d "$dir" \
