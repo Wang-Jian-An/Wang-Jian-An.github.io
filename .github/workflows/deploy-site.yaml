@@ -56,14 +56,16 @@ jobs:
           
           for file in $PRIVATE_FILES; do
             echo "Encrypting: $file"
+            dir=$(dirname "$file")
+            filename=$(basename "$file")
             npx staticrypt "$file" -p "${{ secrets.SLIDES_PASSWORD }}" \
               --short \
               --config false \
+              -d "$dir" \
               --template-title "🔒 Protected Content" \
               --template-instructions "Please enter the password to access this slide." \
               --template-color-primary "#4a90d9" \
-              --template-color-secondary "#e8f0fe" \
-              -o "$file"
+              --template-color-secondary "#e8f0fe"
           done
 
           # Also encrypt iframe HTML files referenced by private slides
@@ -75,14 +77,15 @@ jobs:
             target="public${iframe_path}"
             if [ -f "$target" ]; then
               echo "Encrypting iframe: $target"
+              dir=$(dirname "$target")
               npx staticrypt "$target" -p "${{ secrets.SLIDES_PASSWORD }}" \
                 --short \
                 --config false \
+                -d "$dir" \
                 --template-title "🔒 Protected Content" \
                 --template-instructions "Please enter the password to access this slide." \
                 --template-color-primary "#4a90d9" \
-                --template-color-secondary "#e8f0fe" \
-                -o "$target"
+                --template-color-secondary "#e8f0fe"
             fi
           done
 
