@@ -48,14 +48,12 @@ jobs:
       - name: Encrypt private slides with Staticrypt
         env:
           STATICRYPT_PASSWORD: ${{ secrets.SLIDES_PASSWORD }}
-          STATICRYPT_SALT: ${{ secrets.SLIDES_SALT }}
         run: |
           npm install staticrypt
           
-          # Use a shared salt so all pages share the same localStorage hash
-          # This allows the iframe to auto-decrypt after the parent page is unlocked
-          SALT="${STATICRYPT_SALT:-$(npx staticrypt -s '' 2>/dev/null | grep -oP '[a-f0-9]{32}')}"
-          echo "Using shared salt for all encrypted pages"
+          # Shared salt ensures all pages use the same localStorage hash
+          # so iframe auto-decrypts after parent page is unlocked
+          SALT="cd5edeb37d30a951d73b7f8eef871654"
           
           # Find all HTML files under public/ that are slide pages marked as private (all languages)
           PRIVATE_FILES=$(find public -path "*/slides/*" -name "*.html" -exec grep -l "data-access=private" {} +)
