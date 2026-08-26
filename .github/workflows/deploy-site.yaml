@@ -48,8 +48,8 @@ jobs:
       - name: Encrypt private slides with Staticrypt
         run: |
           npm install staticrypt
-          # Find all HTML files under public/slides/ that contain data-access="private"
-          find public/slides -name "*.html" -exec grep -l 'data-access="private"' {} \; | while read file; do
+          # Find all HTML files under public/ that are slide pages marked as private (all languages)
+          find public -path "*/slides/*" -name "*.html" | xargs grep -l 'data-access=private\|data-access="private"' | while read file; do
             npx staticrypt "$file" -p "${{ secrets.SLIDES_PASSWORD }}" \
               --template-title "🔒 Protected Content" \
               --template-instructions "Please enter the password to access this slide." \
@@ -58,14 +58,17 @@ jobs:
               -o "$file"
           done
 
-          # Also encrypt all HTML files under public/slides-html/
-          find public/slides-html -name "*.html" | while read file; do
-            npx staticrypt "$file" -p "${{ secrets.SLIDES_PASSWORD }}" \
-              --template-title "🔒 Protected Content" \
-              --template-instructions "Please enter the password to access this slide." \
-              --template-color-primary "#4a90d9" \
-              --template-color-secondary "#e8f0fe" \
-              -o "$file"
+          # Also encrypt iframe HTML files referenced by private slides
+          grep -rl "^access: private" content/slides/ | xargs grep -h "^iframe:" | sed 's/iframe: *"//;s/"//' | sort -u | while read iframe_path; do
+            target="public${iframe_path}"
+            if [ -f "$target" ]; then
+              npx staticrypt "$target" -p "${{ secrets.SLIDES_PASSWORD }}" \
+                --template-title "🔒 Protected Content" \
+                --template-instructions "Please enter the password to access this slide." \
+                --template-color-primary "#4a90d9" \
+                --template-color-secondary "#e8f0fe" \
+                -o "$target"
+            fi
           done
 
       - name: Upload GitHub Pages artifact
