@@ -48,8 +48,14 @@ jobs:
       - name: Encrypt private slides with Staticrypt
         run: |
           npm install staticrypt
+          
           # Find all HTML files under public/ that are slide pages marked as private (all languages)
-          find public -path "*/slides/*" -name "*.html" | xargs grep -l 'data-access=private\|data-access="private"' | while read file; do
+          PRIVATE_FILES=$(find public -path "*/slides/*" -name "*.html" -exec grep -l "data-access=private" {} +)
+          echo "Found private slide pages:"
+          echo "$PRIVATE_FILES"
+          
+          for file in $PRIVATE_FILES; do
+            echo "Encrypting: $file"
             npx staticrypt "$file" -p "${{ secrets.SLIDES_PASSWORD }}" \
               --template-title "🔒 Protected Content" \
               --template-instructions "Please enter the password to access this slide." \
@@ -59,9 +65,14 @@ jobs:
           done
 
           # Also encrypt iframe HTML files referenced by private slides
-          grep -rl "^access: private" content/slides/ | xargs grep -h "^iframe:" | sed 's/iframe: *"//;s/"//' | sort -u | while read iframe_path; do
+          IFRAME_PATHS=$(grep -rl "^access: private" content/slides/ | xargs grep -h "^iframe:" | sed 's/iframe: *"//;s/"//' | sort -u)
+          echo "Found private iframe paths:"
+          echo "$IFRAME_PATHS"
+          
+          for iframe_path in $IFRAME_PATHS; do
             target="public${iframe_path}"
             if [ -f "$target" ]; then
+              echo "Encrypting iframe: $target"
               npx staticrypt "$target" -p "${{ secrets.SLIDES_PASSWORD }}" \
                 --template-title "🔒 Protected Content" \
                 --template-instructions "Please enter the password to access this slide." \
