@@ -1,5 +1,5 @@
 ---
-title: "Lesson 2：基本資料型態與型態轉換 (Data Types & Type Casting)"
+title: "Lesson4：條件判斷（Condition）"
 date: 2026-08-28
 categories: ["Python Basics"]
 access: public
