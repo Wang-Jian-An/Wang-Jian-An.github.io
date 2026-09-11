@@ -4,7 +4,7 @@
 
 {{ define "sidebar" }}
   <section class="sidebar-section" id="sidebar-section">
-    <div class="sidebar-holder">
+    <div class="sidebar-holder" id="sidebar-holder">
       <div class="sidebar" id="sidebar">
         <form class="mx-auto" method="get" action="{{ "search" | relLangURL }}">
           <input type="text" name="keyword" value="" placeholder="{{ i18n "search" }}" data-search="" id="search-box" />
@@ -24,7 +24,82 @@
         </div>
       </div>
     </div>
+    <!-- 拖曳把手 -->
+    <div id="sidebar-resizer" style="
+      position: absolute;
+      right: -4px;
+      top: 0;
+      width: 8px;
+      height: 100%;
+      cursor: col-resize;
+      z-index: 100;
+      background: transparent;
+    "></div>
   </section>
+
+  <style>
+    /* 禁止 sidebar 滾動，文字自動換行 */
+    .sidebar-holder {
+      overflow: hidden !important;
+    }
+    .sidebar-holder .sidebar {
+      overflow: hidden !important;
+    }
+    .sidebar-tree {
+      width: auto !important;
+      overflow: hidden !important;
+    }
+    .sidebar-tree .tree li,
+    .sidebar-tree .tree a {
+      white-space: normal !important;
+      word-break: break-word !important;
+      width: 100% !important;
+    }
+    /* 拖曳時游標全頁變形 */
+    body.sidebar-resizing {
+      cursor: col-resize !important;
+      user-select: none !important;
+    }
+    /* sidebar-section 需要 relative 讓把手定位 */
+    #sidebar-section {
+      position: relative !important;
+    }
+  </style>
+
+  <script>
+    (function() {
+      const resizer = document.getElementById('sidebar-resizer');
+      const sidebarSection = document.getElementById('sidebar-section');
+      const wrapper = sidebarSection ? sidebarSection.closest('.wrapper') : null;
+      if (!resizer || !sidebarSection) return;
+
+      let startX, startWidth;
+
+      resizer.addEventListener('mousedown', function(e) {
+        startX = e.clientX;
+        startWidth = sidebarSection.getBoundingClientRect().width;
+        document.body.classList.add('sidebar-resizing');
+
+        document.addEventListener('mousemove', onMouseMove);
+        document.addEventListener('mouseup', onMouseUp);
+        e.preventDefault();
+      });
+
+      function onMouseMove(e) {
+        const dx = e.clientX - startX;
+        const newWidth = Math.max(80, Math.min(400, startWidth + dx));
+        sidebarSection.style.flex = 'none';
+        sidebarSection.style.width = newWidth + 'px';
+        sidebarSection.style.maxWidth = newWidth + 'px';
+      }
+
+      function onMouseUp() {
+        document.body.classList.remove('sidebar-resizing');
+        document.removeEventListener('mousemove', onMouseMove);
+        document.removeEventListener('mouseup', onMouseUp);
+      }
+    })();
+  </script>
 {{ end }}
 
 {{ define "content" }}
@@ -39,17 +114,22 @@
       <div class="post-card">
         <div class="card">
           <div class="card-head">
-            <a href="{{ .RelPermalink }}" class="post-card-link">
+            <a href="{{ .RelPermalink }}" class="post-card-link" style="width: 100%;">
               {{ $hero := "" }}
               {{ $heroResource := .Resources.GetMatch "{hero.*,thumbnail.*}" }}
               {{ if $heroResource }}
                 {{ $hero = $heroResource }}
               {{ end }}
               {{ if $hero }}
-              <img class="card-img-top" src='{{ $hero.RelPermalink }}' alt="Hero Image" loading="lazy">
+              <img class="card-img-top" src='{{ $hero.RelPermalink }}' alt="Hero Image" loading="lazy"
+                style="width: 80%; margin: 0.75rem auto 0; min-width: 0; aspect-ratio: 1/1; object-fit: cover; display: block; border-radius: 0.5rem;">
+              {{ else if .Params.cover_image }}
+              <img class="card-img-top" src='{{ .Params.cover_image }}' alt="Cover Image" loading="lazy"
+                style="width: 80%; margin: 0.75rem auto 0; min-width: 0; aspect-ratio: 1/1; object-fit: cover; display: block; border-radius: 0.5rem;">
               {{ else }}
-              <div class="card-img-top d-flex align-items-center justify-content-center" style="height: 180px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
-                <span style="font-size: 2.5rem; color: white;">📖</span>
+              <div class="card-img-top d-flex align-items-center justify-content-center"
+                style="width: 80%; margin: 0.75rem auto 0; aspect-ratio: 1/1; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 0.5rem;">
+                <span style="font-size: 2.5rem; color: white;">{{ .Params.cover_emoji | default "📖" }}</span>
               </div>
               {{ end }}
             </a>
