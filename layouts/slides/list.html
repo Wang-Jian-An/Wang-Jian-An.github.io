@@ -11,16 +11,13 @@
         </form>
         <div class="sidebar-tree">
           <ul class="tree" id="tree">
-            {{- $slidesRoot := site.GetPage "slides" -}}
-            <li id="list-heading"><a href="{{ "slides" | relLangURL }}" data-filter="all">{{ if $slidesRoot }}{{ $slidesRoot.Title }}{{ else }}Slides{{ end }}</a></li>
+            <li id="list-heading"><a href="#" class="category-filter active-category" data-section-filter="all">{{ .Title }}</a></li>
             <div class="subtree">
-              {{ if $slidesRoot }}
-                {{ range $slidesRoot.Sections }}
-                <li>
-                  <i data-feather="folder"></i>
-                  <a class="list-link" href="{{ .RelPermalink }}">{{ .Title }}</a>
-                </li>
-                {{ end }}
+              {{ range .Sections }}
+              <li>
+                <i data-feather="folder"></i>
+                <a class="list-link category-filter" href="#" data-section-filter="{{ .Title }}">{{ .Title }}</a>
+              </li>
               {{ end }}
             </div>
           </ul>
@@ -67,6 +64,28 @@
     #sidebar-section {
       position: relative !important;
     }
+    /* 分類過濾：選取時藍色，平時保持原色 */
+    .category-filter {
+      cursor: pointer;
+      text-decoration: none;
+    }
+    .category-filter.active-category {
+      color: #1a73e8 !important;
+      font-weight: 600;
+    }
+    /* 被過濾隱藏的卡片 */
+    #post-card-holder .post-card.section-hidden {
+      display: none !important;
+      visibility: hidden !important;
+      position: absolute !important;
+      pointer-events: none !important;
+      opacity: 0 !important;
+      width: 0 !important;
+      height: 0 !important;
+      overflow: hidden !important;
+      margin: 0 !important;
+      padding: 0 !important;
+    }
   </style>
 
   <script>
@@ -103,6 +122,38 @@
       }
     })();
   </script>
+
+  <script>
+    // 分類過濾：事件委派綁在 document
+    document.addEventListener('click', function (e) {
+      const link = e.target.closest('.category-filter');
+      if (!link) return;
+      e.preventDefault();
+
+      document.querySelectorAll('.category-filter').forEach(function (f) {
+        f.classList.remove('active-category');
+      });
+      link.classList.add('active-category');
+
+      const selected = link.getAttribute('data-section-filter');
+      const cards = document.querySelectorAll('#post-card-holder .post-card');
+
+      cards.forEach(function (card) {
+        if (selected === 'all') {
+          card.classList.remove('section-hidden');
+        } else {
+          const section = card.getAttribute('data-section') || '';
+          const cats = card.getAttribute('data-categories') || '';
+          const match = section === selected || cats.indexOf(selected) !== -1;
+          if (match) {
+            card.classList.remove('section-hidden');
+          } else {
+            card.classList.add('section-hidden');
+          }
+        }
+      });
+    });
+  </script>
 {{ end }}
 
 {{ define "content" }}
@@ -111,10 +162,8 @@
     <div class="container-fluid post-card-holder" id="post-card-holder">
       {{ $slides := .RegularPagesRecursive }}
       {{ $slides = where $slides "Params.hidden" "!=" true }}
-      {{ $numShow := site.Params.features.pagination.maxPostsPerPage | default 12 }}
-      {{ $paginator := .Paginate $slides $numShow }}
-      {{ range $paginator.Pages }}
-      <div class="post-card">
+      {{ range $slides }}
+      <div class="post-card" data-section="{{ .CurrentSection.Title }}" data-categories="{{ range .Params.categories }}{{ . }};{{ end }}">
         <div class="card">
           <div class="card-head">
             <a href="{{ .RelPermalink }}" class="post-card-link" style="width: 100%;">
@@ -163,25 +212,6 @@
           </div>
         </div>
       </div>
-      {{ end }}
-    </div>
-    <div class="paginator">
-      {{ if gt $paginator.TotalPages 1 }}
-      <nav aria-label="Page navigation">
-        <ul class="pagination justify-content-center">
-          {{ if .Paginator.HasPrev }}
-          <li class="page-item"><a class="page-link" href="{{ .Paginator.Prev.URL }}">«</a></li>
-          {{ end }}
-          {{ range .Paginator.Pagers }}
-          <li class="page-item {{ if eq . $.Paginator }}active{{ end }}">
-            <a class="page-link" href="{{ .URL }}">{{ .PageNumber }}</a>
-          </li>
-          {{ end }}
-          {{ if .Paginator.HasNext }}
-          <li class="page-item"><a class="page-link" href="{{ .Paginator.Next.URL }}">»</a></li>
-          {{ end }}
-        </ul>
-      </nav>
       {{ end }}
     </div>
   </div>
