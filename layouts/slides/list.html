@@ -174,13 +174,13 @@
               {{ end }}
               {{ if $hero }}
               <img class="card-img-top" src='{{ $hero.RelPermalink }}' alt="Hero Image" loading="lazy"
-                style="width: 80%; margin: 0.75rem auto 0; min-width: 0; aspect-ratio: 1/1; object-fit: cover; display: block; border-radius: 0.5rem;">
+                style="width: 60%; margin: 0.75rem auto 0; min-width: 0; aspect-ratio: 1/1; object-fit: cover; display: block; border-radius: 0.5rem;">
               {{ else if .Params.cover_image }}
               <img class="card-img-top" src='{{ .Params.cover_image }}' alt="Cover Image" loading="lazy"
-                style="width: 80%; margin: 0.75rem auto 0; min-width: 0; aspect-ratio: 1/1; object-fit: cover; display: block; border-radius: 0.5rem;">
+                style="width: 60%; margin: 0.75rem auto 0; min-width: 0; aspect-ratio: 1/1; object-fit: cover; display: block; border-radius: 0.5rem;">
               {{ else }}
               <div class="card-img-top d-flex align-items-center justify-content-center"
-                style="width: 80%; margin: 0.75rem auto 0; aspect-ratio: 1/1; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 0.5rem;">
+                style="width: 60%; margin: 0.75rem auto 0; aspect-ratio: 1/1; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 0.5rem;">
                 <span style="font-size: 2.5rem; color: white;">{{ .Params.cover_emoji | default "📖" }}</span>
               </div>
               {{ end }}
