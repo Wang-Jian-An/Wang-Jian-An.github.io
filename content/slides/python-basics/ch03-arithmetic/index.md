@@ -2,7 +2,7 @@
 title: "Lesson3. Arithmetic Operators"
 date: 2026-08-29
 categories: ["Python Basics"]
-access: private
+access: public
 iframe: "/slides-html/python-basics/ch03-arithmetic/index.html"
 description: "Master Python's arithmetic operators, operator precedence, and common math functions to handle numeric computations confidently."
 summary_points:
