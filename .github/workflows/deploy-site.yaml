@@ -49,8 +49,6 @@ jobs:
         env:
           STATICRYPT_PASSWORD: ${{ secrets.SLIDES_PASSWORD }}
         run: |
-          npm install staticrypt
-          
           # Shared salt ensures all pages use the same localStorage hash
           # so iframe auto-decrypts after parent page is unlocked
           SALT="cd5edeb37d30a951d73b7f8eef871654"
