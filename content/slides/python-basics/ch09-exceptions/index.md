@@ -2,7 +2,7 @@
 title: "Lesson 9: Exception Handling"
 date: 2026-09-19
 categories: ["Python Basics"]
-access: public
+access: private
 iframe: "/slides-html/python-basics/ch09-exceptions/index.html"
 description: "Make your programs resilient! Learn the try/except mechanism to catch runtime errors gracefully and write robust, fault-tolerant code."
 summary_points:
