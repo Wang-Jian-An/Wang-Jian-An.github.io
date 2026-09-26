@@ -56,7 +56,7 @@ jobs:
           SALT="cd5edeb37d30a951d73b7f8eef871654"
           
           # Find all HTML files under public/ that are slide pages marked as private (all languages)
-          PRIVATE_FILES=$(find public -path "*/slides/*" -name "*.html" -exec grep -l "data-access=private" {} +)
+          PRIVATE_FILES=$(find public -path "*/slides/*" -name "*.html" -exec grep -l 'data-access="private"' {} +)
           echo "Found private slide pages:"
           echo "$PRIVATE_FILES"
           
