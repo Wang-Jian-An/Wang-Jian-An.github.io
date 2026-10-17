@@ -608,7 +608,7 @@
         若將串列（List）視為依照整數編號排隊的儲物櫃，字典（Dictionary）則是以專屬「識別標籤（Key）」進行物件對映的關聯儲存系統。
       </p>
       <p>
-        在底層實作中，Python 字典採用雜湊表（Hash Table）架構。當直譯器存取一個鍵（Key）時，會透過雜湊運算換算記憶體槽位，使字典在檢索、新增或刪除元素時均能在平均 <code class="inline-code">O(1)</code> 的常數時間內完成。
+        在底層實作上，Python 字典採用雜湊表（Hash Table）架構。當直譯器存取一個鍵（Key）時，會透過雜湊運算換算記憶體槽位，使字典在檢索、新增或刪除元素時，均能在平均 <code class="inline-code">O(1)</code> 的常數時間內完成。
       </p>
 
       <h3 class="subsection-title">1. 字典宣告與鍵的合法性規範</h3>
@@ -639,7 +639,7 @@ user_info = dict(pairs)</code></pre>
     <section>
       <h2 class="section-title">7-2 字典元素操作與安全讀取機制</h2>
       <p>
-        字典是可變容器（Mutable）。使用 <code class="inline-code">d[key] = value</code> 語法時，若鍵已存在則會就地覆蓋更新，若不存在則會註冊新條目。但在讀取與刪除時，必須格外防範鍵不存在時引發的程式崩潰。
+        字典是可變容器（Mutable）。使用 <code class="inline-code">d[key] = value</code> 語法時，若鍵已存在則會就地覆蓋更新；若不存在則會新增該筆項目。但在讀取與刪除時，必須格外防範因鍵不存在所引發的程式中斷。
       </p>
 
       <!-- ===================================================================
@@ -664,7 +664,7 @@ user_info = dict(pairs)</code></pre>
               </button>
               <button class="btn-preset" data-action="get_bracket" data-key="phone" data-val="" data-def="">
                 <span>危險讀取: ['phone']</span>
-                <span class="preset-tag tag-danger">KeyError 崩潰</span>
+                <span class="preset-tag tag-danger">KeyError 錯誤</span>
               </button>
               <button class="btn-preset" data-action="get_safe" data-key="phone" data-val="" data-def="未登記">
                 <span>防禦讀取: .get('phone')</span>
@@ -690,7 +690,7 @@ user_info = dict(pairs)</code></pre>
                 <option value="get_safe">2. student.get(key, default)（安全防禦取值）</option>
                 <option value="set_val">3. student[key] = value（新增或覆蓋寫入）</option>
                 <option value="pop_val">4. student.pop(key, default)（安全彈出拔除）</option>
-                <option value="del_stmt">5. del student[key]（陳述句銷毀）</option>
+                <option value="del_stmt">5. del student[key]（陳述句刪除）</option>
               </select>
             </div>
 
@@ -705,7 +705,7 @@ user_info = dict(pairs)</code></pre>
             </div>
 
             <div class="form-group" id="hwDefGroup">
-              <label class="form-label" for="hwInputDef">防禦備援預設值 (Default)</label>
+              <label class="form-label" for="hwInputDef">防禦備用預設值 (Default)</label>
               <input type="text" id="hwInputDef" class="form-input" value="未登記" placeholder="查無鍵時回傳">
             </div>
 
@@ -768,7 +768,7 @@ user_info = dict(pairs)</code></pre>
               <td><code class="inline-code">d[key]</code></td>
               <td>索引存取運算子</td>
               <td>正常回傳對應的 Value</td>
-              <td><strong>拋出 KeyError 並阻斷程式中斷</strong></td>
+              <td><strong>拋出 KeyError 並引發程式中斷</strong></td>
               <td>直接回傳 Value</td>
             </tr>
             <tr>
@@ -781,14 +781,14 @@ user_info = dict(pairs)</code></pre>
             <tr>
               <td><code class="inline-code">del d[key]</code></td>
               <td>陳述句 (Statement)</td>
-              <td>自雜湊表中銷毀該鍵值對</td>
-              <td><strong>拋出 KeyError 並阻斷程式中斷</strong></td>
+              <td>自雜湊表中刪除該鍵值對</td>
+              <td><strong>拋出 KeyError 並引發程式中斷</strong></td>
               <td>無（None）</td>
             </tr>
             <tr>
               <td><code class="inline-code">d.pop(key, default)</code></td>
               <td>內建方法</td>
-              <td>銷毀條目，並將原值彈出傳回</td>
+              <td>刪除項目，並將原值彈出傳回</td>
               <td>若無 default 拋出 KeyError；若有則回傳 default</td>
               <td>回傳彈出的 Value 或 default</td>
             </tr>
@@ -820,17 +820,17 @@ for key, val in student.items():
 
     <!-- 7-4 複合容器架構解析 -->
     <section>
-      <h2 class="section-title">7-4 複合容器架構解析：巢狀字典與層級鑽取</h2>
+      <h2 class="section-title">7-4 複合容器架構解析：巢狀字典與層級探索</h2>
       <p class="lead-paragraph">
         在實際網路爬蟲或串接 RESTful Web API 時，資料幾乎皆以多層階層的巢狀結構（Nested Structures / JSON）返回。
       </p>
 
       <!-- ===================================================================
-           動態教具二：多層巢狀結構鑽取解析器 (Drill-down Widget)
+           動態教具二：多層巢狀結構探索解析器 (Drill-down Widget)
            =================================================================== -->
       <div class="widget-container">
         <div class="widget-frame-label">
-          <span>【直譯器機制模擬：多層巢狀結構鑽取與層級定位解析器】</span>
+          <span>【直譯器機制模擬：多層巢狀結構探索與層級定位解析器】</span>
           <span class="widget-status-badge">API JSON 解析器：已就緒</span>
         </div>
 
@@ -846,7 +846,7 @@ for key, val in student.items():
     }
   }
 }</pre>
-            <div class="panel-group-title" style="margin-top:10px;">目標路徑鑽取模擬</div>
+            <div class="panel-group-title" style="margin-top:10px;">目標路徑探索模擬</div>
             <div class="preset-btn-grid">
               <button class="btn-preset" id="drillBtnUser">
                 <span>定位使用者: ['data']['user']</span>
@@ -861,17 +861,17 @@ for key, val in student.items():
                 <span class="preset-tag tag-safe">索引 [0]</span>
               </button>
             </div>
-            <button class="btn-action btn-rst" id="drillBtnReset" style="margin-top:12px;">重置鑽取路徑</button>
+            <button class="btn-action btn-rst" id="drillBtnReset" style="margin-top:12px;">重置探索路徑</button>
           </div>
 
           <div class="visual-stage">
             <div class="drill-tree-container">
-              <div style="font-size:13px; font-weight:700; color:var(--accent-blue);">當前求值路徑 (Chain Evaluation Breadcrumbs):</div>
+              <div style="font-size:13px; font-weight:700; color:var(--accent-blue);">目前取值路徑 (Chain Evaluation Breadcrumbs):</div>
               <div class="drill-breadcrumbs" id="drillBreadcrumbs">
                 <!-- 動態麵包屑 -->
               </div>
 
-              <div style="font-size:13px; font-weight:700; color:var(--text-muted); margin-top:8px;">當前選取物件層級內容 (Current Object Inspector):</div>
+              <div style="font-size:13px; font-weight:700; color:var(--text-muted); margin-top:8px;">目前選取物件層級內容 (Current Object Inspector):</div>
               <div class="nested-card-viewer" id="drillViewer">
                 <!-- 動態呈現子項目 -->
               </div>
@@ -879,13 +879,13 @@ for key, val in student.items():
 
             <div class="pipeline-status-bar" id="drillStatusBar">
               <span class="pipeline-pulse-dot" id="drillPulse"></span>
-              <span id="drillStatusMsg">已就緒。點擊麵包屑或卡片中的 Key 即可向下層鑽取。</span>
+              <span id="drillStatusMsg">已就緒。點擊麵包屑或卡片中的 Key 即可向下層探索。</span>
             </div>
           </div>
         </div>
       </div>
 
-      <h3 class="subsection-title">1. 串列包字典（List of Dicts）與庫存實例</h3>
+      <h3 class="subsection-title">1. 串列包字典（List of Dicts）與庫存範例</h3>
       <pre class="code-block"><code># 模擬電商商品清單
 inventory = [
     {"id": "A01", "name": "機械鍵盤", "price": 2800, "stock": 12},
@@ -897,7 +897,7 @@ total_valuation = 0
 for item in inventory:
     subtotal = item["price"] * item["stock"]
     total_valuation += subtotal
-    print(f"商品：{item['name']} | 庫存市值：{subtotal} 元")
+    print(f"商品：{item['name']} | 庫存總值：{subtotal} 元")
 
 print(f"總庫存資產總值：{total_valuation} 元")</code></pre>
     </section>
@@ -906,9 +906,9 @@ print(f"總庫存資產總值：{total_valuation} 元")</code></pre>
     <section>
       <h2 class="section-title">7-5 字典推導式運算（Dictionary Comprehension）</h2>
       <p>
-        字典推導式能以一行簡明代碼動態建立鍵值對應映射，並支援條件過濾：
+        字典推導式能以一行簡潔的程式碼動態建立鍵值對應映射，並支援條件過濾：
       </p>
-      <pre class="code-block"><code># 1. 數值與平方之動態映射
+      <pre class="code-block"><code># 1. 數值與平方的動態映射
 numbers = [1, 2, 3, 4, 5]
 square_map = {num: num ** 2 for num in numbers}
 print(square_map)  # {1: 1, 2: 4, 3: 9, 4: 16, 5: 25}
@@ -923,17 +923,17 @@ print(even_ascii_dict)  # {'b': 98, 'd': 100}</code></pre>
     <section>
       <h2 class="section-title">7-6 集合本質與集合代數運算</h2>
       <p class="lead-paragraph">
-        集合（Set）是儲存「唯一、不可變元素」的無序容器。它等同於只有鍵而沒有值的雜湊結構。
+        集合（Set）是儲存「唯一、不可變元素」的無序容器。它就像是只有鍵而沒有值的雜湊結構。
       </p>
 
-      <h3 class="subsection-title">1. 集合去重特性與基本操作</h3>
+      <h3 class="subsection-title">1. 集合移除重複的特性與基本操作</h3>
       <pre class="code-block"><code># 利用 set 快速移除串列中的重複項目
 raw_data = ["Python", "AI", "Python", "Web", "AI", "Cloud"]
 unique_set = set(raw_data)
 print(unique_set)  # {'Python', 'Cloud', 'AI', 'Web'}（無序）
 
 unique_set.add("DevOps")     # 新增元素
-unique_set.discard("Web")    # 查無元素亦不報錯的移除方法</code></pre>
+unique_set.discard("Web")    # 找不到元素也不會引發錯誤的移除方法</code></pre>
 
       <h3 class="subsection-title">2. 集合代數運算（交集、聯集、差集）</h3>
       <div class="table-container">
@@ -1183,7 +1183,7 @@ print("A 組獨有技能 (差集):", group_a - group_b)  # {'Git', 'SQL'}</code>
             delete mockDict[key];
             renderBuckets(bucketIdx, false);
             statusPulse.className = "pipeline-pulse-dot";
-            statusText.textContent = `成功彈出：已自 Bucket #${bucketIdx} 拔除鍵 '${key}' 並回傳其值。`;
+            statusText.textContent = `成功彈出：已自 Bucket #${bucketIdx} 刪除鍵 '${key}' 並回傳其值。`;
             logTerminal(`${typeof popped === 'string' ? `'${popped}'` : popped}`);
           } else {
             renderBuckets(bucketIdx, false);
@@ -1198,11 +1198,11 @@ print("A 組獨有技能 (差集):", group_a - group_b)  # {'Git', 'SQL'}</code>
             delete mockDict[key];
             renderBuckets(bucketIdx, false);
             statusPulse.className = "pipeline-pulse-dot";
-            statusText.textContent = `陳述句刪除：已銷毀 Bucket #${bucketIdx} 中的鍵 '${key}'。`;
+            statusText.textContent = `陳述句刪除：已刪除 Bucket #${bucketIdx} 中的鍵 '${key}'。`;
           } else {
             renderBuckets(bucketIdx, true);
             statusPulse.className = "pipeline-pulse-dot pulse-error";
-            statusText.textContent = `語法崩潰：del 不具備防禦機制，查無此鍵拋出 KeyError！`;
+            statusText.textContent = `語法中斷：del 不具備防禦機制，查無此鍵拋出 KeyError！`;
             logTerminal(`KeyError: '${key}'`, "error");
           }
         }
@@ -1222,7 +1222,7 @@ print("A 組獨有技能 (差集):", group_a - group_b)  # {'Git', 'SQL'}</code>
       renderBuckets();
     })();
 
-    // 教具二：多層巢狀結構鑽取解析器
+    // 教具二：多層巢狀結構探索解析器
     (function() {
       const fullData = {
         "status": 200,
@@ -1298,13 +1298,13 @@ print("A 組獨有技能 (差集):", group_a - group_b)  # {'Git', 'SQL'}</code>
           // 純量終點
           viewerEl.innerHTML = `
             <div style="padding:10px; background:#f0fdf4; border-radius:4px; color:#166534; font-weight:700;">
-              鑽取終點純量數值：${typeof targetObj === "string" ? `'${targetObj}'` : targetObj}
+              探索終點純量數值：${typeof targetObj === "string" ? `'${targetObj}'` : targetObj}
             </div>
           `;
         }
 
         // 狀態更新
-        statusMsg.textContent = `當前路徑求值深度：${currentPath.length - 1} 層 ｜ 路徑代碼：${buildPathCode()}`;
+        statusMsg.textContent = `目前路徑取值深度：${currentPath.length - 1} 層 ｜ 路徑程式碼：${buildPathCode()}`;
       }
 
       function buildPathCode() {

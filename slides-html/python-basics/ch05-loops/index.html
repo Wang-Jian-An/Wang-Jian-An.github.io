@@ -746,42 +746,42 @@
     <!-- 單元 1 -->
     <section class="lesson-section">
       <h2 class="section-heading">一、迭代概念與重複執行機制 (Iteration Fundamentals)</h2>
-      <p>在程式架構中，若需多次執行相同的運算或輸出任務，手動編寫重複陳述式將導致程式碼冗長且極難維護[cite: 1]。直譯器提供了自動化重複執行的結構，依據特定規則或條件反覆執行同一組程式碼區塊[cite: 1]。</p>
+      <p>在程式架構中，若需要多次執行相同的運算或輸出任務，手動編寫重複的陳述式會讓程式碼變得冗長且難以維護。直譯器提供了自動重複執行的結構，能根據特定規則或條件，反覆執行同一組程式碼區塊。</p>
       
       <div class="metaphor-box">
         <strong>💡 觀念聚焦：迴圈與迭代的本質</strong><br>
-        「迴圈 (Loop)」指包含重複執行邏輯的程式結構；而每一次自資料來源取出一個元素並執行該區塊陳述式的完整過程，稱為一次<strong>「迭代 (Iteration)」</strong>[cite: 1]。
+        「迴圈 (Loop)」是指包含重複執行邏輯的程式結構；而每次從資料來源取出一個元素，並完整執行該區塊陳述式的過程，就稱為一次<strong>「迭代 (Iteration)」</strong>。
       </div>
 
-      <p>Python 提供了兩種基本迴圈語法結構：</p>
+      <p>Python 提供兩種基本的迴圈語法結構：</p>
       <ul style="padding-left: 1.4rem; margin-bottom: 1rem;">
-        <li><strong><code>for</code> 計數迴圈</strong>：適用於已知迭代次數，或依序走訪可迭代物件（Iterable，如字串、串列或整數序列）的情境[cite: 1]。</li>
-        <li><strong><code>while</code> 條件迴圈</strong>：適用於執行次數不固定，純粹依賴布林條件式之真假值決定是否繼續執行的情境[cite: 1]。</li>
+        <li><strong><code>for</code> 計數迴圈</strong>：適合已知迭代次數，或需要依序走訪可迭代物件（Iterable，如字串、串列或整數序列）的情境。</li>
+        <li><strong><code>while</code> 條件迴圈</strong>：適合執行次數不固定，單純依照布林條件式的真假值，來決定是否繼續執行的情境。</li>
       </ul>
     </section>
 
     <!-- 單元 2 -->
     <section class="lesson-section">
       <h2 class="section-heading">二、序列產生器 range() 與 for 計數迴圈走訪</h2>
-      <p>走訪連續整數數列時，通常搭配內建的 <code>range()</code> 函式[cite: 1]。直譯器嚴格遵循<strong>「包頭不包尾」</strong>（包含起始值、不包含終止值）的邊界規則。例如 <code>range(5)</code> 產生的整數序列為 <code>0, 1, 2, 3, 4</code>[cite: 1]。</p>
+      <p>走訪連續整數數列時，通常會搭配內建的 <code>range()</code> 函式。直譯器嚴格遵守<strong>「包頭不包尾」</strong>（包含起始值、不包含終止值）的邊界規則。例如 <code>range(5)</code> 產生的整數序列為 <code>0, 1, 2, 3, 4</code>。</p>
       
       <pre class="code-block">for i in range(5):
     print(i)</pre>
 
       <div class="interactive-stage" id="stage-for-conveyor">
         <div class="stage-title">
-          <span>直譯器機制：四段式指令管線與變數標籤繫結模擬器</span>
+          <span>直譯器機制：四段式指令管線與變數標籤綁定模擬器</span>
           <span class="badge">for 迴圈管線</span>
         </div>
 
         <p style="font-size: 0.92rem; color: var(--text-muted); margin-bottom: 1rem;">
-          <strong>操作導引：</strong>此處將資料走訪具象化為四段式管線。元素由隊列進入，在<strong>工位 1</strong> 繫結變數識別標籤（<code>i = X</code>），接著平移至<strong>工位 2（加工工位）</strong>執行 <code>print(i)</code> 並輸出至終端機，最後放行移出。
+          <strong>操作導引：</strong>這裡將資料走訪的過程具象化為四段式管線。元素由隊列進入後，會在<strong>工位 1</strong> 綁定變數識別標籤（<code>i = X</code>），接著平移到<strong>工位 2（加工工位）</strong>執行 <code>print(i)</code> 並輸出到終端機，最後放行移出。
         </p>
 
         <div class="controls-row">
           <button class="action-btn btn-primary" id="btn-for-next">▶ 單步執行 (Step Next)</button>
           <button class="action-btn" id="btn-for-auto">⚡ 自動播放 (Auto)</button>
-          <button class="action-btn" id="btn-for-reset">↺ 重新置放元素</button>
+          <button class="action-btn" id="btn-for-reset">↺ 重新放置元素</button>
         </div>
 
         <div class="conveyor-system-container">
@@ -793,7 +793,7 @@
             <div class="processing-chamber-hood" id="chamber-hood" style="left: 26%;"></div>
 
             <div class="station-signboard" style="left: 62%;">
-              <div class="station-tag bg-blue" id="sensor-for-label">工位 1：變數 i 標籤繫結</div>
+              <div class="station-tag bg-blue" id="sensor-for-label">工位 1：變數 i 標籤綁定</div>
               <div class="station-pointer"></div>
             </div>
 
@@ -820,7 +820,7 @@
         </div>
 
         <div class="status-summary">
-          <span id="status-for-text">管線準備就緒，點擊「單步執行」觀察變數標籤繫結與程式碼區塊執行的時序。</span>
+          <span id="status-for-text">管線準備就緒，點擊「單步執行」觀察變數標籤綁定與程式碼區塊執行的時序。</span>
           <span id="step-for-counter" style="font-family: var(--font-mono); font-weight: 700;">Step: 0 / 16</span>
         </div>
       </div>
@@ -829,7 +829,7 @@
     <!-- 單元 3 -->
     <section class="lesson-section">
       <h2 class="section-heading">三、前置條件控制：while 迴圈與終止條件設計</h2>
-      <p><code>while</code> 屬於前置條件控制結構[cite: 1]。直譯器在每次進入迴圈體前，均會先針對條件式進行布林求值：若為 <code>True</code> 則放行進入[cite: 1, 3]；當執行完區塊末行陳述式時，<strong>控制流程將折返至開頭重新求值</strong>；一旦條件評估為 <code>False</code>，即終止迴圈並離開結構[cite: 1, 3]。</p>
+      <p><code>while</code> 屬於前置條件控制結構。直譯器在每次進入迴圈主體前，都會先評估條件式的布林值：若為 <code>True</code> 就放行進入；執行完區塊最後一行陳述式後，<strong>控制流程會折返回開頭重新評估</strong>；一旦條件結果為 <code>False</code>，就會終止迴圈並離開結構。</p>
 
       <pre class="code-block">count = 0
 while count &lt; 5:
@@ -838,7 +838,7 @@ while count &lt; 5:
 
       <div class="metaphor-box">
         <strong>⚠️ 常見邏輯錯誤：無窮迴圈（Infinite Loop）</strong><br>
-        若迴圈體內遺漏 <code>count += 1</code> 等狀態推進陳述式，<code>count</code> 將恆為 <code>0</code>，導致 <code>count &lt; 5</code> 永遠評估為 <code>True</code>[cite: 1]。直譯器將無法脫離此結構，造成程式無法停止[cite: 1]。編寫 <code>while</code> 迴圈時，必須確保內部存在使條件趨向 <code>False</code> 的變更邏輯[cite: 1]。
+        若迴圈主體內漏寫了 <code>count += 1</code> 這類推進狀態的陳述式，<code>count</code> 會恆為 <code>0</code>，導致 <code>count &lt; 5</code> 永遠是 <code>True</code>。直譯器將無法脫離這個結構，造成程式卡死無法停止。撰寫 <code>while</code> 迴圈時，務必確保內部有讓條件趨向 <code>False</code> 的變更邏輯。
       </div>
 
       <div class="interactive-stage" id="stage-while-circuit">
@@ -853,7 +853,7 @@ while count &lt; 5:
           <button class="action-btn" id="btn-while-reset">↺ 重新初始化</button>
           <label class="infinite-toggle-wrapper">
             <input type="checkbox" id="chk-while-bug">
-            <span>⚠️ 模擬邏輯缺失：遺漏 count += 1（驗證無窮迴圈）</span>
+            <span>⚠️ 模擬邏輯缺失：漏寫 count += 1（驗證無窮迴圈）</span>
           </label>
         </div>
 
@@ -877,7 +877,7 @@ while count &lt; 5:
 
           <div class="circuit-top-track"></div>
           <div class="curve-guide-right"></div>
-          <div class="circuit-return-track">◀ ◀ ◀ &nbsp; 底層折返軌道（跳回 while 開頭重新求值） &nbsp; ◀ ◀ ◀</div>
+          <div class="circuit-return-track">◀ ◀ ◀ &nbsp; 底層折返軌道（跳回 while 開頭重新評估） &nbsp; ◀ ◀ ◀</div>
           <div class="curve-guide-left"></div>
 
           <div class="belt-package bound" id="while-pkg" style="left: -60px; top: 80px; z-index: 20;">
@@ -913,11 +913,11 @@ while count &lt; 5:
     <!-- 單元 4 -->
     <section class="lesson-section">
       <h2 class="section-heading">四、流程中斷控制：break、continue 與 pass 陳述式</h2>
-      <p>在迴圈迭代過程中，可利用流程跳躍關鍵字改變預設的執行順序[cite: 1]：</p>
+      <p>在迴圈迭代的過程中，可以使用流程跳躍關鍵字來改變預設的執行順序：</p>
       <ul style="padding-left: 1.4rem; margin-bottom: 1rem;">
-        <li><strong><code>break</code>（強制中斷）</strong>：立即終止當前所在的迴圈結構，直接跳出結構並執行後續程式碼[cite: 1]。後續尚未走訪的元素全數拋棄不再處理[cite: 1]。</li>
-        <li><strong><code>continue</code>（略過當次）</strong>：立即略過本次迭代在 <code>continue</code> 之後的剩餘程式碼，直譯器不終止迴圈，而是直接折返頂端叫出下一個元素進入下一輪迭代[cite: 1]。</li>
-        <li><strong><code>pass</code>（空操作佔位）</strong>：純粹用於語法結構所需位置，直譯器不執行任何運作，通常用於構思框架時的結構佔位。</li>
+        <li><strong><code>break</code>（強制中斷）</strong>：立即終止目前所在的迴圈結構，直接跳出並執行後續的程式碼。後續還沒走訪的元素會全數拋棄，不再處理。</li>
+        <li><strong><code>continue</code>（略過當次）</strong>：立即略過本次迭代 <code>continue</code> 後面的剩餘程式碼。直譯器不會終止迴圈，而是直接折返回開頭，呼叫下一個元素進入下一輪迭代。</li>
+        <li><strong><code>pass</code>（空操作佔位）</strong>：單純用來填補語法結構需要的位置，直譯器不會執行任何動作，通常用在構思程式框架時作為結構佔位符。</li>
       </ul>
 
       <div class="interactive-stage" id="stage-control-conveyor">
@@ -931,32 +931,27 @@ while count &lt; 5:
           <button class="action-btn" id="btn-mode-continue">⏩ continue 模式 (略過當次)</button>
           <span style="border-left: 1px solid var(--border-accent); height: 24px; margin: 0 0.4rem;"></span>
           <button class="action-btn btn-primary" id="btn-ctrl-next">▶ 單步執行 (Step Next)</button>
-          <button class="action-btn" id="btn-ctrl-reset">↺ 重設當前模式</button>
+          <button class="action-btn" id="btn-ctrl-reset">↺ 重設目前模式</button>
           <div class="alarm-siren" id="siren-alert">🚨 BREAK 觸發：流程中斷！</div>
         </div>
 
-        <!-- 修正架構：流水線由右向左，工位 1（檢驗）在右，工位 2（加工）在左 -->
         <div class="conveyor-system-container">
           <div class="belt-assembly">
-            <!-- 工位 2：加工工位（左側 28%） -->
             <div class="station-signboard" style="left: 28%;">
               <div class="station-tag bg-cyan" id="ctrl-chamber-label">加工工位：print(num)</div>
               <div class="station-pointer"></div>
             </div>
             <div class="processing-chamber-hood" id="ctrl-chamber-hood" style="left: 28%;"></div>
 
-            <!-- 工位 1：條件檢驗（右側 62%） -->
             <div class="station-signboard" style="left: 62%;">
               <div class="station-tag bg-blue" id="ctrl-sensor-label">條件判斷：if num == 6</div>
               <div class="station-pointer"></div>
             </div>
 
-            <!-- continue 高空旁路滑道：橫跨 28% 至 62% -->
             <div class="bypass-track" id="bypass-track">
               <span class="bypass-label">⏩ continue 旁路略過</span>
             </div>
 
-            <!-- break 安全防護大閘門（緊鄰檢驗工位右側，阻絕後續隊列） -->
             <div class="safety-gate" id="safety-gate" style="left: calc(62% + 40px);"></div>
 
             <div class="belt-track">
@@ -989,11 +984,11 @@ while count &lt; 5:
     <!-- 單元 5 -->
     <section class="lesson-section">
       <h2 class="section-heading">五、多維資料處理：雙層巢狀迴圈結構 (Nested Loops)</h2>
-      <p>當一個迴圈結構內部包含另一個迴圈時，稱為<strong>「巢狀迴圈 (Nested Loops)」</strong>[cite: 1]。外層指標每步進 1 次，內層迴圈即必須完整執行其定義的所有迭代週期[cite: 1]。</p>
+      <p>當一個迴圈結構內部又包含了另一個迴圈時，就稱為<strong>「巢狀迴圈 (Nested Loops)」</strong>。外層指標每前進 1 步，內層迴圈就必須完整執行完它定義的所有迭代週期。</p>
       
       <div class="metaphor-box">
         <strong>💡 運作模型：時鐘齒輪運作比</strong><br>
-        外層迴圈如同「時針」，內層迴圈如同「分針」。外層指針每前進 1 個刻度，內層指針便會完整走訪整個週期。此拓撲常用於多維資料結構、矩陣運算與二維網格排版[cite: 1]。
+        外層迴圈就像「時針」，內層迴圈就像「分針」。外層指針每前進 1 個刻度，內層指針就會完整走完一整圈。這種架構常用於多維資料結構、矩陣運算與二維網格排版。
       </div>
 
       <pre class="code-block">for i in range(1, 4):
@@ -1070,22 +1065,22 @@ while count &lt; 5:
 
     <!-- 單元 6 -->
     <section class="lesson-section">
-      <h2 class="section-heading">六、課堂實作演練：邏輯構建與驗證</h2>
+      <h2 class="section-heading">六、課堂實作演練：邏輯建構與驗證</h2>
       
       <div class="exercise-card">
-        <h4>任務一：數值猜測與重試機制設計[cite: 1]</h4>
-        <p>請運用 <code>while</code> 迴圈搭配條件分支，設計猜數字邏輯[cite: 1]：</p>
+        <h4>任務一：數值猜測與重試機制設計</h4>
+        <p>請運用 <code>while</code> 迴圈搭配條件分支，設計出猜數字的邏輯：</p>
         <ul>
-          <li>設定秘密目標整數為 <code>7</code>[cite: 1]。</li>
-          <li>限制使用者最多嘗試 5 次猜測[cite: 1]。</li>
-          <li>每次輸入後給予「太大了！」或「太小了！」的明確數值提示[cite: 1]。</li>
-          <li>命中目標時，印出恭喜訊息並使用 <code>break</code> 終止迴圈；若次數耗盡則輸出挑戰結束提示[cite: 1]。</li>
+          <li>設定秘密目標整數為 <code>7</code>。</li>
+          <li>限制使用者最多嘗試 5 次猜測。</li>
+          <li>每次輸入後給予「太大了！」或「太小了！」的明確數值提示。</li>
+          <li>猜中目標時，印出恭喜訊息並使用 <code>break</code> 終止迴圈；若次數用盡，則輸出挑戰結束的提示。</li>
         </ul>
       </div>
 
       <div class="exercise-card">
         <h4>任務二：幾何星形金字塔輸出</h4>
-        <p>運用巢狀 <code>for</code> 迴圈與 <code>range()</code>，於終端機輸出 5 層對稱星號金字塔[cite: 1]：</p>
+        <p>運用巢狀 <code>for</code> 迴圈與 <code>range()</code>，於終端機輸出 5 層對稱星號金字塔：</p>
         <pre class="code-block" style="background:#0f172a; margin-top:0.5rem;">    *
    ***
   *****
@@ -1143,13 +1138,13 @@ while count &lt; 5:
           train.appendChild(pkg);
           packages.push(pkg);
         }
-        sensorLabel.textContent = "工位 1：變數 i 標籤繫結";
+        sensorLabel.textContent = "工位 1：變數 i 標籤綁定";
         hood.classList.remove("active");
         term.textContent = "";
         step = 0;
         updateLines(-1);
         stepCounter.textContent = `Step: 0 / ${totalSteps}`;
-        statusText.textContent = "管線準備就緒，點擊「單步執行」觀察變數標籤繫結與程式碼區塊執行的時序。";
+        statusText.textContent = "管線準備就緒，點擊「單步執行」觀察變數標籤綁定與程式碼區塊執行的時序。";
         btnNext.disabled = false;
         clearInterval(autoTimer);
         autoTimer = null;
@@ -1177,8 +1172,8 @@ while count &lt; 5:
             hood.classList.remove("active");
             curPkg.style.left = "62%";
             curPkg.classList.add("bound");
-            sensorLabel.textContent = `工位 1：已繫結 i = ${itemIdx}`;
-            statusText.textContent = `【取件繫結】從 range(5) 讀入整數 ${itemIdx}，直譯器建立變數繫結「i = ${itemIdx}」。`;
+            sensorLabel.textContent = `工位 1：已綁定 i = ${itemIdx}`;
+            statusText.textContent = `【取件綁定】從 range(5) 讀取整數 ${itemIdx}，直譯器建立變數綁定「i = ${itemIdx}」。`;
 
             for (let j = itemIdx + 1; j < 5; j++) {
               packages[j].style.left = `calc(62% + ${(j - itemIdx) * 68}px)`;
@@ -1197,7 +1192,7 @@ while count &lt; 5:
             hood.classList.remove("active");
             curPkg.classList.remove("processing");
             curPkg.style.left = "-80px";
-            statusText.textContent = `【完成放行】整數 ${itemIdx} 處理完畢，移出當前處理管線。`;
+            statusText.textContent = `【完成放行】整數 ${itemIdx} 處理完畢，移出目前處理管線。`;
           }
         } else if (step === 16) {
           updateLines(2);
@@ -1317,14 +1312,14 @@ while count &lt; 5:
             sentryGate.classList.remove("locked");
             sentryTag.className = "station-tag bg-green";
             sentryTag.textContent = `條件檢驗：${count} < 5 為 True`;
-            statusText.textContent = `【條件求值】當前 count = ${count}，條件 ${count} < 5 評估為 True，允許進入迴圈體。`;
+            statusText.textContent = `【評估條件】目前 count = ${count}，條件 ${count} < 5 結果為 True，允許進入迴圈主體。`;
             stepCounter.textContent = `迭代第 ${loopCount + 1} 輪 - 條件成立`;
             phase = 2;
           } else {
             sentryGate.classList.add("locked");
             sentryTag.className = "station-tag bg-red";
             sentryTag.textContent = `條件檢驗：${count} < 5 為 False`;
-            statusText.textContent = `【條件不成立】當前 count = ${count}，條件 ${count} < 5 評估為 False，流程跳出迴圈。`;
+            statusText.textContent = `【條件不成立】目前 count = ${count}，條件 ${count} < 5 結果為 False，流程跳出迴圈。`;
             phase = 99;
           }
         } else if (phase === 2) {
@@ -1335,7 +1330,7 @@ while count &lt; 5:
 
           term.textContent += `計數：${count}\n`;
           term.scrollTop = term.scrollHeight;
-          statusText.textContent = `【執行陳述式】執行 print(f"計數：{count}")，輸出當前數值。`;
+          statusText.textContent = `【執行陳述式】執行 print(f"計數：{count}")，輸出目前數值。`;
           phase = 3;
         } else if (phase === 3) {
           updateLines(3);
@@ -1367,7 +1362,7 @@ while count &lt; 5:
 
           pkg.style.top = "172px";
           pkg.style.left = "50%";
-          statusText.textContent = `【流程折返】第 ${loopCount} 輪陳述式執行完畢，控制指標折返至 while 條件處重新求值。`;
+          statusText.textContent = `【流程折返】第 ${loopCount} 輪陳述式執行完畢，控制指標折返回 while 條件處重新評估。`;
           
           setTimeout(() => {
             pkg.style.left = "22%";
@@ -1569,7 +1564,7 @@ while count &lt; 5:
               packages[2].style.left = "62%"; // 6 抵達工位 1
               packages[2].classList.add("inspected");
               for (let i = 3; i < 5; i++) packages[i].style.left = `calc(62% + ${(i - 2) * 70}px)`;
-              statusText.textContent = "🎯 num = 6 抵達檢驗工位（62%）：6 == 6 評估為 True！進入 if 分支。";
+              statusText.textContent = "🎯 num = 6 抵達檢驗工位（62%）：6 == 6 結果為 True！進入 if 分支。";
               break;
             case 6:
               updateLines(3); // print 找到目標
@@ -1581,11 +1576,11 @@ while count &lt; 5:
               gate.classList.add("slammed"); // 大閘門於 62%+40px 重砸，阻絕後方 8 與 10
               siren.classList.add("active");
               surface.classList.remove("moving"); // 輸送帶停轉
-              statusText.textContent = "🛑 執行 break：安全閘門重砸阻絕！輸送帶急停斷電，迴圈強制中斷！";
+              statusText.textContent = "🛑 執行 break：安全閘門重砸阻隔！輸送帶急停斷電，迴圈強制中斷！";
               break;
             case 8:
               updateLines(6); // 外部程式碼
-              statusText.textContent = "控制流程彈射出迴圈外！被阻絕在閘門外的數字 8 與 10 徹底不再處理。";
+              statusText.textContent = "控制流程彈射出迴圈外！被阻擋在閘門外的數字 8 與 10 完全不再處理。";
               btnNext.disabled = true;
               break;
           }
@@ -1597,7 +1592,7 @@ while count &lt; 5:
             updateLines(2); // 1 抵達工位 1
             packages[0].style.left = "62%";
             for (let i = 1; i < 5; i++) packages[i].style.left = `calc(62% + ${i * 70}px)`;
-            statusText.textContent = "num = 1 抵達檢驗工位（62%）：1 % 2 != 0 評估為 True（奇數）！進入 if 分支。";
+            statusText.textContent = "num = 1 抵達檢驗工位（62%）：1 % 2 != 0 結果為 True（奇數）！進入 if 分支。";
           } else if (step === 2) {
             updateLines(3); // 執行 continue -> 升入高空旁路並向左跨越
             packages[0].classList.add("bypassing");
@@ -1624,13 +1619,13 @@ while count &lt; 5:
             packages[1].style.left = "-80px";
             packages[2].style.left = "62%";
             for (let i = 3; i < 5; i++) packages[i].style.left = `calc(62% + ${(i - 2) * 70}px)`;
-            statusText.textContent = "num = 3 抵達檢驗工位（62%）：3 % 2 != 0 評估為 True（奇數）！進入 if 分支。";
+            statusText.textContent = "num = 3 抵達檢驗工位（62%）：3 % 2 != 0 結果為 True（奇數）！進入 if 分支。";
           } else if (step === 6) {
             updateLines(3); // 3 走旁路
             packages[2].classList.add("bypassing");
             packages[2].style.top = "-8px";
             packages[2].style.left = "28%";
-            statusText.textContent = "⏩ 執行 continue！元素 3 走高空旁路跨越加工艙，直接跳至下一輪！";
+            statusText.textContent = "⏩ 執行 continue！元素 3 走高空旁路跨越加工艙，直接跳到下一輪！";
           } else if (step === 7) {
             updateLines(2); // 3 移出，4 抵達工位 1
             packages[2].style.left = "-80px";
@@ -1704,21 +1699,21 @@ while count &lt; 5:
       const totalSteps = 16;
 
       const schedule = [
-        { type: "i", i: 1, j: null, line: 0, text: "外層迴圈啟動：外層指標步進至 i = 1。" },
-        { type: "cell", i: 1, j: 1, line: 3, text: "內層第 1 步：j = 1，計算 1x1=1，輸出至終端機。" },
-        { type: "cell", i: 1, j: 2, line: 3, text: "內層第 2 步：j = 2，計算 1x2=2，輸出至終端機。" },
+        { type: "i", i: 1, j: null, line: 0, text: "外層迴圈啟動：外層指標前進 1 步至 i = 1。" },
+        { type: "cell", i: 1, j: 1, line: 3, text: "內層第 1 步：j = 1，計算 1x1=1，輸出到終端機。" },
+        { type: "cell", i: 1, j: 2, line: 3, text: "內層第 2 步：j = 2，計算 1x2=2，輸出到終端機。" },
         { type: "cell", i: 1, j: 3, line: 3, text: "內層第 3 步：j = 3，計算 1x3=3，內層週期走訪完畢。" },
         { type: "newline", i: 1, j: null, line: 4, text: "內層週期結束：執行 print() 輸出換行字元。" },
 
         { type: "i", i: 2, j: null, line: 0, text: "外層指標推進至 i = 2，內層即將重新開始新週期。" },
-        { type: "cell", i: 2, j: 1, line: 3, text: "內層第 1 步：j = 1，計算 2x1=2，輸出至終端機。" },
-        { type: "cell", i: 2, j: 2, line: 3, text: "內層第 2 步：j = 2，計算 2x2=4，輸出至終端機。" },
+        { type: "cell", i: 2, j: 1, line: 3, text: "內層第 1 步：j = 1，計算 2x1=2，輸出到終端機。" },
+        { type: "cell", i: 2, j: 2, line: 3, text: "內層第 2 步：j = 2，計算 2x2=4，輸出到終端機。" },
         { type: "cell", i: 2, j: 3, line: 3, text: "內層第 3 步：j = 3，計算 2x3=6，內層週期走訪完畢。" },
         { type: "newline", i: 2, j: null, line: 4, text: "內層週期結束：執行 print() 輸出換行字元。" },
 
         { type: "i", i: 3, j: null, line: 0, text: "外層指標推進至 i = 3。" },
-        { type: "cell", i: 3, j: 1, line: 3, text: "內層第 1 步：j = 1，計算 3x1=3，輸出至終端機。" },
-        { type: "cell", i: 3, j: 2, line: 3, text: "內層第 2 步：j = 2，計算 3x2=6，輸出至終端機。" },
+        { type: "cell", i: 3, j: 1, line: 3, text: "內層第 1 步：j = 1，計算 3x1=3，輸出到終端機。" },
+        { type: "cell", i: 3, j: 2, line: 3, text: "內層第 2 步：j = 2，計算 3x2=6，輸出到終端機。" },
         { type: "cell", i: 3, j: 3, line: 3, text: "內層第 3 步：j = 3，計算 3x3=9，內層週期走訪完畢。" },
         { type: "newline", i: 3, j: null, line: 4, text: "內層週期結束：執行 print() 輸出換行字元。" },
 

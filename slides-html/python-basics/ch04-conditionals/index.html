@@ -696,24 +696,24 @@
   <!-- 第一章 -->
   <section class="section-block">
     <h2 class="section-heading">第一章：比較運算子與布林值判定</h2>
-    <p>在進入程式的分支決策之前，電腦必須具備度量衡與辨明真偽的能力。在 Python 中，所有比較運算本質上就像是一座<strong>精密的天秤</strong>：天秤兩端放置資料，檢測完畢後，只會產生兩種不可撼動的布林值（Boolean）結果之一：<code class="inline-code">True</code>（真）或是 <code class="inline-code">False</code>（假）。這種布林狀態，正是所有控制流程決策的基礎。</p>
+    <p>在進入程式的分支決策之前，電腦必須具備衡量與辨明真偽的能力。在 Python 中，所有比較運算本質上就像是一座<strong>精密的天秤</strong>：天秤兩端放置資料，檢測完畢後，只會產生兩種不可撼動的布林值（Boolean）結果：<code class="inline-code">True</code>（真）或是 <code class="inline-code">False</code>（假）。這種布林狀態，正是所有控制流程決策的基礎。</p>
 
-    <h3 class="sub-heading">1-1 數值度量衡：認識 6 大比較運算子</h3>
-    <p>Python 提供了 6 種最基礎的度量運算子，用於數值與資料內容的比較：</p>
+    <h3 class="sub-heading">1-1 數值衡量：認識 6 大比較運算子</h3>
+    <p>Python 提供了 6 種最基礎的比較運算子，用於數值與資料內容的比對：</p>
     
     <div class="code-wrapper">
       <div class="code-header"><span>python</span><span>comparison_demo.py</span></div>
       <pre class="code-block">score = 85
 
-print(score &gt; 60)
-print(score &lt; 50)
-print(score &gt;= 85)
-print(score &lt;= 80)
+print(score > 60)
+print(score < 50)
+print(score >= 85)
+print(score <= 80)
 print(score == 85)
 print(score != 100)</pre>
     </div>
 
-    <h3 class="sub-heading">1-2 觀念避坑：賦值綁定「=」與 數值比較「==」的本質差異</h3>
+    <h3 class="sub-heading">1-2 觀念避坑：指定值「=」與 數值比較「==」的本質差異</h3>
     <div class="highlight-card">
       <strong>⚠️ 零基礎避坑提醒：</strong><br>
       初學者極常將數學上的「等於」習慣寫成單一個等號 <code class="inline-code">=</code>。<br>
@@ -729,9 +729,9 @@ print(score != 100)</pre>
   <!-- 第二章 -->
   <section class="section-block">
     <h2 class="section-heading">第二章：邏輯運算子與短路求值</h2>
-    <p>日常生活中，事件的發生往往取決於多項條件的組合。在 Python 中，我們使用三大邏輯運算子：<code class="inline-code">and</code>（且）、<code class="inline-code">or</code>（或）、<code class="inline-code">not</code>（非）[cite: 3]。</p>
+    <p>日常生活中，事件的發生往往取決於多項條件的組合。在 Python 中，我們使用三大邏輯運算子：<code class="inline-code">and</code>（且）、<code class="inline-code">or</code>（或）、<code class="inline-code">not</code>（非）。</p>
 
-    <h3 class="sub-heading">2-1 複合條件安檢：真值表與邏輯法則</h3>
+    <h3 class="sub-heading">2-1 多重條件檢查：真值表與邏輯法則</h3>
     <table class="truth-table">
       <thead>
         <tr>
@@ -776,20 +776,20 @@ print(score != 100)</pre>
           <td><strong>not</strong></td>
           <td>—</td>
           <td class="val-false">False</td>
-          <td>邏輯反轉，顛倒真偽狀態</td>
+          <td>邏輯反轉，反轉真假狀態</td>
         </tr>
       </tbody>
     </table>
 
-    <h3 class="sub-heading">2-2 直譯器求值機制：短路評估（Short-circuit Evaluation）</h3>
-    <p>直譯器在計算複合邏輯時高度講求執行效率。若<strong>左側運算式的求值結果已足以確定整體布林值，直譯器便會直接終止並跳過右側運算式的求值</strong>！這種機制稱為「短路評估」。</p>
+    <h3 class="sub-heading">2-2 直譯器求值機制：短路求值（Short-circuit Evaluation）</h3>
+    <p>直譯器在運算複合邏輯時非常講究執行效率。若<strong>左側運算式的結果已經足以決定最終的布林值，直譯器就會直接中斷，跳過右側運算式的求值程序</strong>！這種機制稱為「短路求值」。</p>
 
     <!-- 動態教具一：邏輯審查機器人 -->
     <div class="theater-container" id="botTheater">
       <div class="theater-title-bar">
         <div>
-          <strong style="font-size: 1.1rem;">動態教具一：邏輯審查機器人——短路評估求值模擬器</strong>
-          <span style="color: var(--text-muted); font-size: 0.85rem; margin-left: 8px;">(短路評估求值路徑可視化)</span>
+          <strong style="font-size: 1.1rem;">動態教具一：邏輯審查機器人——短路求值模擬器</strong>
+          <span style="color: var(--text-muted); font-size: 0.85rem; margin-left: 8px;">(短路求值路徑可視化)</span>
         </div>
         <span class="theater-tag">邏輯運算核心</span>
       </div>
@@ -871,32 +871,32 @@ print(score != 100)</pre>
   <!-- 第三章 -->
   <section class="section-block">
     <h2 class="section-heading">第三章：條件分支控制結構（if / elif / else）</h2>
-    <p>掌握了真偽判斷後，我們就能指引 Python 走向不同的程式區塊。Python 的條件分支結構就像是鐵路調車場的<strong>軌道轉轍器</strong>，引導載運資料的指令指標（IP）駛入指定的程式碼區塊[cite: 1, 3]。</p>
+    <p>掌握了真偽判斷後，我們就能指引 Python 走向不同的程式區塊。Python 的條件分支結構就像是鐵道上的<strong>轉轍器</strong>，負責引導載運資料的指令指標（IP）駛入指定的程式碼區塊。</p>
 
-    <h3 class="sub-heading">3-1 單向通行門檻：if 條件式</h3>
-    <p>只有滿足條件時，才會執行特定動作；不滿足則直接繞過該區塊[cite: 1, 3]：</p>
+    <h3 class="sub-heading">3-1 單向通行閘門：if 條件式</h3>
+    <p>只有滿足條件時，才會執行特定動作；若不滿足，則會直接繞過該區塊：</p>
     <div class="code-wrapper">
       <div class="code-header"><span>python</span><span>single_if.py</span></div>
       <pre class="code-block">age = 18
 
-if age &gt;= 18:
+if age >= 18:
     print("你已經成年")</pre>
     </div>
 
-    <h3 class="sub-heading">3-2 雙向互斥分流：if...else 結構</h3>
-    <p>非此即彼，兩個區塊必定擇一執行，絕不可能同時跳過或同時執行[cite: 1, 3]：</p>
+    <h3 class="sub-heading">3-2 雙向分流：if...else 結構</h3>
+    <p>非此即彼，兩個區塊必定擇一執行，絕不可能同時跳過或同時執行：</p>
     <div class="code-wrapper">
       <div class="code-header"><span>python</span><span>if_else.py</span></div>
       <pre class="code-block">age = 16
 
-if age &gt;= 18:
+if age >= 18:
     print("你已經成年")
 else:
     print("你還未成年")</pre>
     </div>
 
     <h3 class="sub-heading">3-3 多向條件分支：if...elif...else 互斥階梯與順序依賴</h3>
-    <p>當面臨 3 種以上的分流需求時，使用 <code class="inline-code">elif</code>（即 else if 之縮寫）[cite: 1, 3]。請務必向學生強調：<strong>這是一座由上而下的互斥階梯，一旦上方有任何條件命中，整座結構立即結案，下方所有的 elif 與 else 都會被指令指標直接跳過（Bypass）！</strong>[cite: 1, 3]</p>
+    <p>當面臨 3 種以上的分流需求時，使用 <code class="inline-code">elif</code>（即 else if 之縮寫）。請務必向學生強調：<strong>這是一座由上而下的互斥階梯，一旦上方條件成立，整個判斷流程就會直接結束，下方所有的 elif 與 else 都會被指令指標略過（Bypass）！</strong></p>
 
     <!-- 動態教具二：指令指標分支執行模擬器 -->
     <div class="theater-container" id="trainSwitchTheater">
@@ -929,15 +929,15 @@ else:
 
           <path d="M 80 80 Q 140 80 200 80 L 460 80" stroke="#e2e8f0" stroke-width="8" fill="none" id="railPath1"/>
           <circle cx="80" cy="80" r="10" fill="#94a3b8" id="railSwitch1"/>
-          <text x="210" y="74" fill="#64748b" font-size="12" font-family="monospace">Gate 1: &gt;= 90 (等級 A)</text>
+          <text x="210" y="74" fill="#64748b" font-size="12" font-family="monospace">Gate 1: >= 90 (等級 A)</text>
 
           <path d="M 80 150 Q 140 150 200 150 L 460 150" stroke="#e2e8f0" stroke-width="8" fill="none" id="railPath2"/>
           <circle cx="80" cy="150" r="10" fill="#94a3b8" id="railSwitch2"/>
-          <text x="210" y="144" fill="#64748b" font-size="12" font-family="monospace">Gate 2: &gt;= 80 (等級 B)</text>
+          <text x="210" y="144" fill="#64748b" font-size="12" font-family="monospace">Gate 2: >= 80 (等級 B)</text>
 
           <path d="M 80 220 Q 140 220 200 220 L 460 220" stroke="#e2e8f0" stroke-width="8" fill="none" id="railPath3"/>
           <circle cx="80" cy="220" r="10" fill="#94a3b8" id="railSwitch3"/>
-          <text x="210" y="214" fill="#64748b" font-size="12" font-family="monospace">Gate 3: &gt;= 70 (等級 C)</text>
+          <text x="210" y="214" fill="#64748b" font-size="12" font-family="monospace">Gate 3: >= 70 (等級 C)</text>
 
           <path d="M 80 290 Q 140 290 200 290 L 460 290" stroke="#e2e8f0" stroke-width="8" fill="none" id="railPath4"/>
           <circle cx="80" cy="290" r="10" fill="#94a3b8" id="railSwitch4"/>
@@ -961,7 +961,7 @@ else:
 
         <div class="train-code-panel">
           <div class="rail-code-row" id="rcRow1">
-            <span><code>if score &gt;= 90:</code></span>
+            <span><code>if score >= 90:</code></span>
             <span class="rail-tag" id="rcTag1">待檢驗</span>
           </div>
           <div class="rail-code-row" id="rcRow1Sub" style="margin-left: 20px; font-size: 0.85rem; color: #475569;">
@@ -969,7 +969,7 @@ else:
           </div>
 
           <div class="rail-code-row" id="rcRow2">
-            <span><code>elif score &gt;= 80:</code></span>
+            <span><code>elif score >= 80:</code></span>
             <span class="rail-tag" id="rcTag2">待檢驗</span>
           </div>
           <div class="rail-code-row" id="rcRow2Sub" style="margin-left: 20px; font-size: 0.85rem; color: #475569;">
@@ -977,7 +977,7 @@ else:
           </div>
 
           <div class="rail-code-row" id="rcRow3">
-            <span><code>elif score &gt;= 70:</code></span>
+            <span><code>elif score >= 70:</code></span>
             <span class="rail-tag" id="rcTag3">待檢驗</span>
           </div>
           <div class="rail-code-row" id="rcRow3Sub" style="margin-left: 20px; font-size: 0.85rem; color: #475569;">
@@ -1023,7 +1023,7 @@ else:
     <h2 class="section-heading">第四章：條件判斷進階技巧與複合邏輯</h2>
 
     <h3 class="sub-heading">4-1 單行條件運算式（三元運算子）</h3>
-    <p>當只有單純的二選一賦值需求時，Python 支援將 if-else 撰寫為精巧的一行表達式[cite: 3]：</p>
+    <p>當只有單純的二選一賦值需求時，Python 支援將 if-else 撰寫為精巧的一行表達式：</p>
     <p style="text-align: center; font-family: var(--font-code); background: var(--bg-secondary); padding: 10px; border-radius: 6px;">
       <strong>變數 = 真實結果 if 判斷條件 else 虛假結果</strong>
     </p>
@@ -1036,13 +1036,13 @@ print(status)</pre>
     </div>
 
     <h3 class="sub-heading">4-2 複合條件判斷：邏輯運算子與分支整合</h3>
-    <p>多個條件可以使用括號與邏輯運算子組合，建立多重把關的檢驗門檻[cite: 3]：</p>
+    <p>我們可以使用括號與邏輯運算子組合多個條件，設立多重檢驗門檻：</p>
     <div class="code-wrapper">
       <div class="code-header"><span>python</span><span>combined_conditions.py</span></div>
       <pre class="code-block">temperature = 30
 weather = "晴天"
 
-if temperature &gt; 25 and weather == "晴天":
+if temperature > 25 and weather == "晴天":
     print("天氣很好，適合外出")
 else:
     print("天氣不太好")</pre>
@@ -1137,7 +1137,7 @@ else:
         <div class="checkpoint-block" id="cpBlockA">
           <div class="cp-indicator-light"></div>
           <div style="font-weight: 700; font-size: 0.85rem;">第一哨 (溫度)</div>
-          <div style="font-family: var(--font-code); font-size: 0.75rem; color: #475569;">temp &gt; 25</div>
+          <div style="font-family: var(--font-code); font-size: 0.75rem; color: #475569;">temp > 25</div>
           <div class="condition-chip" id="cpChipA" style="font-size: 0.85rem; padding: 2px 10px;">True</div>
         </div>
 
@@ -1176,7 +1176,7 @@ else:
       <div class="live-terminal">
         <div class="term-row">
           <span class="term-prompt">&gt;&gt;&gt;</span>
-          <span id="drCodePreview">if 30 &gt; 25 and "晴天" == "晴天":</span>
+          <span id="drCodePreview">if 30 > 25 and "晴天" == "晴天":</span>
         </div>
         <div class="term-row">
           <span class="term-status">[標準輸出 stdout]</span>
@@ -1191,40 +1191,40 @@ else:
     <h2 class="section-heading">第五章：新手常見語法陷阱與除錯指南</h2>
 
     <h3 class="sub-heading">5-1 縮排（Indentation）結構：空白字元的區塊界定</h3>
-    <p>在 Python 中，<strong>直譯器完全依賴「空白縮排」來識別程式碼的從屬區塊結構</strong>！</p>
+    <p>在 Python 中，<strong>直譯器完全依賴「空白縮排」來辨識程式碼的區塊層級</strong>！</p>
     <div class="code-wrapper">
       <div class="code-header"><span>python</span><span>indentation_error.py</span></div>
       <pre class="code-block"># 錯誤示範：忘記縮排
-if 5 &gt; 3:
+if 5 > 3:
 print("這行會直接拋出 IndentationError！")
 
 # 正確規範：縮排統一使用 4 個半形空白，切勿混用 Tab 鍵</pre>
     </div>
 
-    <h3 class="sub-heading">5-2 語法標點：忘記冒號「:」的常見報錯</h3>
-    <p><code class="inline-code">if</code>、<code class="inline-code">elif</code>、<code class="inline-code">else</code> 行尾的冒號代表「向直譯器宣告：後方即將進入從屬程式區塊」。漏掉冒號會立即引發 <code class="inline-code">SyntaxError: expected ':'</code>。</p>
+    <h3 class="sub-heading">5-2 語法標點：忘記冒號「:」的常見錯誤訊息</h3>
+    <p><code class="inline-code">if</code>、<code class="inline-code">elif</code>、<code class="inline-code">else</code> 行尾的冒號代表「提示直譯器：接下來將進入子區塊」。漏掉冒號會立即引發 <code class="inline-code">SyntaxError: expected ':'</code> 語法錯誤。</p>
   </section>
 
   <!-- 第六章 -->
   <section class="section-block">
     <h2 class="section-heading">第六章：課堂實戰任務挑戰</h2>
 
-    <h3 class="sub-heading">任務一：數值正負零判定機</h3>
-    <p><strong>規則說明：</strong>撰寫程式，根據使用者輸入的整數判斷其為正數、負數還是零[cite: 3]。</p>
+    <h3 class="sub-heading">任務一：判斷正負數與零</h3>
+    <p><strong>規則說明：</strong>撰寫程式，根據使用者輸入的整數判斷其為正數、負數還是零。</p>
     <div class="code-wrapper">
       <div class="code-header"><span>python</span><span>number_sign_solution.py</span></div>
       <pre class="code-block">num = int(input("請輸入一個數字："))
 
-if num &gt; 0:
+if num > 0:
     print("這是一個正數")
-elif num &lt; 0:
+elif num < 0:
     print("這是一個負數")
 else:
     print("這是零")</pre>
     </div>
 
     <h3 class="sub-heading">任務二：公曆閏年判定系統</h3>
-    <p><strong>規則說明：</strong>公曆閏年規則如下：能被 4 整除且「不能被 100 整除」，或能被 400 整除者為閏年，其餘為平年[cite: 3]。</p>
+    <p><strong>規則說明：</strong>公曆閏年規則如下：能被 4 整除且「不能被 100 整除」，或能被 400 整除者為閏年，其餘為平年。</p>
     <div class="code-wrapper">
       <div class="code-header"><span>python</span><span>leap_year_solution.py</span></div>
       <pre class="code-block">year = int(input("請輸入年份："))
@@ -1235,19 +1235,19 @@ else:
     print(f"{year} 不是閏年")</pre>
     </div>
 
-    <h3 class="sub-heading">任務三：成績等第評定系統</h3>
-    <p><strong>規則說明：</strong>根據使用者輸入的成績（0~100），輸出對應的等級（A, B, C, D, F）[cite: 3]。</p>
+    <h3 class="sub-heading">任務三：成績分級系統</h3>
+    <p><strong>規則說明：</strong>根據使用者輸入的成績（0~100），輸出對應的等級（A, B, C, D, F）。</p>
     <div class="code-wrapper">
       <div class="code-header"><span>python</span><span>score_evaluator_solution.py</span></div>
       <pre class="code-block">score = int(input("請輸入成績："))
 
-if score &gt;= 90:
+if score >= 90:
     print("等級 A")
-elif score &gt;= 80:
+elif score >= 80:
     print("等級 B")
-elif score &gt;= 70:
+elif score >= 70:
     print("等級 C")
-elif score &gt;= 60:
+elif score >= 60:
     print("等級 D")
 else:
     print("等級 F")</pre>
