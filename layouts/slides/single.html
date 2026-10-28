@@ -407,7 +407,7 @@
     line-height: 1.6;
     color: #333;
     word-wrap: break-word;
-    max-width: 860px;
+    max-width: 1120px;
     margin: 2rem auto;
     padding: 0 1.5rem 3rem 1.5rem;
     box-sizing: border-box;
@@ -737,6 +737,13 @@
     {{/* ── Markdown / content.html 模式 ── */}}
     <div class="slide-body-sandbox">
       {{ $htmlFile := .Resources.Get "content.html" }}
+      {{ if not $htmlFile }}
+        {{ range .Translations }}
+          {{ if not $htmlFile }}
+            {{ $htmlFile = .Resources.Get "content.html" }}
+          {{ end }}
+        {{ end }}
+      {{ end }}
       {{ if $htmlFile }}
         {{ $htmlFile.Content | safeHTML }}
       {{ else }}
