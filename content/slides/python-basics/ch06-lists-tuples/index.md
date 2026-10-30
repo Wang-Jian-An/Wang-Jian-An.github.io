@@ -3,7 +3,6 @@ title: "Lesson 6: Lists & Tuples"
 date: 2026-09-16
 categories: ["Python Basics"]
 access: private
-iframe: "/slides-html/python-basics/ch06-lists-tuples/index.html"
 description: "Discover Python's most-used sequence containers: the mutable list and the immutable tuple. Master indexing, slicing, and common methods."
 summary_points:
   - "Creating lists, indexing, and slicing"

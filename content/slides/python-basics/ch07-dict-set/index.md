@@ -3,7 +3,6 @@ title: "Lesson7. Dictionaries & Sets"
 date: 2026-09-17
 categories: ["Python Basics"]
 access: public
-iframe: "/slides-html/python-basics/ch07-dict-set/index.html"
 description: "Learn Python's key-value store (dict) and unordered unique collection (set) for efficient lookup, deduplication, and set operations."
 summary_points:
   - "Creating dicts and accessing values"
