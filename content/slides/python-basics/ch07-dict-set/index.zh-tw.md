@@ -3,7 +3,6 @@ title: "Lesson7. 字典（Dict）與集合（Set）"
 date: 2026-09-17
 categories: ["Python Basics"]
 access: public
-iframe: "/slides-html/python-basics/ch07-dict-set/index.html"
 description: "掌握 Python 的鍵值對容器字典與無序集合，學習高效的資料查找、去重複與集合運算。"
 summary_points:
   - "Dict 建立、存取與更新"
