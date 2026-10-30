@@ -31,6 +31,19 @@
   }
 }
 
+/* 講義列表卡片（type-slides）：支援 summary_points 學習重點列表，高度自適應 */
+body.type-slides {
+  .post-card {
+    .card-body {
+      height: auto !important;
+      min-height: 13rem;
+      overflow: visible !important;
+      display: flex;
+      flex-direction: column;
+    }
+  }
+}
+
 /* 關閉卡片 hover/focus 時圖片放大的效果 */
 .card:hover .card-img-top,
 .card:focus .card-img-top,
