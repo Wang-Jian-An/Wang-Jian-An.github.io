@@ -37,11 +37,16 @@ jobs:
       - name: Update Hugo Modules
         run: hugo mod tidy
 
-      - name: Install Node modules
+      - name: Install Node modules & Dart Sass
         run: |
           hugo mod npm pack
           npm ci
-          npm install -g sass
+          DART_SASS_VERSION=$(curl -s https://api.github.com/repos/sass/dart-sass/releases/latest | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
+          curl -sL "https://github.com/sass/dart-sass/releases/download/${DART_SASS_VERSION}/dart-sass-${DART_SASS_VERSION}-linux-x64.tar.gz" -o dart-sass.tar.gz
+          sudo mkdir -p /opt/dart-sass
+          sudo tar -xzf dart-sass.tar.gz -C /opt/dart-sass --strip-components=1
+          rm -f dart-sass.tar.gz
+          echo "/opt/dart-sass" >> $GITHUB_PATH
 
       - name: Build site
         run: hugo --minify
