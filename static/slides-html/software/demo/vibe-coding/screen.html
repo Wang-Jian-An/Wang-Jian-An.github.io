@@ -241,16 +241,16 @@ body:has(#player-hud) {background:#96cfa7 url('data:image/svg+xml;charset=utf-8,
      .on('postgres_changes',{event:'UPDATE',schema:'public',table:'rpg_rooms',filter:'id=eq.'+room.id},p=>{room=p.new;informRoom()})
      .subscribe(s=>{if(s==='SUBSCRIBED'){ready=true;status('已連線｜課堂代碼：'+room.code);informRoom();}else if(s==='CHANNEL_ERROR'||s==='TIMED_OUT'){ready=false;status('同步連線中斷，請檢查網路並重新連線');}});
  }
-  async function restoreStudentRoster(){
+  async function restoreStudentRoster(manual=false){
     if(!client||!room)return;
-    // The event stream is authoritative; do not rely on the teacher's localStorage.
+    // The event stream is authoritative; fetch full student roster and five-stage action/explore logs.
     const {data,error}=await client.from('rpg_events')
-      .select('id,kind,payload').eq('room_id',room.id)
-      .in('kind',['player:join','player:progress','student:progress','student:sceneEnter','student:returnToClass'])
-      .order('id',{ascending:false}).limit(1000);
-    if(error){console.warn('學生清單還原失敗',error);status('課堂已連線，學生清單讀取失敗：'+error.message);return;}
+      .select('id,kind,payload,created_at').eq('room_id',room.id)
+      .in('kind',['player:join','player:progress','player:action','player:explore','student:progress','student:sceneEnter','student:returnToClass','admin:resetAll'])
+      .order('id',{ascending:false}).limit(2000);
+    if(error){console.warn('學生清單與操作紀錄還原失敗',error);status('課堂已連線，紀錄讀取失敗：'+error.message);return;}
     if(!data)return;
-    window.dispatchEvent(new CustomEvent('rpg:roster-restore',{detail:{events:data.reverse()}}));
+    window.dispatchEvent(new CustomEvent('rpg:roster-restore',{detail:{events:data.reverse(),manual:Boolean(manual)}}));
   }
  async function connect(mode,url,key,code){
    ready=false;status('正在連線及驗證課堂…');await setup(url,key);
@@ -304,6 +304,7 @@ body:has(#player-hud) {background:#96cfa7 url('data:image/svg+xml;charset=utf-8,
      <div class="rpg-room-actions">
        <button id="rpg-reconnect" type="button">重新加入上次課堂</button>
        <button id="rpg-connect-go" type="button">建立新課堂</button>
+       <button id="rpg-sync-now" type="button" disabled>🔄 抓取最新紀錄</button>
      </div>
      <p id="rpg-connect-status" aria-live="polite">尚未連線。離線可單機體驗。</p>
      <p id="rpg-room-code"></p></div>`;
@@ -315,8 +316,8 @@ body:has(#player-hud) {background:#96cfa7 url('data:image/svg+xml;charset=utf-8,
    $('rpg-last-code').value=cleanCode(saved.code||'');
    statusEl=$('rpg-connect-status');codeEl=$('rpg-room-code');
    $('rpg-connect-toggle').onclick=()=>el.classList.toggle('open');
-   const reconnect=$('rpg-reconnect'),create=$('rpg-connect-go'),lastCode=$('rpg-last-code');
-   function updateActions(){reconnect.disabled=!cleanCode(lastCode.value);}
+   const reconnect=$('rpg-reconnect'),create=$('rpg-connect-go'),syncNowBtn=$('rpg-sync-now'),lastCode=$('rpg-last-code');
+   function updateActions(){reconnect.disabled=!cleanCode(lastCode.value);if(syncNowBtn)syncNowBtn.disabled=!ready;}
    lastCode.addEventListener('input',updateActions);updateActions();
    async function run(mode){
      reconnect.disabled=true;create.disabled=true;
@@ -349,6 +350,11 @@ body:has(#player-hud) {background:#96cfa7 url('data:image/svg+xml;charset=utf-8,
    }
    create.onclick=()=>run('create');
    reconnect.onclick=()=>run('join');
+   if(syncNowBtn)syncNowBtn.onclick=async()=>{
+     syncNowBtn.disabled=true;
+     try{status('正在從資料庫抓取最新學生紀錄…');await restoreStudentRoster(true);status('已同步最新紀錄｜課堂代碼：'+room.code);}
+     finally{updateActions();}
+   };
    if(saved.url&&saved.key&&saved.code){
      el.classList.add('open');
      status('找到上次課堂 '+cleanCode(saved.code)+'。可選擇重新加入，或直接建立新課堂。');
@@ -356,7 +362,7 @@ body:has(#player-hud) {background:#96cfa7 url('data:image/svg+xml;charset=utf-8,
  }
  const style=document.createElement('style');style.textContent=`#rpg-connect-host{position:fixed;top:10px;right:10px;z-index:2147483000;font-family:system-ui,sans-serif;color:#342616}#rpg-connect{width:min(340px,calc(100vw - 20px));pointer-events:none}#rpg-connect-toggle{pointer-events:auto;float:right;background:#68432a;color:#fff8dc;border:2px solid #d4ad66;border-radius:12px;padding:8px 12px;font-weight:bold;cursor:pointer;box-shadow:0 3px 9px #0004}#rpg-connect-panel{clear:both;display:none;pointer-events:auto;background:#fff5da;border:3px solid #79512f;border-radius:12px;padding:14px;box-shadow:0 8px 24px #0006;font-size:13px;max-height:75vh;overflow:auto}#rpg-connect.open #rpg-connect-panel{display:block}#rpg-connect-panel label{display:block;margin:9px 0}#rpg-connect-panel input{box-sizing:border-box;width:100%;padding:8px;border:1px solid #b99a71;border-radius:6px;font-size:12px}#rpg-connect-go,#rpg-reconnect{padding:9px 12px;background:#4b8647;color:white;border:0;border-radius:8px;cursor:pointer;font-size:12px}#rpg-reconnect{background:#94612f}#rpg-connect button:disabled{opacity:.48;cursor:not-allowed}.rpg-room-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}#rpg-connect-status{overflow-wrap:anywhere}#rpg-room-code{font-weight:bold;color:#11643b}`;document.head.append(style);
  function joinUrl(){if(!room)return '';const c=cfg();if(!c.url||!c.key)return '';const url=new URL('./mobile.html',location.href);url.searchParams.set('room',room.code);const h=new URLSearchParams();h.set('rpg_url',c.url);h.set('rpg_key',c.key);url.hash=h.toString();return url.href;}
- window.rpgBridge={joinUrl,publish,onEvent:fn=>listeners.push(fn),onRoom:fn=>{roomListeners.push(fn);if(room&&ready)fn(roomData(room));},mountUI,get connected(){return ready},get room(){return room}};
+ window.rpgBridge={joinUrl,publish,syncNow:(manual=true)=>restoreStudentRoster(manual),onEvent:fn=>listeners.push(fn),onRoom:fn=>{roomListeners.push(fn);if(room&&ready)fn(roomData(room));},mountUI,get connected(){return ready},get room(){return room}};
 })();
 
 </script>
@@ -1178,8 +1184,9 @@ header.v5-teacher-hud{overflow:visible!important;isolation:isolate;z-index:950!i
             <h2 id="dashTitle" style="color:#854D0E; font-size:1.3rem;">即時監控儀表板</h2>
             <p id="dashSubtitle" style="color:#64748b; font-size:0.78rem;">全體冒險者連線操作與現場行為雙軌日誌</p>
           </div>
-          <div style="display:flex; gap:10px; align-items:center;">
+          <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap; justify-content:flex-end;">
             <span id="dashStatus" class="stat-badge" style="background:#065f46; color:#a7f3d0; border-color:#047857;">連線健全</span>
+            <button class="ms-btn ms-btn-blue" id="dashSyncBtn" style="height:34px; font-size:0.82rem; padding:4px 12px;" onclick="window.syncLatestDashboard()">🔄 抓取最新紀錄</button>
             <button class="ms-btn ms-btn-green" id="dashNextBtn" onclick="window.nextScene()">前往下一階段 ❯</button>
           </div>
         </div>
@@ -1701,11 +1708,29 @@ header.v5-teacher-hud{overflow:visible!important;isolation:isolate;z-index:950!i
       document.getElementById('streamCounter').textContent=list.length+' 筆';
     }
 
-    function appendLiveStreamItem(time,name,desc,type='explore',sceneId=window.currentScene) {
+    function appendLiveStreamItem(time,name,desc,type='explore',sceneId=window.currentScene,silent=false) {
       window.logData.liveStream.unshift({time,name,desc,type,sceneId});
-      if(window.logData.liveStream.length>1000)window.logData.liveStream.pop();
-      renderCurrentSceneLog();
+      if(window.logData.liveStream.length>2000)window.logData.liveStream.pop();
+      if(!silent)renderCurrentSceneLog();
     }
+
+    window.syncLatestDashboard = async function() {
+      window.soundEngine?.playClick?.();
+      const btn = document.getElementById('dashSyncBtn');
+      if (!window.rpgBridge?.connected) {
+        renderCurrentSceneLog();
+        const mode = window.SCENE_CONFIG[window.currentScene]?.mode;
+        if (mode) renderDashboardView(mode);
+        window.showGameToast('尚未連線至 Supabase 課堂，請先於右上角「☁ 課堂連線」建立或加入課堂。', 'info');
+        return;
+      }
+      if (btn) { btn.disabled = true; btn.textContent = '⏳ 同步中…'; }
+      try {
+        await window.rpgBridge.syncNow(true);
+      } finally {
+        if (btn) { btn.disabled = false; btn.textContent = '🔄 抓取最新紀錄'; }
+      }
+    };
 
 
     function renderDashboardView(mode) {
@@ -1778,48 +1803,58 @@ header.v5-teacher-hud{overflow:visible!important;isolation:isolate;z-index:950!i
       tbody.innerHTML = list.map(item=>`<tr>${rowRenderer(item)}</tr>`).join('');
     }
 
-    function handlePlayerActionLog(data) {
-      const time=new Date().toLocaleTimeString(),p=window.players.get(data.playerId)||{name:data.playerName||'冒險者'};
-      const sceneId=Number(data.sceneId)||window.currentScene;
-      const name=window.escapeHtml(p.name);
-      const safe=window.escapeHtml;
+    function handlePlayerActionLog(data, opts = {}) {
+      const silent = Boolean(opts.silent);
+      const time = opts.eventTime || new Date().toLocaleTimeString();
+      const p = window.players.get(data.playerId) || { name: data.playerName || '冒險者' };
+      const sceneId = Number(data.sceneId) || window.currentScene;
+      const name = window.escapeHtml(p.name);
+      const safe = window.escapeHtml;
       if(data.actionType==='BUY_TICKET'){
         const persisted=Boolean(data.persisted);
         window.logData.ticketLogs.unshift({sceneId,time,name,txId:safe(data.txId),ticketType:safe(data.ticketType),count:Number(data.ticketCount)||1,price:Number(data.price)||0,
           statusText:persisted?'✔ 已存入教學持久化模擬':'⚠ 僅在 RAM，重新載入將失去',statusColor:persisted?'#059669':'#b91c1c'});
-        appendLiveStreamItem(time,p.name,`訂購 ${data.ticketCount||1} 張${data.ticketType||'門票'}`,'action',sceneId);
+        appendLiveStreamItem(time,p.name,`訂購 ${data.ticketCount||1} 張${data.ticketType||'門票'}`,'action',sceneId,silent);
       }else if(data.actionType==='TICKET_LOSS'){
-        appendLiveStreamItem(time,p.name,`模擬 F5 後失去 ${data.ticketCount||1} 張 RAM 票券`,'danger',sceneId);
+        appendLiveStreamItem(time,p.name,`模擬 F5 後失去 ${data.ticketCount||1} 張 RAM 票券`,'danger',sceneId,silent);
       }else if(data.actionType==='TAMPER_ROLE'){
         const protectedMode=Boolean(data.protected);
         window.logData.rbacLogs.unshift({sceneId,time,name,oldRole:'Staff',action:safe(data.urlParam),statusText:protectedMode?'🛡️ 403：伺服器 RBAC 拒絕':'🚨 模擬越權成功',statusColor:protectedMode?'#059669':'#b91c1c'});
-        appendLiveStreamItem(time,p.name,`嘗試越權 ${data.urlParam}；${protectedMode?'已阻擋':'漏洞未修'}` ,protectedMode?'action':'danger',sceneId);
+        appendLiveStreamItem(time,p.name,`嘗試越權 ${data.urlParam}；${protectedMode?'已阻擋':'漏洞未修'}` ,protectedMode?'action':'danger',sceneId,silent);
       }else if(data.actionType==='UPLOAD_FILE'){
         const clean=Boolean(data.safe),rejected=Boolean(data.rejected);
         window.logData.fileLogs.unshift({sceneId,time,name,fileName:safe(data.fileName),inspectResult:clean?(rejected?'✔ 格式不符，已拒絕':'✔ 正規 PDF 通過檢查'):'⚠ 尚未配置檢驗',serverStatus:clean?'正常（安全模擬）':data.penalty?'模擬 OOM 異常':'未驗證',statusColor:clean?'#059669':'#b91c1c'});
-        appendLiveStreamItem(time,p.name,`送審 ${data.fileName}；${clean?'已安全檢驗':'缺少防護'}`,clean?'action':'danger',sceneId);
+        appendLiveStreamItem(time,p.name,`送審 ${data.fileName}；${clean?'已安全檢驗':'缺少防護'}`,clean?'action':'danger',sceneId,silent);
       }else if(data.actionType==='AI_CHAT'){
         const guarded=Boolean(data.guarded),malicious=Boolean(data.isMalicious);
         window.logData.aiLogs.unshift({sceneId,time,name,prompt:safe(data.prompt),guardResult:guarded?'🛡️ 模擬護欄已啟用':'⚠ 未啟用護欄',response:safe(data.response),statusColor:guarded?'#059669':malicious?'#dc2626':'#0284c7'});
-        appendLiveStreamItem(time,p.name,`向露米提問：${String(data.prompt||'').slice(0,45)}`,malicious&&!guarded?'danger':'action',sceneId);
+        appendLiveStreamItem(time,p.name,`向露米提問：${String(data.prompt||'').slice(0,45)}`,malicious&&!guarded?'danger':'action',sceneId,silent);
+      }else if(data.actionType==='CLOUD_OBSERVE'){
+        appendLiveStreamItem(time,p.name,'觀摩 Docker 雲端啟航（尚有徽章待補）','explore',sceneId,silent);
       }else if(data.actionType==='CLOUD_LAUNCH'){
-        appendLiveStreamItem(time,p.name,'完成 Docker 教學模擬部署','action',sceneId);
+        appendLiveStreamItem(time,p.name,'完成 Docker 教學模擬部署','action',sceneId,silent);
       }
-      const currentMode=window.SCENE_CONFIG[window.currentScene]?.mode;
-      if(currentMode)renderDashboardView(currentMode);
+      if(!silent){
+        const currentMode=window.SCENE_CONFIG[window.currentScene]?.mode;
+        if(currentMode)renderDashboardView(currentMode);
+      }
       if(Number(data.penalty)>0){
         window.disasterCount++;
         window.systemStability=Math.max(10,window.systemStability-15);
-        document.getElementById('disasterCount').textContent=window.disasterCount;
-        document.getElementById('systemStability').textContent=window.systemStability+'%';
-        window.soundEngine.playDamage();
-        window.showGameToast(`${p.name} 遭遇架構災難，班級穩定度下降！`,'danger');
-        const card=document.getElementById(`card-${data.playerId}`);
-        if(card){card.classList.add('damaged');setTimeout(()=>card.classList.remove('damaged'),600);}
+        if(!silent){
+          document.getElementById('disasterCount').textContent=window.disasterCount;
+          document.getElementById('systemStability').textContent=window.systemStability+'%';
+          window.soundEngine.playDamage();
+          window.showGameToast(`${p.name} 遭遇架構災難，班級穩定度下降！`,'danger');
+          const card=document.getElementById(`card-${data.playerId}`);
+          if(card){card.classList.add('damaged');setTimeout(()=>card.classList.remove('damaged'),600);}
+        }
       }else if(data.isRepaired){
         window.systemStability=Math.min(100,window.systemStability+25);
-        document.getElementById('systemStability').textContent=window.systemStability+'%';
-        window.showGameToast(`${p.name} 完成修復，班級穩定度回升。`,'success');
+        if(!silent){
+          document.getElementById('systemStability').textContent=window.systemStability+'%';
+          window.showGameToast(`${p.name} 完成修復，班級穩定度回升。`,'success');
+        }
       }
     }
 
@@ -1932,25 +1967,72 @@ header.v5-teacher-hud{overflow:visible!important;isolation:isolate;z-index:950!i
         window.socket.on(ev,d=>handleIncomingEvent(ev,d));
     }
     window.addEventListener('rpg:roster-restore',e=>{
-      const events=e.detail?.events||[];
-      // Only reconstruct roster; do not replay actions, logs or grant rewards.
+      const allEvents=e.detail?.events||[];
+      // 若資料庫中有全場重置紀錄，僅還原最後一次重置之後的課堂狀態與操作日誌
+      let startIdx=0;
+      for(let i=allEvents.length-1;i>=0;i--){
+        if(allEvents[i].kind==='admin:resetAll'){startIdx=i+1;break;}
+      }
+      const events=allEvents.slice(startIdx);
+
       window.players.clear();
+      window.seenEventIds.clear();
+      window.disasterCount=0;
+      window.systemStability=100;
+      window.logData={ticketLogs:[],rbacLogs:[],fileLogs:[],aiLogs:[],liveStream:[]};
+
       for(const row of events){
         const data=row.payload||{};
-        const id=(row.kind==='player:join'?data.id:data.playerId);
-        if(!id||id==='pending')continue;
-        const previous=window.players.get(id)||{id};
-        const updated={...previous,
-          name:data.name||data.playerName||previous.name||'見習冒險者',
-          role:data.role||previous.role,
-          avatarConfig:data.avatarConfig??previous.avatarConfig,
-          activeScene:data.activeScene??data.sceneId??previous.activeScene,
-          stability:data.stability??previous.stability,
-          followInstructor:data.followInstructor??previous.followInstructor,
-          badges:data.badges||previous.badges};
-        window.players.set(id,updated);
+        if(data.eventId)window.seenEventIds.add(data.eventId);
+        const rawTs=row.created_at||data.issuedAt;
+        const eventTime=rawTs?new Date(rawTs).toLocaleTimeString():new Date().toLocaleTimeString();
+
+        if(row.kind==='player:join'){
+          const id=data.id||data.playerId;
+          if(!id||id==='pending')continue;
+          const previous=window.players.get(id)||{id};
+          window.players.set(id,{...previous,
+            id,
+            name:data.name||data.playerName||previous.name||'見習冒險者',
+            role:data.role||previous.role,
+            avatarConfig:data.avatarConfig??previous.avatarConfig,
+            activeScene:data.activeScene??data.sceneId??previous.activeScene,
+            stability:data.stability??previous.stability??100,
+            followInstructor:data.followInstructor??previous.followInstructor,
+            badges:data.badges||previous.badges});
+          appendLiveStreamItem(eventTime,data.name||data.playerName||'冒險者','已連線進入公會大廳','explore',Number(data.activeScene||data.sceneId)||3,true);
+        } else if(['player:progress','student:progress','student:sceneEnter','student:returnToClass'].includes(row.kind)){
+          const id=data.playerId||data.id;
+          if(!id||id==='pending')continue;
+          const previous=window.players.get(id)||{id};
+          window.players.set(id,{...previous,
+            id,
+            name:data.name||data.playerName||previous.name||'見習冒險者',
+            role:data.role||previous.role,
+            systems:data.systems||previous.systems,
+            avatarConfig:data.avatarConfig??previous.avatarConfig,
+            activeScene:data.activeScene??data.sceneId??previous.activeScene,
+            stability:data.stability??previous.stability,
+            followInstructor:data.followInstructor??previous.followInstructor,
+            sceneProgress:data.sceneProgress??previous.sceneProgress,
+            badges:data.badges||previous.badges});
+        } else if(row.kind==='player:explore'){
+          const p=window.players.get(data.playerId)||{name:data.playerName||'冒險者'};
+          appendLiveStreamItem(eventTime,p.name,`${data.action}【${data.target}】`,'explore',Number(data.sceneId)||1,true);
+        } else if(row.kind==='player:action'){
+          handlePlayerActionLog(data,{silent:true,eventTime});
+        }
       }
+
+      document.getElementById('disasterCount').textContent=String(window.disasterCount);
+      document.getElementById('systemStability').textContent=window.systemStability+'%';
       renderPlayerCards();
+      renderCurrentSceneLog();
+      const currentMode=window.SCENE_CONFIG[window.currentScene]?.mode;
+      if(currentMode)renderDashboardView(currentMode);
+      if(e.detail?.manual){
+        window.showGameToast(`✔ 已同步資料庫最新紀錄（共 ${window.players.size} 位冒險者、${window.logData.liveStream.length} 筆行動）`,'success');
+      }
     });
     window.rpgBridge.onEvent((event,data)=>handleIncomingEvent(event,data));
     window.rpgBridge.onRoom(room=>{if(room){window.classProgress={currentTeachingScene:room.currentTeachingScene,highestUnlockedScene:room.highestUnlockedScene,classEpoch:room.classEpoch};localStorage.setItem('rpg_v5_class_progress',JSON.stringify(window.classProgress));if(window.currentScene!==room.currentTeachingScene)window.renderScene?.(room.currentTeachingScene,false);window.updateClassHud?.();}});

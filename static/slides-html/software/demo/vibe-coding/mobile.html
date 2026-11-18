@@ -823,10 +823,212 @@ body:has(#player-hud) {background:#96cfa7 url('data:image/svg+xml;charset=utf-8,
 #player-hud{overflow:visible;}
 @media(max-width:600px){#rpg-connect-toggle{font-size:.69rem;padding:6px 7px;}#rpg-connect-panel{position:fixed;top:57px;right:8px;width:min(345px,calc(100vw - 16px));} }
 </style>
+
+  <style id="v5-3d-world-style">
+    #world3dCanvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      display: block;
+      z-index: 5;
+      touch-action: none;
+    }
+    #world3dLabelsLayer {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+      z-index: 15;
+    }
+    .w3d-label {
+      position: absolute;
+      transform: translate(-50%, -100%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      pointer-events: auto;
+      cursor: pointer;
+      transition: opacity 0.15s;
+      will-change: transform, left, top;
+    }
+    .w3d-quest-mark {
+      font-size: 1.05rem;
+      font-weight: 900;
+      color: #fde047;
+      background: rgba(56, 31, 13, 0.92);
+      border: 2px solid #f59e0b;
+      border-radius: 50%;
+      width: 26px;
+      height: 26px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 3px;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.45);
+      animation: bounceArrow 0.85s infinite alternate ease-in-out;
+    }
+    .w3d-quest-mark.guide-highlight {
+      background: #dc2626;
+      border-color: #fef08a;
+      color: #fff;
+      transform: scale(1.2);
+    }
+    .w3d-tag {
+      background: rgba(43, 27, 17, 0.92);
+      color: #FFFCE8;
+      border: 1.5px solid #d4ad66;
+      border-radius: 12px;
+      padding: 2px 9px;
+      font-size: 0.72rem;
+      font-weight: 900;
+      white-space: nowrap;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.45);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .w3d-tag.is-npc {
+      border-color: #38bdf8;
+      color: #fde047;
+    }
+    .w3d-tag.is-player {
+      background: rgba(2, 132, 199, 0.92);
+      border-color: #bae6fd;
+      color: #fff;
+      font-size: 0.68rem;
+      padding: 1px 8px;
+    }
+    /* 2D fallback hidden when 3D WebGL is active */
+    #world-viewport.webgl-active #world-stage,
+    #world-viewport.webgl-active #v5WorldParallax {
+      display: none !important;
+    }
+
+    /* 手機左下角圓形類比操作桿 (Mobile Circular Joystick) */
+    #v5-mobile-joystick {
+      position: absolute;
+      left: 18px;
+      bottom: 18px;
+      width: 116px;
+      height: 116px;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      pointer-events: auto;
+      touch-action: none;
+      z-index: 48;
+    }
+    body.is-mobile-device #v5-mobile-joystick {
+      display: flex;
+    }
+    .joy-base {
+      position: relative;
+      width: 112px;
+      height: 112px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(64, 38, 23, 0.52) 0%, rgba(36, 21, 12, 0.84) 100%);
+      border: 3px solid #d4ad66;
+      box-shadow: 0 6px 16px rgba(0,0,0,0.5), inset 0 0 0 2px rgba(255, 246, 225, 0.25);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .joy-inner-ring {
+      position: absolute;
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      border: 1.5px dashed rgba(255, 224, 102, 0.45);
+      pointer-events: none;
+    }
+    .joy-dir {
+      position: absolute;
+      font-size: 0.62rem;
+      color: rgba(255, 236, 179, 0.72);
+      pointer-events: none;
+      font-weight: 900;
+    }
+    .joy-dir.up { top: 6px; left: 50%; transform: translateX(-50%); }
+    .joy-dir.down { bottom: 6px; left: 50%; transform: translateX(-50%); }
+    .joy-dir.left { left: 8px; top: 50%; transform: translateY(-50%); }
+    .joy-dir.right { right: 8px; top: 50%; transform: translateY(-50%); }
+    .joy-stick {
+      position: relative;
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 30%, #fffbeb 0%, #eab308 62%, #92400e 100%);
+      border: 2.5px solid #381F0D;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.55), inset 0 2px 3px rgba(255,255,255,0.75);
+      pointer-events: none;
+      will-change: transform;
+      transition: box-shadow 0.12s;
+    }
+    .joy-stick.active {
+      box-shadow: 0 0 14px rgba(253, 224, 71, 0.9), inset 0 2px 3px rgba(255,255,255,0.9);
+    }
+
+    /* 桌面端鍵盤操作提示膠囊 (非手機時顯示於左下角) */
+    #desktop-key-hint {
+      position: absolute;
+      left: 16px;
+      bottom: 16px;
+      background: rgba(43, 27, 17, 0.86);
+      color: #FFFCE8;
+      border: 2px solid #d4ad66;
+      border-radius: 12px;
+      padding: 6px 12px;
+      font-size: 0.74rem;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.35);
+      pointer-events: none;
+      z-index: 44;
+    }
+    body.is-mobile-device #desktop-key-hint {
+      display: none;
+    }
+    .key-cap {
+      background: #f6eac9;
+      color: #381F0D;
+      border: 1.5px solid #79512f;
+      border-bottom-width: 3px;
+      border-radius: 5px;
+      padding: 1px 5px;
+      font-family: monospace;
+      font-size: 0.72rem;
+      font-weight: 900;
+    }
+
+    /* 調整原有 #mobile-controls 讓右下角互動按鈕與左下角圓形搖桿完美共存 */
+    #mobile-controls {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 145px;
+      pointer-events: none;
+      z-index: 46;
+    }
+    #mobile-controls .virtual-dpad {
+      display: none !important;
+    }
+    #btnActionInteract {
+      position: absolute;
+      right: 18px;
+      bottom: 22px;
+      width: 68px;
+      height: 68px;
+      font-size: 0.88rem;
+      z-index: 48;
+    }
+  </style>
 </head>
 <body>
 
-  <!-- 頂部 HUD (常駐 3D 角色表情頭像與系統穩定度) -->
+  <!-- 頂部 HUD (常駐角色表情頭像與系統穩定度) -->
   <header id="player-hud">
     <div class="hud-left">
       <div class="hud-avatar-box">
@@ -850,10 +1052,10 @@ body:has(#player-hud) {background:#96cfa7 url('data:image/svg+xml;charset=utf-8,
   <div class="v5-class-strip" id="v5ClassStrip"><span id="v5ClassText">目前授課：第 1 關</span>
     <button id="v5ReturnToClass" onclick="returnToClass()" hidden>↗ 返回老師目前關卡</button></div>
 
-  <!-- 主要 2.5D 世界舞台 -->
+  <!-- 主要 3D 冒險世界舞台 -->
   <main id="mobile-container">
 
-    <!-- 頂部公會專用加密通訊頻寬 (Radio Banner - 替代強制鎖屏) -->
+    <!-- 頂部公會專用加密通訊頻寬 (Radio Banner - 由講師端同步說明進度) -->
     <div id="radio-comms-banner">
       <div class="radio-left">
         <div class="radio-avatar-wrap">
@@ -880,8 +1082,12 @@ body:has(#player-hud) {background:#96cfa7 url('data:image/svg+xml;charset=utf-8,
       <span class="indicator-title">點擊檢視設備</span>
     </div>
 
-    <!-- 2.5D 橫向捲軸世界 -->
+    <!-- 3D WebGL 探索世界視埠 (支援自動降級 2.5D 舞台) -->
     <div id="world-viewport" class="v5-world-scene">
+      <canvas id="world3dCanvas" aria-label="3D 星光公會冒險世界"></canvas>
+      <div id="world3dLabelsLayer" aria-hidden="true"></div>
+
+      <!-- 2.5D 備援圖層（若裝置不支援 WebGL 時自動啟用） -->
       <div id="v5WorldParallax" aria-hidden="true"></div>
       <div id="world-stage">
         <div class="world-ground"></div>
@@ -908,8 +1114,27 @@ body:has(#player-hud) {background:#96cfa7 url('data:image/svg+xml;charset=utf-8,
       </div>
     </div>
 
-    <!-- 虛擬按鈕與搖桿 -->
+    <!-- 桌面端鍵盤操作提示 -->
+    <div id="desktop-key-hint">
+      <span>⌨️ 移動：</span>
+      <span class="key-cap">W</span><span class="key-cap">A</span><span class="key-cap">S</span><span class="key-cap">D</span>
+      <span>/</span>
+      <span class="key-cap">↑</span><span class="key-cap">↓</span><span class="key-cap">←</span><span class="key-cap">→</span>
+      <span>· 互動：<span class="key-cap">Space</span> 或點擊目標</span>
+    </div>
+
+    <!-- 操作控制層：手機自動偵測顯示左下角圓形類比搖桿，右下角保留互動按鈕 -->
     <div id="mobile-controls">
+      <div id="v5-mobile-joystick" aria-label="虛擬類比搖桿">
+        <div class="joy-base" id="joyBase">
+          <div class="joy-inner-ring"></div>
+          <span class="joy-dir up">▲</span>
+          <span class="joy-dir down">▼</span>
+          <span class="joy-dir left">◀</span>
+          <span class="joy-dir right">▶</span>
+          <div class="joy-stick" id="joyStick"></div>
+        </div>
+      </div>
       <div class="virtual-dpad">
         <button class="dpad-btn" id="btnMoveLeft">◀</button>
         <button class="dpad-btn" id="btnMoveRight">▶</button>
@@ -917,7 +1142,7 @@ body:has(#player-hud) {background:#96cfa7 url('data:image/svg+xml;charset=utf-8,
       <button class="action-btn" id="btnActionInteract" onclick="triggerActiveInteraction()">檢查</button>
     </div>
 
-    <!-- 抽屜互動檢視視窗 (設備操作) -->
+    <!-- 2D 抽屜互動檢視視窗 (設備操作任務面板，由講師端說明進度) -->
     <div id="inspector-drawer">
       <div class="drawer-header">
         <h3 id="drawerTitle" style="color:#854D0E;">設備檢視</h3>
@@ -942,7 +1167,6 @@ body:has(#player-hud) {background:#96cfa7 url('data:image/svg+xml;charset=utf-8,
     </div>
 
   </main>
-
   <!-- V5 角色創建：右邊 3D 角色預覽，左側職業木牌，手機上下排列。 -->
   <section id="character-creator" aria-label="3D 冒險者創建">
     <div class="v5-create-scene">
@@ -1070,24 +1294,1120 @@ body:has(#player-hud) {background:#96cfa7 url('data:image/svg+xml;charset=utf-8,
     </div>
   </div>
 
-  <!-- V5: WebGL+Three.js 角色創建（Three 模組固定版本，失敗時使用可操作 2D 備援） -->
+
+  <!-- V5: WebGL + Three.js 3D 冒險世界與角色預覽模組 (0.160.1) -->
   <script type="module">
-    try {
-      const { mountAvatarPreview } = await import('data:text/javascript;base64,LyogVjUgQ2hhcmFjdGVyUHJldmlldyArIEF2YXRhckZhY3RvcnkuCiAgIE9yaWdpbmFsIHByb2NlZHVyYWwgY2hpYmkgZ2VvbWV0cnkuIFRocmVlLmpzIHBpbm5lZCB0byAwLjE2MC4xOyBubyB0aGlyZC1wYXJ0eSBhdmF0YXIgbW9kZWwuCiAgIEEgYnJvd3NlciB3aXRoIFdlYkdMIGFuZCBhY2Nlc3MgdG8gdGhlIHBpbm5lZCBDRE4gZ2V0cyB0aGUgZnVsbCBHUFUgcHJldmlldzsKICAgb3RoZXJ3aXNlIDJEIGVkaXRpbmcgcmVtYWlucyBvcGVyYXRpb25hbCB0aHJvdWdoIHRoZSBjbGFzc2ljLXNjcmlwdCBmYWxsYmFjay4gKi8KY29uc3QgVEhSRUVfQ0ROPSdodHRwczovL2Nkbi5qc2RlbGl2ci5uZXQvbnBtL3RocmVlQDAuMTYwLjEvYnVpbGQvdGhyZWUubW9kdWxlLmpzJzsKbGV0IHRocmVlUHJvbWlzZT1udWxsOwpmdW5jdGlvbiBsb2FkVGhyZWUoKXtyZXR1cm4gdGhyZWVQcm9taXNlIHx8PSBpbXBvcnQoVEhSRUVfQ0ROKTt9CmNvbnN0IHBhbGV0dGU9ewogICdvdXRmaXQtMDEnOntiYXNlOjB4NGM4YTY3LHRyaW06MHhlNWM3ODUsZGVlcDoweDMxNWI0Yn0sCiAgJ291dGZpdC0wMic6e2Jhc2U6MHg4NzY1YWUsdHJpbToweGY0Y2M4NixkZWVwOjB4NTA0MDgzfSwKICAnb3V0Zml0LTAzJzp7YmFzZToweDNmOTRiYSx0cmltOjB4ZjNlMWFlLGRlZXA6MHgzMTVhODV9Cn07CmNvbnN0IGN1cnJlbnRPcHRpb25zPShnZXRDb25maWcpPT57CiAgY29uc3QgYXBwZWFyYW5jZT1nZXRDb25maWc/LigpPy5hcHBlYXJhbmNlIHx8IHt9OwogIHJldHVybiB7aGFpclN0eWxlOmFwcGVhcmFuY2UuaGFpclN0eWxlfHwnaGFpci0wMScsaGFpckNvbG9yOmFwcGVhcmFuY2UuaGFpckNvbG9yfHwnIzZCNDIyNicsCiAgICBvdXRmaXQ6YXBwZWFyYW5jZS5vdXRmaXR8fCdvdXRmaXQtMDEnLGFjY2Vzc29yeTphcHBlYXJhbmNlLmFjY2Vzc29yeXx8J25vbmUnfTsKfTsKZnVuY3Rpb24gZmFjdG9yeShUSFJFRSwgb3B0aW9ucyl7CiAgY29uc3Qgcm9vdD1uZXcgVEhSRUUuR3JvdXAoKSxoZXJvPW5ldyBUSFJFRS5Hcm91cCgpO3Jvb3QuYWRkKGhlcm8pOwogIGNvbnN0IG1hdD0oY29sb3Iscm91Z2huZXNzPS44Nyk9Pm5ldyBUSFJFRS5NZXNoU3RhbmRhcmRNYXRlcmlhbCh7Y29sb3Iscm91Z2huZXNzLG1ldGFsbmVzczouMDJ9KTsKICBjb25zdCBza2luPW1hdCgweGZmZGRhZSksaGFpcj1tYXQob3B0aW9ucy5oYWlyQ29sb3IpLGV5ZXM9bWF0KDB4MzUyYjQ4KSxpcmlzPW1hdCgweDU2NTQ3ZCksbGlnaHQ9bWF0KDB4ZmZmNWRmKSwKICAgIGJsdXNoPW5ldyBUSFJFRS5NZXNoU3RhbmRhcmRNYXRlcmlhbCh7Y29sb3I6MHhmN2EyYTUsdHJhbnNwYXJlbnQ6dHJ1ZSxvcGFjaXR5Oi41Mn0pLAogICAgbW91dGg9bWF0KDB4OTg1ZjViKSxzaG9lcz1tYXQoMHg1OTRhNGQpLHBhbnRzPW1hdCgweDM5M2Y1NCksCiAgICBjbG90aD1tYXQocGFsZXR0ZVtvcHRpb25zLm91dGZpdF0/LmJhc2U/PzB4NGM4YTY3KSxnb2xkPW1hdChwYWxldHRlW29wdGlvbnMub3V0Zml0XT8udHJpbT8/MHhlNWM3ODUpLAogICAgZGVlcD1tYXQocGFsZXR0ZVtvcHRpb25zLm91dGZpdF0/LmRlZXA/PzB4MzE1YjRiKTsKICBjb25zdCBtYXRlcmlhbHM9bmV3IFNldChbc2tpbixoYWlyLGV5ZXMsaXJpcyxsaWdodCxibHVzaCxtb3V0aCxzaG9lcyxwYW50cyxjbG90aCxnb2xkLGRlZXBdKTsKICBmdW5jdGlvbiBwYXJ0KGcsbSxwb3MscGFyZW50PWhlcm8pe2NvbnN0IG1lc2g9bmV3IFRIUkVFLk1lc2goZyxtKTttZXNoLnBvc2l0aW9uLnNldCguLi5wb3MpO3BhcmVudC5hZGQobWVzaCk7cmV0dXJuIG1lc2g7fQogIGNvbnN0IHNwaGVyZT0ocngscnkscnosbSx4LHkseixwYXJlbnQ9aGVybyk9Pntjb25zdCBhPXBhcnQobmV3IFRIUkVFLlNwaGVyZUdlb21ldHJ5KDEsMjQsMTgpLG0sW3gseSx6XSxwYXJlbnQpO2Euc2NhbGUuc2V0KHJ4LHJ5LHJ6KTtyZXR1cm4gYTt9OwogIGNvbnN0IGN5bD0ocnQscmIsaCxtLHgseSx6LHBhcmVudD1oZXJvKT0+cGFydChuZXcgVEhSRUUuQ3lsaW5kZXJHZW9tZXRyeShydCxyYixoLDE4KSxtLFt4LHksel0scGFyZW50KTsKICAvLyBTbWFsbCBib290cyBhbmQgbGVncyAtIHZpc2libGUgYmVsb3cgcm9iZQogIGZvcihjb25zdCBzaWRlIG9mIFstMSwxXSl7CiAgICBzcGhlcmUoLjE5LC4yNSwuMjEscGFudHMsc2lkZSouMjQsLjQ0LDApOwogICAgc3BoZXJlKC4yMywuMTQsLjMsc2hvZXMsc2lkZSouMjQsLjE4LC4wOSk7CiAgfQogIC8vIFRvcnNvIGFuZCBjbG9hayB3aXRoIGJyaWdodCB0cmltLgogIHNwaGVyZSguNTgsLjcsLjM2LGNsb3RoLDAsMS4wMCwwKTsKICBzcGhlcmUoLjYyLC4xNCwuNCxnb2xkLDAsLjY1LDApOwogIHNwaGVyZSguNDYsLjUyLC40MixkZWVwLDAsLjk2LC0uMTYpOwogIHNwaGVyZSguMjAsLjIwLC4yNSxnb2xkLDAsMS4yOCwuMzQpOwogIHNwaGVyZSguMTIsLjEyLC4xMyxsaWdodCwwLDEuMjgsLjQ1KTsKICBmb3IoY29uc3Qgc2lkZSBvZiBbLTEsMV0pewogICAgY29uc3Qgc2xlZXZlPXNwaGVyZSguMjIsLjQ1LC4yNSxjbG90aCxzaWRlKi42NSwxLjA2LDApOwogICAgc2xlZXZlLnJvdGF0aW9uLno9c2lkZSouMjg7CiAgICBzcGhlcmUoLjIxLC4yMiwuMjIsc2tpbixzaWRlKi43NywuNjUsLjAzKTsKICAgIHNwaGVyZSguMDgsLjA5LC4xLGdvbGQsc2lkZSouNjMsMS4yNSwuMjIpOwogIH0KICBzcGhlcmUoLjE3LC4yMiwuMTcsc2tpbiwwLDEuNDksLjAzKTsKICAvLyBEZWxpYmVyYXRlbHkgb3ZlcnNpemVkIGhlYWQ6IG9yaWdpbmFsIHN0b3J5Ym9vayAxOjMgYm9keSBwcm9wb3J0aW9uLgogIHNwaGVyZSguNjcsLjY3LC42MCxza2luLDAsMi4wMywwKTsKICBzcGhlcmUoLjE2LC4xLC4wNjUsYmx1c2gsLS40MiwxLjk3LC40Nyk7CiAgc3BoZXJlKC4xNiwuMSwuMDY1LGJsdXNoLC40MiwxLjk3LC40Nyk7CiAgY29uc3QgZXllUGFydHM9W107CiAgZm9yKGNvbnN0IHNpZGUgb2YgWy0xLDFdKXsKICAgIHNwaGVyZSguMTQ1LC4xOSwuMDYzLGxpZ2h0LHNpZGUqLjI0NSwyLjA4LC41NDUpOwogICAgY29uc3QgZXllPXNwaGVyZSguMDg0LC4xNCwuMDYyLGV5ZXMsc2lkZSouMjQ1LDIuMDc1LC42MDEpOyBleWVQYXJ0cy5wdXNoKGV5ZSk7CiAgICBzcGhlcmUoLjAzNSwuMDUsLjAyLGxpZ2h0LHNpZGUqLjI3NiwyLjEyNCwuNjUwKTsKICB9CiAgc3BoZXJlKC4wNiwuMDM1LC4wMjUsbW91dGgsMCwxLjg1LC42KTsKICAvLyBIYWlyIHBpZWNlczogZXZlcnkgc3R5bGUgaXMgYSBkaXN0aW5jdCAzRCBtZXNoIGFzc2VtYmx5LCBub3QgYSAyRCBvdmVybGF5LgogIHNwaGVyZSguNywuMzEsLjYyLGhhaXIsMCwyLjQ4LC0uMDQpOwogIGlmKG9wdGlvbnMuaGFpclN0eWxlPT09J2hhaXItMDEnKXsKICAgIGZvcihjb25zdCBbeCx5LHoscnpdIG9mIFtbLS4zOCwyLjQxLC40MSwtLjNdLFstLjA1LDIuNDEsLjU0LC4yXSxbLjI4LDIuNDMsLjQ3LC40NV1dKXsKICAgICAgY29uc3QgYmFuZz1zcGhlcmUoLjI2LC4yMSwuMjUsaGFpcix4LHkseik7IGJhbmcucm90YXRpb24uej1yejsKICAgIH0KICAgIHNwaGVyZSguMiwuMTgsLjIsaGFpciwtLjQ5LDIuNjEsLS4wNCk7CiAgfWVsc2UgaWYob3B0aW9ucy5oYWlyU3R5bGU9PT0naGFpci0wMicpewogICAgZm9yKGNvbnN0IHNpZGUgb2YgWy0xLDFdKXsKICAgICAgc3BoZXJlKC4yNSwuNDMsLjI1LGhhaXIsc2lkZSouNTYsMi4wNiwtLjA3KTsKICAgICAgc3BoZXJlKC4yMSwuMTksLjIyLGhhaXIsc2lkZSouNDQsMi4zNiwuNDIpOwogICAgfQogICAgc3BoZXJlKC4zNiwuMTYsLjI5LGhhaXIsMCwyLjQ0LC4zNyk7CiAgfWVsc2V7CiAgICBmb3IoY29uc3Qgc2lkZSBvZiBbLTEsMV0pewogICAgICBzcGhlcmUoLjI3LC4yNSwuMjgsaGFpcixzaWRlKi42OCwyLjU0LC0uMTIpOwogICAgICBzcGhlcmUoLjE2LC40MSwuMixoYWlyLHNpZGUqLjc4LDIuMTksLS4xMSk7CiAgICAgIHNwaGVyZSguMjIsLjEzLC4yMSxnb2xkLHNpZGUqLjY1LDIuNTMsLS4wNCk7CiAgICB9CiAgICBzcGhlcmUoLjQwLC4xNiwuMyxoYWlyLDAsMi40OCwuNCk7CiAgfQogIC8vIEFjY2Vzc29yeSB2YXJpYW50cywgaW5jbHVkaW5nIG9uZSBuby1hY2Nlc3Nvcnkgc3RhdGUuCiAgaWYob3B0aW9ucy5hY2Nlc3Nvcnk9PT0nYWNjZXNzb3J5LTAxJyl7CiAgICBjb25zdCBzdGFyPXBhcnQobmV3IFRIUkVFLkljb3NhaGVkcm9uR2VvbWV0cnkoLjE1LDApLGdvbGQsWy41NywyLjQ1LC40NV0pO3N0YXIucm90YXRpb24uej0uMTU7CiAgfWVsc2UgaWYob3B0aW9ucy5hY2Nlc3Nvcnk9PT0nYWNjZXNzb3J5LTAyJyl7CiAgICBjeWwoLjY2LC43MywuMTQsZGVlcCwwLDIuNjYsMCk7CiAgICBzcGhlcmUoLjQyLC4zNywuNDIsZGVlcCwwLDIuOTEsMCk7CiAgICBjb25zdCBvcm5hbWVudD1zcGhlcmUoLjE0LC4xMywuMDcsZ29sZCwwLDIuODksLjM5KTsKICB9ZWxzZSBpZihvcHRpb25zLmFjY2Vzc29yeT09PSdhY2Nlc3NvcnktMDMnKXsKICAgIGZvcihjb25zdCBzaWRlIG9mIFstMSwxXSlzcGhlcmUoLjIzLC4xNCwuMDk1LGdvbGQsc2lkZSouMjcsMi4yMiwuNTcpOwogICAgY3lsKC4wMjUsLjAyNSwuNTYsZGVlcCwwLDIuMjMsLjU5KTsKICB9CiAgcmV0dXJuIHtyb290LGhlcm8sZXllczpleWVQYXJ0cyxkaXNwb3NlOigpPT57CiAgICByb290LnRyYXZlcnNlKGNoaWxkPT57aWYoY2hpbGQuaXNNZXNoKXtjaGlsZC5nZW9tZXRyeS5kaXNwb3NlKCk7fX0pOwogICAgbWF0ZXJpYWxzLmZvckVhY2gobT0+bS5kaXNwb3NlKCkpOwogIH19Owp9CmV4cG9ydCBhc3luYyBmdW5jdGlvbiBtb3VudEF2YXRhclByZXZpZXcoY29udGFpbmVyLGdldENvbmZpZyl7CiAgaWYoIWNvbnRhaW5lcilyZXR1cm4ge2Rpc3Bvc2UoKXt9LHVwZGF0ZSgpe319OwogIGNvbnN0IGNhbnZhcz1jb250YWluZXIucXVlcnlTZWxlY3RvcignI2F2YXRhckNhbnZhcycpOwogIGNvbnN0IHN0YXR1cz1jb250YWluZXIucXVlcnlTZWxlY3RvcignI2F2YXRhci1sb2FkLXN0YXR1cycpOwogIGlmKCFjYW52YXMpcmV0dXJuIHtkaXNwb3NlKCl7fSx1cGRhdGUoKXt9fTsKICBsZXQgZGlzcG9zZWQ9ZmFsc2UscmVuZGVyZXI9bnVsbCxyYWY9MCxvYnNlcnZlcj1udWxsLGF2YXRhcj1udWxsLGRyYWc9bnVsbCxzcGluVmVsb2NpdHk9MCwKICAgIHlhdz0tLjIsbGFzdFRpbWU9MCxuZXh0Qmxpbms9Mi43LGp1bXA9MCxjbG9jaz0wLFRIUkVFPW51bGw7CiAgY29uc3QgY2FsbGJhY2tzPVtdOwogIGNvbnN0IHNheT10ZXh0PT57aWYoc3RhdHVzKXN0YXR1cy50ZXh0Q29udGVudD10ZXh0O307CiAgY29uc3QgbGlzdGVuPShvYmosbmFtZSxjYixvcHRpb25zKT0+e29iai5hZGRFdmVudExpc3RlbmVyKG5hbWUsY2Isb3B0aW9ucyk7Y2FsbGJhY2tzLnB1c2goKCk9Pm9iai5yZW1vdmVFdmVudExpc3RlbmVyKG5hbWUsY2Isb3B0aW9ucykpO307CiAgY29uc3QgZmFsbGJhY2s9KCk9PnsKICAgIHNheSgnMkQg6YCg5Z6L57eo6Lyv5qih5byPIMK3IFdlYkdMIOS4jeWPr+eUqCcpOwogICAgLy8gQ2FsbCB0aGUgYWx3YXlzLXByZXNlbnQgYnJvd3Nlci1zaWRlIGZhbGxiYWNrIHJlbmRlcmVyIG9uY2UuCiAgICBjb25zdCBvbGQ9d2luZG93LnY1RmFsbGJhY2tQYWludDsKICAgIGlmKHR5cGVvZiBvbGQ9PT0nZnVuY3Rpb24nKW9sZCgpOwogICAgcmV0dXJuIHttb2RlOicyZCcsdXBkYXRlOigpPT53aW5kb3cudjVGYWxsYmFja1BhaW50Py4oKSxkaXNwb3NlOigpPT57ZGlzcG9zZWQ9dHJ1ZTtjYWxsYmFja3MuZm9yRWFjaChmbj0+Zm4oKSk7fX07CiAgfTsKICB0cnl7CiAgICBjb25zdCBwcm9iZT1kb2N1bWVudC5jcmVhdGVFbGVtZW50KCdjYW52YXMnKTsKICAgIGNvbnN0IGdsPXByb2JlLmdldENvbnRleHQoJ3dlYmdsMicpfHxwcm9iZS5nZXRDb250ZXh0KCd3ZWJnbCcpOwogICAgaWYoIWdsKXJldHVybiBmYWxsYmFjaygpOwogICAgc2F5KCfmraPlnKjovInlhaUgVGhyZWUuanMgMC4xNjAuMeKApicpOwogICAgVEhSRUU9YXdhaXQgbG9hZFRocmVlKCk7CiAgICBpZihkaXNwb3NlZClyZXR1cm4ge2Rpc3Bvc2UoKXt9LHVwZGF0ZSgpe319OwogICAgY29uc3Qgc2NlbmU9bmV3IFRIUkVFLlNjZW5lKCk7CiAgICBjb25zdCBjYW1lcmE9bmV3IFRIUkVFLlBlcnNwZWN0aXZlQ2FtZXJhKDI5LDEsLjEsNTApOwogICAgcmVuZGVyZXI9bmV3IFRIUkVFLldlYkdMUmVuZGVyZXIoe2NhbnZhcyxhbHBoYTp0cnVlLGFudGlhbGlhczp0cnVlLHBvd2VyUHJlZmVyZW5jZTonbG93LXBvd2VyJ30pOwogICAgcmVuZGVyZXIuc2V0UGl4ZWxSYXRpbyhNYXRoLm1pbigyLHdpbmRvdy5kZXZpY2VQaXhlbFJhdGlvfHwxKSk7CiAgICByZW5kZXJlci5vdXRwdXRDb2xvclNwYWNlPVRIUkVFLlNSR0JDb2xvclNwYWNlOwogICAgcmVuZGVyZXIudG9uZU1hcHBpbmc9VEhSRUUuQUNFU0ZpbG1pY1RvbmVNYXBwaW5nOwogICAgcmVuZGVyZXIudG9uZU1hcHBpbmdFeHBvc3VyZT0xLjM1OwogICAgc2NlbmUuYWRkKG5ldyBUSFJFRS5IZW1pc3BoZXJlTGlnaHQoMHhmZmYyZGQsMHg2YzgzNmUsMi4wKSk7CiAgICBjb25zdCBkaXI9bmV3IFRIUkVFLkRpcmVjdGlvbmFsTGlnaHQoMHhmZmZmZmYsMi41KTtkaXIucG9zaXRpb24uc2V0KDMsNiw1KTtzY2VuZS5hZGQoZGlyKTsKICAgIGNvbnN0IHJpbT1uZXcgVEhSRUUuRGlyZWN0aW9uYWxMaWdodCgweGJmZTlmZiwxLjMpO3JpbS5wb3NpdGlvbi5zZXQoLTQsMiwtMyk7c2NlbmUuYWRkKHJpbSk7CiAgICBjb25zdCB3b29kPW5ldyBUSFJFRS5NZXNoU3RhbmRhcmRNYXRlcmlhbCh7Y29sb3I6MHg4ZjY1M2Iscm91Z2huZXNzOi44Nn0pLAogICAgICBlZGdlPW5ldyBUSFJFRS5NZXNoU3RhbmRhcmRNYXRlcmlhbCh7Y29sb3I6MHhjYmEyNjUscm91Z2huZXNzOi42NX0pOwogICAgY29uc3QgcG9kaXVtPW5ldyBUSFJFRS5NZXNoKG5ldyBUSFJFRS5DeWxpbmRlckdlb21ldHJ5KC45MSwuOTksLjE3LDYwKSxbd29vZCxlZGdlLHdvb2RdKTsKICAgIHBvZGl1bS5wb3NpdGlvbi55PS4wMjU7c2NlbmUuYWRkKHBvZGl1bSk7CiAgICBjb25zdCByaW5nPW5ldyBUSFJFRS5NZXNoKG5ldyBUSFJFRS5Ub3J1c0dlb21ldHJ5KC45MiwuMDQ1LDEwLDYwKSxlZGdlKTsKICAgIHJpbmcucm90YXRpb24ueD1NYXRoLlBJLzI7cmluZy5wb3NpdGlvbi55PS4xMTk7c2NlbmUuYWRkKHJpbmcpOwogICAgY29uc3Qgc2hhZG93PWRvY3VtZW50LmNyZWF0ZUVsZW1lbnQoJ2NhbnZhcycpO3NoYWRvdy53aWR0aD1zaGFkb3cuaGVpZ2h0PTY0OwogICAgY29uc3QgY3g9c2hhZG93LmdldENvbnRleHQoJzJkJyksZ3JhZGllbnQ9Y3guY3JlYXRlUmFkaWFsR3JhZGllbnQoMzIsMzIsNCwzMiwzMiwzMCk7CiAgICBncmFkaWVudC5hZGRDb2xvclN0b3AoMCwncmdiYSg0NSwzNywzMCwwLjM4KScpO2dyYWRpZW50LmFkZENvbG9yU3RvcCgxLCdyZ2JhKDQ1LDM3LDMwLDApJyk7CiAgICBjeC5maWxsU3R5bGU9Z3JhZGllbnQ7Y3guZmlsbFJlY3QoMCwwLDY0LDY0KTsKICAgIGNvbnN0IHRleHR1cmU9bmV3IFRIUkVFLkNhbnZhc1RleHR1cmUoc2hhZG93KTsKICAgIGNvbnN0IHNoYWRvd1BsYW5lPW5ldyBUSFJFRS5NZXNoKG5ldyBUSFJFRS5QbGFuZUdlb21ldHJ5KDEuOSwxLjkpLAogICAgICBuZXcgVEhSRUUuTWVzaEJhc2ljTWF0ZXJpYWwoe21hcDp0ZXh0dXJlLHRyYW5zcGFyZW50OnRydWUsZGVwdGhXcml0ZTpmYWxzZX0pKTsKICAgIHNoYWRvd1BsYW5lLnJvdGF0aW9uLng9LU1hdGguUEkvMjtzaGFkb3dQbGFuZS5wb3NpdGlvbi55PS4xMjU7c2NlbmUuYWRkKHNoYWRvd1BsYW5lKTsKICAgIGZ1bmN0aW9uIGluc3RhbGwoKXthdmF0YXI9ZmFjdG9yeShUSFJFRSxjdXJyZW50T3B0aW9ucyhnZXRDb25maWcpKTtzY2VuZS5hZGQoYXZhdGFyLnJvb3QpO2F2YXRhci5yb290LnJvdGF0aW9uLnk9eWF3O30KICAgIGluc3RhbGwoKTsKICAgIGZ1bmN0aW9uIHJlc2l6ZSgpewogICAgICBpZihkaXNwb3NlZClyZXR1cm47CiAgICAgIGNvbnN0IHc9TWF0aC5tYXgoMTYwLGNvbnRhaW5lci5jbGllbnRXaWR0aCksaD1NYXRoLm1heCgxNjAsY29udGFpbmVyLmNsaWVudEhlaWdodCk7CiAgICAgIHJlbmRlcmVyLnNldFNpemUodyxoLGZhbHNlKTtjYW1lcmEuYXNwZWN0PXcvaDsKICAgICAgY29uc3QgZGlzdD1oL3c+MS4xPzcuNzo2Ljc7CiAgICAgIGNhbWVyYS5wb3NpdGlvbi5zZXQoMCwxLjUsZGlzdCk7Y2FtZXJhLmxvb2tBdCgwLDEuNDUsMCk7Y2FtZXJhLnVwZGF0ZVByb2plY3Rpb25NYXRyaXgoKTsKICAgIH0KICAgIGlmKCdSZXNpemVPYnNlcnZlcicgaW4gd2luZG93KXtvYnNlcnZlcj1uZXcgUmVzaXplT2JzZXJ2ZXIocmVzaXplKTtvYnNlcnZlci5vYnNlcnZlKGNvbnRhaW5lcik7fWVsc2UgbGlzdGVuKHdpbmRvdywncmVzaXplJyxyZXNpemUpOwogICAgcmVzaXplKCk7CiAgICBmdW5jdGlvbiBkb3duKGUpe2RyYWc9e3g6ZS5jbGllbnRYLHlhd307c3BpblZlbG9jaXR5PTA7Y2FudmFzLnNldFBvaW50ZXJDYXB0dXJlPy4oZS5wb2ludGVySWQpO30KICAgIGZ1bmN0aW9uIG1vdmUoZSl7aWYoIWRyYWcpcmV0dXJuO2NvbnN0IGRlbHRhPShlLmNsaWVudFgtZHJhZy54KSouMDEyO2NvbnN0IG5leHQ9ZHJhZy55YXcrZGVsdGE7c3BpblZlbG9jaXR5PShuZXh0LXlhdykqLjQyO3lhdz1uZXh0O30KICAgIGZ1bmN0aW9uIHVwKCl7ZHJhZz1udWxsO30KICAgIGxpc3RlbihjYW52YXMsJ3BvaW50ZXJkb3duJyxkb3duKTtsaXN0ZW4oY2FudmFzLCdwb2ludGVybW92ZScsbW92ZSk7bGlzdGVuKGNhbnZhcywncG9pbnRlcnVwJyx1cCk7bGlzdGVuKGNhbnZhcywncG9pbnRlcmNhbmNlbCcsdXApOwogICAgY29uc3Qgcm90YXRlPWRlbHRhPT57eWF3Kz1kZWx0YTtzcGluVmVsb2NpdHk9ZGVsdGEqLjEyO307CiAgICB3aW5kb3cudjVSb3RhdGVBdmF0YXI9cm90YXRlOwogICAgd2luZG93LnY1QXZhdGFyQ2VsZWJyYXRlPSgpPT57anVtcD0uNTU7fTsKICAgIGNvbnN0IHJlZHVjZWQ9d2luZG93Lm1hdGNoTWVkaWE/LignKHByZWZlcnMtcmVkdWNlZC1tb3Rpb246IHJlZHVjZSknKT8ubWF0Y2hlczsKICAgIGZ1bmN0aW9uIGZyYW1lKHQpewogICAgICByYWY9MDtpZihkaXNwb3NlZHx8ZG9jdW1lbnQuaGlkZGVuKXJldHVybjsKICAgICAgY29uc3QgZHQ9TWF0aC5taW4oLjA1LCgodC1sYXN0VGltZSl8fDE2KS8xMDAwKTtsYXN0VGltZT10OwogICAgICBpZighZHJhZyYmIXJlZHVjZWQpe3lhdys9c3BpblZlbG9jaXR5O3NwaW5WZWxvY2l0eSo9TWF0aC5wb3coLjA4LGR0KTtpZihNYXRoLmFicyhzcGluVmVsb2NpdHkpPC4wMDAyKXNwaW5WZWxvY2l0eT0wO30KICAgICAgaWYoYXZhdGFyKXsKICAgICAgICBjbG9jays9ZHQ7CiAgICAgICAgYXZhdGFyLnJvb3Qucm90YXRpb24ueT15YXc7CiAgICAgICAgYXZhdGFyLmhlcm8ucG9zaXRpb24ueT0ocmVkdWNlZD8wOk1hdGguc2luKGNsb2NrKjIuMikqLjAyNSkrKGp1bXA+MD9NYXRoLnNpbihqdW1wKk1hdGguUEkpKi4xOTowKTsKICAgICAgICBpZihqdW1wPjApanVtcD1NYXRoLm1heCgwLGp1bXAtZHQpOwogICAgICAgIGNvbnN0IGJsaW5raW5nPSFyZWR1Y2VkJiZjbG9jaz5uZXh0QmxpbmsmJmNsb2NrPG5leHRCbGluaysuMTM7CiAgICAgICAgYXZhdGFyLmV5ZXMuZm9yRWFjaChleWU9PntleWUuc2NhbGUueT0uMTQqKGJsaW5raW5nPy4xMjoxKTt9KTsKICAgICAgICBpZihjbG9jaz5uZXh0QmxpbmsrLjIpbmV4dEJsaW5rPWNsb2NrKzIuNCtNYXRoLnJhbmRvbSgpKjMuNDsKICAgICAgfQogICAgICByZW5kZXJlci5yZW5kZXIoc2NlbmUsY2FtZXJhKTtyYWY9cmVxdWVzdEFuaW1hdGlvbkZyYW1lKGZyYW1lKTsKICAgIH0KICAgIGNvbnN0IHJlc3VtZT0oKT0+e2lmKGRvY3VtZW50LmhpZGRlbil7Y2FuY2VsQW5pbWF0aW9uRnJhbWUocmFmKTtyYWY9MDt9ZWxzZSBpZighZGlzcG9zZWQmJiFyYWYpe2xhc3RUaW1lPXBlcmZvcm1hbmNlLm5vdygpO3JhZj1yZXF1ZXN0QW5pbWF0aW9uRnJhbWUoZnJhbWUpO319OwogICAgbGlzdGVuKGRvY3VtZW50LCd2aXNpYmlsaXR5Y2hhbmdlJyxyZXN1bWUpO3Jlc3VtZSgpOwogICAgc2F5KCczRCDljbPmmYLmj5voo53lt7LlsLHnt5Igwrcg5ouW5puz5peL6L2JJyk7CiAgICBjb25zdCBhcGk9e21vZGU6J3dlYmdsJyx1cGRhdGU6KCk9PnsKICAgICAgaWYoZGlzcG9zZWQpcmV0dXJuOwogICAgICBzY2VuZS5yZW1vdmUoYXZhdGFyLnJvb3QpO2F2YXRhci5kaXNwb3NlKCk7aW5zdGFsbCgpOwogICAgICB3aW5kb3cudjVBdmF0YXJDZWxlYnJhdGU/LigpOwogICAgfSxkaXNwb3NlOigpPT57CiAgICAgIGlmKGRpc3Bvc2VkKXJldHVybjtkaXNwb3NlZD10cnVlO2NhbmNlbEFuaW1hdGlvbkZyYW1lKHJhZik7b2JzZXJ2ZXI/LmRpc2Nvbm5lY3QoKTtjYWxsYmFja3MuZm9yRWFjaChmbj0+Zm4oKSk7CiAgICAgIGlmKGF2YXRhcil7c2NlbmUucmVtb3ZlKGF2YXRhci5yb290KTthdmF0YXIuZGlzcG9zZSgpO2F2YXRhcj1udWxsO30KICAgICAgZm9yKGNvbnN0IG9iaiBvZiBbcG9kaXVtLHJpbmcsc2hhZG93UGxhbmVdKXtvYmouZ2VvbWV0cnkuZGlzcG9zZSgpO2lmKG9iai5tYXRlcmlhbCYmIUFycmF5LmlzQXJyYXkob2JqLm1hdGVyaWFsKSlvYmoubWF0ZXJpYWwuZGlzcG9zZSgpO30KICAgICAgd29vZC5kaXNwb3NlKCk7ZWRnZS5kaXNwb3NlKCk7dGV4dHVyZS5kaXNwb3NlKCk7cmVuZGVyZXIuZGlzcG9zZSgpOwogICAgICBpZih3aW5kb3cudjVSb3RhdGVBdmF0YXI9PT1yb3RhdGUpd2luZG93LnY1Um90YXRlQXZhdGFyPW51bGw7CiAgICAgIGlmKHdpbmRvdy52NUF2YXRhckNlbGVicmF0ZSl3aW5kb3cudjVBdmF0YXJDZWxlYnJhdGU9bnVsbDsKICAgIH19OwogICAgcmV0dXJuIGFwaTsKICB9Y2F0Y2goZXJyb3IpewogICAgY29uc29sZS53YXJuKCdbVjUgYXZhdGFyXSAzRCB1bmF2YWlsYWJsZSwgc2FmZSAyRCBmYWxsYmFjazonLGVycm9yKTsKICAgIHRyeXtyZW5kZXJlcj8uZGlzcG9zZSgpO31jYXRjaChfKXt9CiAgICByZXR1cm4gZmFsbGJhY2soKTsKICB9Cn0K');
-      window.mountAvatarPreview=mountAvatarPreview;
-      window.initTalkingHeadCharacter=async()=>{
-        const area=document.getElementById('threejs-canvas-wrapper');
-        if(window.disposeV5AvatarPreview)window.disposeV5AvatarPreview();
-        const instance=await mountAvatarPreview(area,()=>window.getDraftAvatarConfig?.());
-        window.v5PreviewInstance=instance;
-        window.disposeV5AvatarPreview=()=>{instance?.dispose?.();window.v5PreviewInstance=null;};
-        window.refreshV5AvatarPreview=()=>instance?.update?.(window.getDraftAvatarConfig?.());
+    const THREE_CDN = 'https://cdn.jsdelivr.net/npm/three@0.160.1/build/three.module.js';
+    let threePromise = null;
+    function loadThree() { return threePromise ||= import(THREE_CDN); }
+
+    const palette = {
+      'outfit-01': { base: 0x4c8a67, trim: 0xe5c785, deep: 0x315b4b },
+      'outfit-02': { base: 0x8765ae, trim: 0xf4cc86, deep: 0x504083 },
+      'outfit-03': { base: 0x3f94ba, trim: 0xf3e1ae, deep: 0x315a85 }
+    };
+
+    function createChibiRig(THREE, options = {}) {
+      const root = new THREE.Group();
+      const hero = new THREE.Group();
+      root.add(hero);
+
+      const mat = (color, roughness = 0.85, metalness = 0.04) =>
+        new THREE.MeshStandardMaterial({ color, roughness, metalness });
+
+      const pal = palette[options.outfit] || {
+        base: options.customCoat ?? 0x4c8a67,
+        trim: options.customTrim ?? 0xe5c785,
+        deep: options.customDeep ?? 0x315b4b
       };
-      if(document.getElementById('character-creator')?.classList.contains('active'))
-        window.initTalkingHeadCharacter();
-    } catch(error) {
-      console.warn('3D 預覽模組不可用，繼續使用 2D 編輯備援',error);
+
+      const skin = mat(options.skinColor ?? 0xffddae);
+      const hair = mat(options.hairColor || '#6B4226');
+      const eyes = mat(0x352b48);
+      const light = mat(0xfff5df);
+      const blush = new THREE.MeshStandardMaterial({ color: 0xf7a2a5, transparent: true, opacity: 0.52 });
+      const mouth = mat(0x985f5b);
+      const shoes = mat(0x594a4d);
+      const pants = mat(0x393f54);
+      const cloth = mat(pal.base);
+      const gold = mat(pal.trim, 0.55, 0.2);
+      const deep = mat(pal.deep);
+
+      function part(g, m, pos, parent = hero) {
+        const mesh = new THREE.Mesh(g, m);
+        mesh.position.set(...pos);
+        mesh.castShadow = true;
+        mesh.receiveShadow = true;
+        parent.add(mesh);
+        return mesh;
+      }
+      const sphere = (rx, ry, rz, m, x, y, z, parent = hero) => {
+        const a = part(new THREE.SphereGeometry(1, 20, 16), m, [x, y, z], parent);
+        a.scale.set(rx, ry, rz);
+        return a;
+      };
+      const cyl = (rt, rb, h, m, x, y, z, parent = hero) =>
+        part(new THREE.CylinderGeometry(rt, rb, h, 16), m, [x, y, z], parent);
+
+      // 左右腳 (可做行走擺動)
+      const leftLeg = new THREE.Group(); leftLeg.position.set(-0.24, 0.44, 0); hero.add(leftLeg);
+      sphere(0.19, 0.25, 0.21, pants, 0, 0, 0, leftLeg);
+      sphere(0.23, 0.14, 0.30, shoes, 0, -0.26, 0.09, leftLeg);
+
+      const rightLeg = new THREE.Group(); rightLeg.position.set(0.24, 0.44, 0); hero.add(rightLeg);
+      sphere(0.19, 0.25, 0.21, pants, 0, 0, 0, rightLeg);
+      sphere(0.23, 0.14, 0.30, shoes, 0, -0.26, 0.09, rightLeg);
+
+      // 軀幹與斗篷
+      sphere(0.58, 0.70, 0.36, cloth, 0, 1.00, 0);
+      sphere(0.62, 0.14, 0.40, gold, 0, 0.65, 0);
+      sphere(0.46, 0.52, 0.42, deep, 0, 0.96, -0.16);
+      sphere(0.20, 0.20, 0.25, gold, 0, 1.28, 0.34);
+      sphere(0.12, 0.12, 0.13, light, 0, 1.28, 0.45);
+
+      // 左右手臂 (可做行走擺動)
+      const leftArm = new THREE.Group(); leftArm.position.set(-0.62, 1.18, 0); hero.add(leftArm);
+      const lSleeve = sphere(0.22, 0.45, 0.25, cloth, -0.04, -0.14, 0, leftArm);
+      lSleeve.rotation.z = -0.25;
+      sphere(0.20, 0.21, 0.21, skin, -0.14, -0.52, 0.03, leftArm);
+
+      const rightArm = new THREE.Group(); rightArm.position.set(0.62, 1.18, 0); hero.add(rightArm);
+      const rSleeve = sphere(0.22, 0.45, 0.25, cloth, 0.04, -0.14, 0, rightArm);
+      rSleeve.rotation.z = 0.25;
+      sphere(0.20, 0.21, 0.21, skin, 0.14, -0.52, 0.03, rightArm);
+
+      // 脖子與 Q 版大頭
+      sphere(0.17, 0.22, 0.17, skin, 0, 1.49, 0.03);
+      sphere(0.67, 0.67, 0.60, skin, 0, 2.03, 0);
+      sphere(0.16, 0.10, 0.065, blush, -0.42, 1.97, 0.47);
+      sphere(0.16, 0.10, 0.065, blush, 0.42, 1.97, 0.47);
+
+      const eyeParts = [];
+      for (const side of [-1, 1]) {
+        sphere(0.145, 0.19, 0.063, light, side * 0.245, 2.08, 0.545);
+        const eye = sphere(0.084, 0.14, 0.062, eyes, side * 0.245, 2.075, 0.601);
+        eyeParts.push(eye);
+        sphere(0.035, 0.05, 0.02, light, side * 0.276, 2.124, 0.650);
+      }
+      sphere(0.06, 0.035, 0.025, mouth, 0, 1.85, 0.60);
+
+      // 髮型
+      sphere(0.70, 0.31, 0.62, hair, 0, 2.48, -0.04);
+      const hs = options.hairStyle || 'hair-01';
+      if (hs === 'hair-01') {
+        for (const [x, y, z, rz] of [[-0.38, 2.41, 0.41, -0.3], [-0.05, 2.41, 0.54, 0.2], [0.28, 2.43, 0.47, 0.45]]) {
+          const bang = sphere(0.26, 0.21, 0.25, hair, x, y, z);
+          bang.rotation.z = rz;
+        }
+        sphere(0.20, 0.18, 0.20, hair, -0.49, 2.61, -0.04);
+      } else if (hs === 'hair-02') {
+        for (const side of [-1, 1]) {
+          sphere(0.25, 0.43, 0.25, hair, side * 0.56, 2.06, -0.07);
+          sphere(0.21, 0.19, 0.22, hair, side * 0.44, 2.36, 0.42);
+        }
+        sphere(0.36, 0.16, 0.29, hair, 0, 2.44, 0.37);
+      } else {
+        for (const side of [-1, 1]) {
+          sphere(0.27, 0.25, 0.28, hair, side * 0.68, 2.54, -0.12);
+          sphere(0.16, 0.41, 0.20, hair, side * 0.78, 2.19, -0.11);
+          sphere(0.22, 0.13, 0.21, gold, side * 0.65, 2.53, -0.04);
+        }
+        sphere(0.40, 0.16, 0.30, hair, 0, 2.48, 0.40);
+      }
+
+      // 配件
+      const acc = options.accessory || 'none';
+      if (acc === 'accessory-01') {
+        const star = part(new THREE.IcosahedronGeometry(0.16, 0), gold, [0.57, 2.45, 0.45]);
+        star.rotation.z = 0.24;
+      } else if (acc === 'accessory-02') {
+        cyl(0.66, 0.73, 0.14, deep, 0, 2.66, 0);
+        sphere(0.42, 0.37, 0.42, deep, 0, 2.91, 0);
+        sphere(0.14, 0.13, 0.07, gold, 0, 2.89, 0.39);
+      } else if (acc === 'accessory-03') {
+        for (const side of [-1, 1]) sphere(0.23, 0.14, 0.095, gold, side * 0.27, 2.22, 0.57);
+        cyl(0.025, 0.025, 0.56, deep, 0, 2.23, 0.59);
+      } else if (acc === 'mic') {
+        // NPC 莓莉手持麥克風
+        cyl(0.04, 0.03, 0.38, mat(0x334155), 0.76, 0.85, 0.28);
+        sphere(0.11, 0.11, 0.11, mat(0xfbbf24, 0.3, 0.6), 0.76, 1.08, 0.32);
+      } else if (acc === 'scroll') {
+        // NPC 採購專員阿偉手持公文卷軸
+        const scr = cyl(0.09, 0.09, 0.48, mat(0xfef3c7), 0.78, 0.78, 0.26);
+        scr.rotation.z = 0.5;
+      }
+
+      // 腳底地面柔和陰影圈
+      const shadowGeo = new THREE.CircleGeometry(0.68, 24);
+      const shadowMat = new THREE.MeshBasicMaterial({ color: 0x1e293b, transparent: true, opacity: 0.28, depthWrite: false });
+      const shadowMesh = new THREE.Mesh(shadowGeo, shadowMat);
+      shadowMesh.rotation.x = -Math.PI / 2;
+      shadowMesh.position.y = 0.02;
+      root.add(shadowMesh);
+
+      return {
+        root,
+        hero,
+        leftLeg,
+        rightLeg,
+        leftArm,
+        rightArm,
+        eyes: eyeParts,
+        dispose() {
+          root.traverse(c => {
+            if (c.isMesh) {
+              c.geometry?.dispose?.();
+              if (Array.isArray(c.material)) c.material.forEach(m => m.dispose?.());
+              else c.material?.dispose?.();
+            }
+          });
+        }
+      };
     }
+
+    // --------------------------------------------------------
+    // 1. 角色創建視窗 3D 預覽模組
+    // --------------------------------------------------------
+    async function mountAvatarPreview(container, getConfig) {
+      if (!container) return { dispose() {}, update() {} };
+      const canvas = container.querySelector('#avatarCanvas');
+      const status = container.querySelector('#avatar-load-status');
+      if (!canvas) return { dispose() {}, update() {} };
+      let disposed = false, renderer = null, raf = 0, avatar = null, yaw = -0.2, spinVel = 0, drag = null, clock = 0, jump = 0, nextBlink = 2.5, lastTime = 0;
+      const say = t => { if (status) status.textContent = t; };
+      const fallback = () => {
+        say('2D 造型模式（可正常建立角色）');
+        window.v5FallbackPaint?.();
+        return { mode: '2d', update: () => window.v5FallbackPaint?.(), dispose: () => { disposed = true; } };
+      };
+      try {
+        const THREE = await loadThree();
+        if (disposed) return { dispose() {}, update() {} };
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(29, 1, 0.1, 50);
+        renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true, powerPreference: 'low-power' });
+        renderer.setPixelRatio(Math.min(2, window.devicePixelRatio || 1));
+        renderer.outputColorSpace = THREE.SRGBColorSpace;
+        scene.add(new THREE.HemisphereLight(0xfff2dd, 0x6c836e, 2.0));
+        const dir = new THREE.DirectionalLight(0xffffff, 2.4); dir.position.set(3, 6, 5); scene.add(dir);
+
+        const wood = new THREE.MeshStandardMaterial({ color: 0x8f653b, roughness: 0.86 });
+        const edge = new THREE.MeshStandardMaterial({ color: 0xcba265, roughness: 0.65 });
+        const podium = new THREE.Mesh(new THREE.CylinderGeometry(0.91, 0.99, 0.17, 48), [wood, edge, wood]);
+        podium.position.y = 0.025; scene.add(podium);
+
+        const getOpts = () => {
+          const a = getConfig?.()?.appearance || {};
+          return {
+            hairStyle: a.hairStyle || 'hair-01',
+            hairColor: a.hairColor || '#6B4226',
+            outfit: a.outfit || 'outfit-01',
+            accessory: a.accessory || 'none'
+          };
+        };
+        const install = () => {
+          avatar = createChibiRig(THREE, getOpts());
+          avatar.root.position.y = 0.11;
+          scene.add(avatar.root);
+          avatar.root.rotation.y = yaw;
+        };
+        install();
+
+        const resize = () => {
+          if (disposed) return;
+          const w = Math.max(160, container.clientWidth), h = Math.max(160, container.clientHeight);
+          renderer.setSize(w, h, false);
+          camera.aspect = w / h;
+          camera.position.set(0, 1.5, h / w > 1.1 ? 7.7 : 6.7);
+          camera.lookAt(0, 1.45, 0);
+          camera.updateProjectionMatrix();
+        };
+        resize();
+        const ro = 'ResizeObserver' in window ? new ResizeObserver(resize) : null;
+        ro?.observe(container);
+
+        canvas.addEventListener('pointerdown', e => { drag = { x: e.clientX, yaw }; spinVel = 0; canvas.setPointerCapture?.(e.pointerId); });
+        canvas.addEventListener('pointermove', e => { if (!drag) return; const next = drag.yaw + (e.clientX - drag.x) * 0.012; spinVel = (next - yaw) * 0.42; yaw = next; });
+        const endDrag = () => { drag = null; };
+        canvas.addEventListener('pointerup', endDrag);
+        canvas.addEventListener('pointercancel', endDrag);
+        window.v5RotateAvatar = d => { yaw += d; spinVel = d * 0.12; };
+        window.v5AvatarCelebrate = () => { jump = 0.55; };
+
+        const loop = t => {
+          if (disposed) return;
+          const dt = Math.min(0.05, ((t - lastTime) || 16) / 1000); lastTime = t;
+          if (!drag) { yaw += spinVel; spinVel *= Math.pow(0.08, dt); if (Math.abs(spinVel) < 0.0002) spinVel = 0; }
+          if (avatar) {
+            clock += dt;
+            avatar.root.rotation.y = yaw;
+            avatar.hero.position.y = Math.sin(clock * 2.2) * 0.025 + (jump > 0 ? Math.sin(jump * Math.PI) * 0.19 : 0);
+            if (jump > 0) jump = Math.max(0, jump - dt);
+            const blinking = clock > nextBlink && clock < nextBlink + 0.13;
+            avatar.eyes.forEach(e => { e.scale.y = 0.14 * (blinking ? 0.12 : 1); });
+            if (clock > nextBlink + 0.2) nextBlink = clock + 2.4 + Math.random() * 3.4;
+          }
+          renderer.render(scene, camera);
+          raf = requestAnimationFrame(loop);
+        };
+        raf = requestAnimationFrame(loop);
+        say('3D 角色造型預覽 · 可左右拖曳旋轉');
+        return {
+          mode: 'webgl',
+          update() { if (disposed) return; scene.remove(avatar.root); avatar.dispose(); install(); window.v5AvatarCelebrate?.(); },
+          dispose() { disposed = true; cancelAnimationFrame(raf); ro?.disconnect(); avatar?.dispose(); renderer?.dispose(); }
+        };
+      } catch (err) {
+        console.warn('[V5 Avatar 3D fallback]', err);
+        return fallback();
+      }
+    }
+
+    // --------------------------------------------------------
+    // 2. 3D 冒險世界主引擎 (支援第一關演唱祭、第二關後台辦公廳及全章節場景)
+    // --------------------------------------------------------
+    async function initAdventureWorld3D() {
+      const viewport = document.getElementById('world-viewport');
+      const canvas = document.getElementById('world3dCanvas');
+      const labelsLayer = document.getElementById('world3dLabelsLayer');
+      if (!viewport || !canvas) return null;
+
+      let THREE;
+      try {
+        THREE = await loadThree();
+      } catch (e) {
+        console.warn('Three.js 載入失敗，切換為 2.5D 備援舞台', e);
+        return null;
+      }
+
+      let renderer;
+      try {
+        renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: 'high-performance' });
+      } catch (e) {
+        console.warn('WebGL 初始化失敗，切換為 2.5D 備援舞台', e);
+        return null;
+      }
+
+      viewport.classList.add('webgl-active');
+      renderer.setPixelRatio(Math.min(2, window.devicePixelRatio || 1));
+      renderer.outputColorSpace = THREE.SRGBColorSpace;
+      renderer.shadowMap.enabled = true;
+      renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+      const scene = new THREE.Scene();
+      scene.background = new THREE.Color(0x87ceeb);
+      scene.fog = new THREE.FogExp2(0x9bd7f0, 0.019);
+
+      const camera = new THREE.PerspectiveCamera(44, 1, 0.1, 140);
+      camera.position.set(0, 7.2, 10.5);
+
+      const hemiLight = new THREE.HemisphereLight(0xfff7e6, 0x4d7c4f, 1.35);
+      scene.add(hemiLight);
+
+      const sunLight = new THREE.DirectionalLight(0xfff5d6, 1.9);
+      sunLight.position.set(10, 18, 12);
+      sunLight.castShadow = true;
+      sunLight.shadow.mapSize.set(1024, 1024);
+      sunLight.shadow.camera.near = 1;
+      sunLight.shadow.camera.far = 55;
+      const d = 18;
+      sunLight.shadow.camera.left = -d;
+      sunLight.shadow.camera.right = d;
+      sunLight.shadow.camera.top = d;
+      sunLight.shadow.camera.bottom = -d;
+      sunLight.shadow.bias = -0.001;
+      scene.add(sunLight);
+
+      // 輔助函式
+      const stdMat = (color, roughness = 0.82, metalness = 0.05, extra = {}) =>
+        new THREE.MeshStandardMaterial({ color, roughness, metalness, ...extra });
+
+      // 2D 座標 (60..1340) <-> 3D 世界 X 座標 (-12..+12) 映射
+      const map2Dto3DX = x2d => ((x2d - 700) / 640) * 12;
+      const map3Dto2DX = x3d => Math.round(700 + (x3d / 12) * 640);
+
+      // 環境容器與互動實體容器
+      const envGroup = new THREE.Group();
+      const entitiesGroup = new THREE.Group();
+      const fxGroup = new THREE.Group();
+      scene.add(envGroup, entitiesGroup, fxGroup);
+
+      // 地面碰撞平面 (供 Raycaster 點擊地面尋路)
+      const groundPlane = new THREE.Mesh(
+        new THREE.PlaneGeometry(40, 28),
+        new THREE.MeshBasicMaterial({ visible: false })
+      );
+      groundPlane.rotation.x = -Math.PI / 2;
+      scene.add(groundPlane);
+
+      // 點擊地面目標光圈指示器
+      const targetRing = new THREE.Mesh(
+        new THREE.RingGeometry(0.28, 0.45, 28),
+        new THREE.MeshBasicMaterial({ color: 0xfde047, side: THREE.DoubleSide, transparent: true, opacity: 0.85 })
+      );
+      targetRing.rotation.x = -Math.PI / 2;
+      targetRing.position.y = 0.04;
+      targetRing.visible = false;
+      scene.add(targetRing);
+
+      // 玩家 3D 角色
+      let playerRig = null;
+      let playerPos = new THREE.Vector3(map2Dto3DX(playerState.x || 300), 0, 2.2);
+      let playerYaw = 0;
+      let walkTarget = null;
+      let walkCycle = 0;
+      let idleClock = 0;
+      let nextBlink = 2.2;
+      let guideTargetId = null;
+
+      function rebuildPlayerMesh() {
+        if (playerRig) {
+          scene.remove(playerRig.root);
+          playerRig.dispose();
+        }
+        const app = playerState.avatarConfig?.appearance || {};
+        playerRig = createChibiRig(THREE, {
+          hairStyle: app.hairStyle || 'hair-01',
+          hairColor: app.hairColor || '#6B4226',
+          outfit: app.outfit || 'outfit-01',
+          accessory: app.accessory || 'none'
+        });
+        playerRig.root.scale.setScalar(0.88);
+        playerRig.root.position.copy(playerPos);
+        playerRig.root.rotation.y = playerYaw;
+        scene.add(playerRig.root);
+      }
+      rebuildPlayerMesh();
+
+      // 動態場景視覺參考物件（供災難體感與架構修復時即時變化 3D 特效）
+      let sceneProps = {};
+      let dynamicEntities = []; // { obj, group, rig, baseX, baseZ, labelEl, questEl }
+      let smokeParticles = [];
+
+      function clearGroup(grp) {
+        while (grp.children.length > 0) {
+          const child = grp.children[0];
+          grp.remove(child);
+          child.traverse?.(c => {
+            if (c.isMesh) {
+              c.geometry?.dispose?.();
+              if (Array.isArray(c.material)) c.material.forEach(m => m.dispose?.());
+              else c.material?.dispose?.();
+            }
+          });
+        }
+      }
+
+      // 建置低多邊形樹木與草叢裝飾
+      function addStorybookTree(parent, x, z, scale = 1) {
+        const tree = new THREE.Group();
+        tree.position.set(x, 0, z);
+        tree.scale.setScalar(scale);
+        const trunk = new THREE.Mesh(new THREE.CylinderGeometry(0.24, 0.36, 1.8, 10), stdMat(0x7c4d2b));
+        trunk.position.y = 0.9; trunk.castShadow = true; tree.add(trunk);
+        const c1 = new THREE.Mesh(new THREE.DodecahedronGeometry(1.15, 1), stdMat(0x4d8b46));
+        c1.position.set(0, 2.3, 0); c1.castShadow = true; tree.add(c1);
+        const c2 = new THREE.Mesh(new THREE.DodecahedronGeometry(0.85, 1), stdMat(0x74b759));
+        c2.position.set(-0.55, 1.95, 0.35); c2.castShadow = true; tree.add(c2);
+        const c3 = new THREE.Mesh(new THREE.DodecahedronGeometry(0.8, 1), stdMat(0x5fa14e));
+        c3.position.set(0.55, 2.0, -0.25); c3.castShadow = true; tree.add(c3);
+        parent.add(tree);
+      }
+
+      // 建置發光蘑菇路燈
+      function addMushroomLamp(parent, x, z) {
+        const g = new THREE.Group();
+        g.position.set(x, 0, z);
+        const stem = new THREE.Mesh(new THREE.CylinderGeometry(0.11, 0.16, 1.1, 10), stdMat(0xf5e6c8));
+        stem.position.y = 0.55; g.add(stem);
+        const cap = new THREE.Mesh(new THREE.ConeGeometry(0.48, 0.42, 14), stdMat(0xea6d48, 0.6));
+        cap.position.y = 1.18; g.add(cap);
+        const glow = new THREE.Mesh(new THREE.SphereGeometry(0.16, 10, 10), new THREE.MeshBasicMaterial({ color: 0xfef08a }));
+        glow.position.y = 0.92; g.add(glow);
+        parent.add(g);
+      }
+
+      // 建置 3D 場景建築與地形（依關卡主題切換）
+      function buildEnvironmentForScene(sceneId) {
+        clearGroup(envGroup);
+        clearGroup(fxGroup);
+        sceneProps = {};
+        smokeParticles = [];
+
+        const isStage1Festival = (sceneId >= 4 && sceneId <= 7);
+        const isStage2Office = (sceneId >= 8 && sceneId <= 11);
+        const isStage3Workshop = (sceneId >= 12 && sceneId <= 15);
+        const isStage4Library = (sceneId >= 16 && sceneId <= 19);
+        const isStage5Harbor = (sceneId >= 20);
+
+        if (isStage1Festival) {
+          // 【第一關：星光演唱祭露天廣場】
+          scene.background = new THREE.Color(0x7cc8eb);
+          scene.fog = new THREE.FogExp2(0x9bdbf2, 0.016);
+          hemiLight.color.setHex(0xfff8e7);
+          hemiLight.groundColor.setHex(0x4b8749);
+
+          // 草地基底
+          const grass = new THREE.Mesh(new THREE.BoxGeometry(36, 0.6, 26), stdMat(0x6ab35b));
+          grass.position.y = -0.3; grass.receiveShadow = true; envGroup.add(grass);
+
+          // 石板慶典廣場
+          const plaza = new THREE.Mesh(new THREE.BoxGeometry(26, 0.08, 12.5), stdMat(0xe8d5b0, 0.9));
+          plaza.position.set(0, 0.02, 0.5); plaza.receiveShadow = true; envGroup.add(plaza);
+
+          // 遠景低多邊形山丘
+          for (const [hx, hz, hr, hy, col] of [[-13, -11, 6, 3.2, 0x569c59], [0, -13, 8, 4.0, 0x4b8e53], [14, -11, 6.5, 3.5, 0x5ca35d]]) {
+            const hill = new THREE.Mesh(new THREE.ConeGeometry(hr, hy * 2, 16), stdMat(col));
+            hill.position.set(hx, hy - 0.5, hz); envGroup.add(hill);
+          }
+
+          // 背景露天星光主舞台
+          const stageGroup = new THREE.Group();
+          stageGroup.position.set(0, 0, -5.8);
+          const deck = new THREE.Mesh(new THREE.BoxGeometry(11, 0.7, 3.6), stdMat(0x6b4226));
+          deck.position.y = 0.35; deck.receiveShadow = true; deck.castShadow = true; stageGroup.add(deck);
+          const backWall = new THREE.Mesh(new THREE.BoxGeometry(9.6, 3.4, 0.3), stdMat(0x312e81));
+          backWall.position.set(0, 2.3, -1.4); stageGroup.add(backWall);
+          const banner = new THREE.Mesh(new THREE.BoxGeometry(7.2, 1.3, 0.15), stdMat(0xf59e0b, 0.5, 0.2, { emissive: 0x78350f, emissiveIntensity: 0.35 }));
+          banner.position.set(0, 2.6, -1.2); stageGroup.add(banner);
+          for (const sx of [-4.6, 4.6]) {
+            const pillar = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.22, 4.2, 12), stdMat(0xd4ad66, 0.4, 0.4));
+            pillar.position.set(sx, 2.4, 1.2); stageGroup.add(pillar);
+            const speaker = new THREE.Mesh(new THREE.BoxGeometry(0.9, 1.5, 0.8), stdMat(0x1e293b));
+            speaker.position.set(sx * 0.85, 1.45, 0.6); stageGroup.add(speaker);
+          }
+          // 慶典彩旗
+          const flagColors = [0xf43f5e, 0xfbbf24, 0x38bdf8, 0x34d399, 0xa855f7];
+          for (let i = -8; i <= 8; i++) {
+            const flag = new THREE.Mesh(new THREE.ConeGeometry(0.24, 0.48, 3), stdMat(flagColors[Math.abs(i) % flagColors.length]));
+            flag.rotation.x = Math.PI;
+            flag.position.set(i * 0.55, 4.1 - Math.cos(i * 0.18) * 0.25, 1.2);
+            stageGroup.add(flag);
+          }
+          envGroup.add(stageGroup);
+
+          // 樹木與蘑菇燈圍繞廣場
+          addStorybookTree(envGroup, -12.5, -3.5, 1.15);
+          addStorybookTree(envGroup, 12.8, -3.2, 1.2);
+          addStorybookTree(envGroup, -13.5, 4.5, 0.95);
+          addStorybookTree(envGroup, 13.5, 4.8, 1.0);
+          addMushroomLamp(envGroup, -7.8, -3.2);
+          addMushroomLamp(envGroup, 7.8, -3.2);
+          addMushroomLamp(envGroup, -8.5, 4.8);
+          addMushroomLamp(envGroup, 8.5, 4.8);
+
+          // Scene 7 連線資料管線 (從 PostgreSQL 機房通往售票水晶機)
+          if (sceneId === 7) {
+            const pipeMat = stdMat(playerState.systems.database.connected ? 0x10b981 : 0x64748b, 0.4, 0.4, {
+              emissive: playerState.systems.database.connected ? 0x059669 : 0x000000,
+              emissiveIntensity: playerState.systems.database.connected ? 0.6 : 0
+            });
+            const pipe = new THREE.Mesh(new THREE.CylinderGeometry(0.14, 0.14, 6.4, 14), pipeMat);
+            pipe.rotation.z = Math.PI / 2;
+            pipe.position.set(0.2, 0.22, -1.6);
+            envGroup.add(pipe);
+            sceneProps.dbPipeMat = pipeMat;
+          }
+
+        } else if (isStage2Office) {
+          // 【第二關：星光公會營運辦公廳與門禁大殿】
+          scene.background = new THREE.Color(0xdbeafe);
+          scene.fog = new THREE.FogExp2(0xe0e7ff, 0.015);
+          hemiLight.color.setHex(0xfffbeb);
+          hemiLight.groundColor.setHex(0x78553a);
+
+          // 木質大廳地板
+          const hallFloor = new THREE.Mesh(new THREE.BoxGeometry(32, 0.6, 22), stdMat(0xa87c51, 0.8));
+          hallFloor.position.y = -0.3; hallFloor.receiveShadow = true; envGroup.add(hallFloor);
+
+          // 中央石磚與紅金迎賓地毯
+          const tileFloor = new THREE.Mesh(new THREE.BoxGeometry(24, 0.06, 12), stdMat(0xf3e5c8, 0.85));
+          tileFloor.position.set(0, 0.02, 0.4); tileFloor.receiveShadow = true; envGroup.add(tileFloor);
+
+          const carpet = new THREE.Mesh(new THREE.BoxGeometry(22, 0.08, 2.6), stdMat(0x991b1b, 0.9));
+          carpet.position.set(0, 0.03, 2.2); carpet.receiveShadow = true; envGroup.add(carpet);
+
+          // 後方木樑牆面與高聳档案書櫃
+          const wall = new THREE.Mesh(new THREE.BoxGeometry(28, 6.5, 0.5), stdMat(0xf5deb3));
+          wall.position.set(0, 3.2, -5.5); envGroup.add(wall);
+
+          const shelfColors = [0xef4444, 0x3b82f6, 0x10b981, 0xf59e0b, 0x8b5cf6];
+          for (const bx of [-7.5, -2.5, 2.5, 7.5]) {
+            const shelf = new THREE.Mesh(new THREE.BoxGeometry(3.4, 4.4, 0.8), stdMat(0x5c3a21));
+            shelf.position.set(bx, 2.2, -4.9); shelf.castShadow = true; envGroup.add(shelf);
+            for (let row = 0; row < 3; row++) {
+              for (let b = -3; b <= 3; b++) {
+                const book = new THREE.Mesh(new THREE.BoxGeometry(0.32, 0.65, 0.5), stdMat(shelfColors[(Math.abs(b) + row) % shelfColors.length]));
+                book.position.set(bx + b * 0.4, 1.1 + row * 1.15, -4.75);
+                envGroup.add(book);
+              }
+            }
+          }
+
+          // 四角門禁警戒石柱與安全護盾罩
+          const pillarPositions = [[-5.5, -2.8], [5.5, -2.8], [-5.5, 3.8], [5.5, 3.8]];
+          sceneProps.alertOrbs = [];
+          for (const [px, pz] of pillarPositions) {
+            const col = new THREE.Mesh(new THREE.CylinderGeometry(0.28, 0.36, 2.6, 12), stdMat(0x475569, 0.5, 0.3));
+            col.position.set(px, 1.3, pz); col.castShadow = true; envGroup.add(col);
+            const orbMat = stdMat(0x38bdf8, 0.3, 0.2, { emissive: 0x0284c7, emissiveIntensity: 0.7 });
+            const orb = new THREE.Mesh(new THREE.OctahedronGeometry(0.32, 0), orbMat);
+            orb.position.set(px, 2.85, pz); envGroup.add(orb);
+            sceneProps.alertOrbs.push(orbMat);
+          }
+
+          // 金色六角防護罩 (Scene 11 啟用 RBAC/JWT 時升起)
+          const domeGeo = new THREE.CylinderGeometry(4.2, 4.6, 3.6, 6, 1, true);
+          const domeMat = new THREE.MeshStandardMaterial({
+            color: 0xfacc15, emissive: 0xeab308, emissiveIntensity: 0.45,
+            transparent: true, opacity: 0.24, side: THREE.DoubleSide, depthWrite: false
+          });
+          const shieldDome = new THREE.Mesh(domeGeo, domeMat);
+          shieldDome.position.set(0.8, 1.8, -0.5);
+          shieldDome.visible = Boolean(playerState.systems.auth.rbacEnabled);
+          envGroup.add(shieldDome);
+          sceneProps.shieldDome = shieldDome;
+
+        } else {
+          // 【第 3~5 關與公會大廳通用 3D 奇幻場景】
+          const groundCol = isStage5Harbor ? 0x3b4d6b : isStage4Library ? 0x5b4636 : isStage3Workshop ? 0x7c6f64 : 0x5ba856;
+          scene.background = new THREE.Color(isStage5Harbor ? 0x6366f1 : 0x8ad0f0);
+          scene.fog = new THREE.FogExp2(isStage5Harbor ? 0x818cf8 : 0xa5dcf5, 0.017);
+
+          const base = new THREE.Mesh(new THREE.BoxGeometry(36, 0.6, 26), stdMat(groundCol));
+          base.position.y = -0.3; base.receiveShadow = true; envGroup.add(base);
+
+          const path = new THREE.Mesh(new THREE.BoxGeometry(26, 0.07, 11), stdMat(isStage5Harbor ? 0x94a3b8 : 0xe9d8b4));
+          path.position.set(0, 0.02, 0.5); path.receiveShadow = true; envGroup.add(path);
+
+          if (!isStage5Harbor) {
+            addStorybookTree(envGroup, -11.5, -3.5, 1.1);
+            addStorybookTree(envGroup, 11.5, -3.5, 1.15);
+            addMushroomLamp(envGroup, -6.5, -3.0);
+            addMushroomLamp(envGroup, 6.5, -3.0);
+          } else {
+            // 雲端港口碼頭欄杆與星光拱門
+            for (let x = -10; x <= 10; x += 2.5) {
+              const post = new THREE.Mesh(new THREE.CylinderGeometry(0.14, 0.16, 1.2, 10), stdMat(0xd4ad66));
+              post.position.set(x, 0.6, -4.5); envGroup.add(post);
+            }
+          }
+        }
+      }
+
+      // 建置 3D 互動熱點（NPC 與 3D 裝置模型）
+      function buildEntitiesForScene(sceneId) {
+        clearGroup(entitiesGroup);
+        labelsLayer.replaceChildren();
+        dynamicEntities = [];
+
+        activeStageObjects.forEach((obj, idx) => {
+          const group = new THREE.Group();
+          const wx = map2Dto3DX(obj.x);
+          const wz = obj.isNpc ? 0.6 : -1.4;
+          group.position.set(wx, 0, wz);
+          group.userData.hotspotObj = obj;
+
+          // 腳底互動發光圓環
+          const haloMat = new THREE.MeshBasicMaterial({
+            color: obj.isNpc ? 0x38bdf8 : 0xfacc15,
+            transparent: true, opacity: 0.45, side: THREE.DoubleSide
+          });
+          const halo = new THREE.Mesh(new THREE.RingGeometry(0.65, 0.92, 28), haloMat);
+          halo.rotation.x = -Math.PI / 2;
+          halo.position.y = 0.03;
+          group.add(halo);
+
+          let rig = null;
+          let animatedPart = null;
+
+          if (obj.isNpc) {
+            // 依 NPC 身分建置專屬 3D Q版人物
+            const npcConfigs = {
+              npc_meli: { hairStyle: 'hair-02', hairColor: '#7b332c', customCoat: 0xe07a55, customTrim: 0xfff0a2, customDeep: 0x2f4055, accessory: 'mic' },
+              npc_fans: { hairStyle: 'hair-01', hairColor: '#3a334b', outfit: 'outfit-03', accessory: 'accessory-01' },
+              npc_gatekeeper: { hairStyle: 'hair-01', hairColor: '#1e293b', customCoat: 0x1e3a8a, customTrim: 0xfacc15, customDeep: 0x0f172a, accessory: 'accessory-02' },
+              npc_wei: { hairStyle: 'hair-01', hairColor: '#4a3525', outfit: 'outfit-01', accessory: 'scroll' },
+              npc_rumi: { hairStyle: 'hair-03', hairColor: '#60a5fa', outfit: 'outfit-02', accessory: 'accessory-03' },
+              npc_anchor: { hairStyle: 'hair-01', hairColor: '#94a3b8', customCoat: 0x0369a1, customTrim: 0xfbbf24, customDeep: 0x1e293b, accessory: 'accessory-02' }
+            };
+            rig = createChibiRig(THREE, npcConfigs[obj.id] || { outfit: 'outfit-02' });
+            rig.root.scale.setScalar(0.9);
+            group.add(rig.root);
+
+            // 若是排隊歌迷，左右再加兩位小夥伴
+            if (obj.isFans) {
+              const fanL = createChibiRig(THREE, { hairStyle: 'hair-03', hairColor: '#B76B71', outfit: 'outfit-02' });
+              fanL.root.scale.setScalar(0.78); fanL.root.position.set(-0.95, 0, 0.35);
+              group.add(fanL.root);
+              const fanR = createChibiRig(THREE, { hairStyle: 'hair-02', hairColor: '#D8A457', outfit: 'outfit-01' });
+              fanR.root.scale.setScalar(0.78); fanR.root.position.set(0.95, 0, 0.3);
+              group.add(fanR.root);
+            }
+          } else {
+            // 建置 3D 裝置建築（售票水晶機、PostgreSQL 機房、後台終端、JWT 鋼印機等）
+            if (obj.id === 'kiosk_ticket') {
+              // 第一關：星光售票亭 + 懸浮全息票券水晶
+              const booth = new THREE.Mesh(new THREE.BoxGeometry(1.7, 1.5, 1.3), stdMat(0x81512b));
+              booth.position.y = 0.75; booth.castShadow = true; group.add(booth);
+              const counter = new THREE.Mesh(new THREE.BoxGeometry(1.85, 0.16, 1.5), stdMat(0xf8e9c8));
+              counter.position.y = 1.48; group.add(counter);
+              const roof = new THREE.Mesh(new THREE.ConeGeometry(1.45, 0.95, 4), stdMat(0xd97451));
+              roof.position.y = 2.65; roof.rotation.y = Math.PI / 4; roof.castShadow = true; group.add(roof);
+              for (const px of [-0.72, 0.72]) {
+                const post = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.06, 0.85, 8), stdMat(0xd4ad66));
+                post.position.set(px, 1.9, 0.55); group.add(post);
+              }
+              const crystalMat = stdMat(playerState.systems.database.connected ? 0x10b981 : 0x38bdf8, 0.2, 0.3, {
+                emissive: playerState.systems.database.connected ? 0x059669 : 0x0284c7, emissiveIntensity: 0.75
+              });
+              const crystal = new THREE.Mesh(new THREE.OctahedronGeometry(0.38, 0), crystalMat);
+              crystal.position.y = 3.55; group.add(crystal);
+              animatedPart = crystal;
+              sceneProps.ticketCrystal = crystal;
+              sceneProps.ticketCrystalMat = crystalMat;
+            } else if (obj.id === 'pipe_postgres') {
+              // PostgreSQL 永固基石機房
+              const base = new THREE.Mesh(new THREE.BoxGeometry(1.8, 2.2, 1.5), stdMat(0x1e3a8a, 0.5, 0.3));
+              base.position.y = 1.1; base.castShadow = true; group.add(base);
+              const core = new THREE.Mesh(new THREE.CylinderGeometry(0.45, 0.45, 1.3, 16), stdMat(0x38bdf8, 0.2, 0.4, { emissive: 0x0284c7, emissiveIntensity: 0.6 }));
+              core.position.set(0, 1.2, 0.65); group.add(core);
+              const crown = new THREE.Mesh(new THREE.TorusGeometry(0.55, 0.08, 10, 24), stdMat(0xfacc15, 0.3, 0.6));
+              crown.position.y = 2.55; crown.rotation.x = Math.PI / 2; group.add(crown);
+              animatedPart = crown;
+            } else if (obj.id === 'kiosk_admin') {
+              // 第二關：活動後台管理終端（原木操作台 + 懸浮全息螢幕）
+              const desk = new THREE.Mesh(new THREE.BoxGeometry(2.1, 1.1, 1.2), stdMat(0x5c3a21));
+              desk.position.y = 0.55; desk.castShadow = true; group.add(desk);
+              const screen = new THREE.Mesh(new THREE.BoxGeometry(1.5, 0.95, 0.1), stdMat(0x0f172a, 0.2, 0.5, { emissive: 0x0284c7, emissiveIntensity: 0.55 }));
+              screen.position.set(0, 1.75, 0); group.add(screen);
+              animatedPart = screen;
+              sceneProps.adminScreen = screen;
+            } else if (obj.id === 'device_jwt') {
+              // 第二關：JWT 防偽密鑰鋼印機
+              const pedestal = new THREE.Mesh(new THREE.CylinderGeometry(0.65, 0.85, 1.3, 12), stdMat(0x334155, 0.4, 0.4));
+              pedestal.position.y = 0.65; pedestal.castShadow = true; group.add(pedestal);
+              const emblem = new THREE.Mesh(new THREE.OctahedronGeometry(0.48, 0), stdMat(0xfacc15, 0.25, 0.6, { emissive: 0xb45309, emissiveIntensity: 0.5 }));
+              emblem.position.y = 1.95; group.add(emblem);
+              animatedPart = emblem;
+            } else {
+              // 其他關卡裝置（合約管線、Magic Bytes 透視鏡、蜂巢護欄、Docker 飛艇）
+              const ped = new THREE.Mesh(new THREE.CylinderGeometry(0.75, 0.95, 1.2, 16), stdMat(0x6b4226));
+              ped.position.y = 0.6; ped.castShadow = true; group.add(ped);
+              const orb = new THREE.Mesh(new THREE.DodecahedronGeometry(0.52, 0), stdMat(0x38bdf8, 0.3, 0.4, { emissive: 0x0369a1, emissiveIntensity: 0.5 }));
+              orb.position.y = 1.85; group.add(orb);
+              animatedPart = orb;
+            }
+          }
+
+          entitiesGroup.add(group);
+
+          // 建立 2D 投影名牌與任務驚嘆號
+          const labelEl = document.createElement('div');
+          labelEl.className = 'w3d-label';
+          const questEl = document.createElement('div');
+          questEl.className = 'w3d-quest-mark';
+          questEl.textContent = obj.isNpc ? '!' : '⚙';
+          if (guideTargetId === obj.id) questEl.classList.add('guide-highlight');
+
+          const tagEl = document.createElement('div');
+          tagEl.className = `w3d-tag ${obj.isNpc ? 'is-npc' : ''}`;
+          tagEl.textContent = `${obj.icon || ''} ${obj.name}`;
+
+          labelEl.append(questEl, tagEl);
+          labelEl.onclick = e => {
+            e.stopPropagation();
+            walkToAndInteract(obj);
+          };
+          labelsLayer.appendChild(labelEl);
+
+          dynamicEntities.push({
+            obj,
+            group,
+            rig,
+            animatedPart,
+            halo,
+            baseX: wx,
+            baseZ: wz,
+            labelEl,
+            questEl,
+            labelHeight: obj.isNpc ? 2.85 : 3.25
+          });
+        });
+
+        // 玩家頭頂名牌
+        const pLabel = document.createElement('div');
+        pLabel.className = 'w3d-label';
+        pLabel.style.pointerEvents = 'none';
+        const pTag = document.createElement('div');
+        pTag.className = 'w3d-tag is-player';
+        pTag.id = 'w3dPlayerTag';
+        pTag.textContent = playerState.name || '見習冒險者';
+        pLabel.appendChild(pTag);
+        labelsLayer.appendChild(pLabel);
+        sceneProps.playerLabel = pLabel;
+      }
+
+      // 點擊 NPC 或設備後自動走過去並觸發對話／任務
+      function walkToAndInteract(obj) {
+        const ent = dynamicEntities.find(e => e.obj.id === obj.id);
+        if (!ent) return;
+        const dx = ent.group.position.x - playerPos.x;
+        const dz = ent.group.position.z - playerPos.z;
+        const dist = Math.hypot(dx, dz);
+        if (dist <= 2.1) {
+          activeHotspot = obj;
+          currentHotspotId = obj.id;
+          triggerActiveInteraction();
+        } else {
+          // 走到目標前方一點的位置
+          const stopDist = 1.45;
+          const ratio = (dist - stopDist) / dist;
+          walkTarget = {
+            x: playerPos.x + dx * ratio,
+            z: playerPos.z + dz * ratio,
+            autoInteractObj: obj
+          };
+          targetRing.position.set(walkTarget.x, 0.04, walkTarget.z);
+          targetRing.visible = true;
+        }
+      }
+
+      // Raycaster 處理點擊地面移動或直接點擊 3D NPC / 裝置
+      const raycaster = new THREE.Raycaster();
+      const pointerNDC = new THREE.Vector2();
+      let pointerDownInfo = null;
+
+      canvas.addEventListener('pointerdown', e => {
+        pointerDownInfo = { x: e.clientX, y: e.clientY, time: performance.now() };
+      });
+      canvas.addEventListener('pointerup', e => {
+        if (!pointerDownInfo) return;
+        const moveDist = Math.hypot(e.clientX - pointerDownInfo.x, e.clientY - pointerDownInfo.y);
+        pointerDownInfo = null;
+        if (moveDist > 12) return; // 避免把滑動誤判成點擊
+
+        const rect = canvas.getBoundingClientRect();
+        pointerNDC.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+        pointerNDC.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+        raycaster.setFromCamera(pointerNDC, camera);
+
+        // 1. 先偵測是否點擊到 3D NPC 或裝置
+        const entityHits = raycaster.intersectObjects(entitiesGroup.children, true);
+        if (entityHits.length > 0) {
+          let node = entityHits[0].object;
+          while (node && !node.userData?.hotspotObj) node = node.parent;
+          if (node?.userData?.hotspotObj) {
+            window.soundEngine?.playHotspot?.();
+            walkToAndInteract(node.userData.hotspotObj);
+            return;
+          }
+        }
+
+        // 2. 否則偵測點擊地面移動
+        const groundHits = raycaster.intersectObject(groundPlane);
+        if (groundHits.length > 0) {
+          const pt = groundHits[0].point;
+          const tx = Math.max(-11.5, Math.min(11.5, pt.x));
+          const tz = Math.max(-3.6, Math.min(5.2, pt.z));
+          walkTarget = { x: tx, z: tz, autoInteractObj: null };
+          targetRing.position.set(tx, 0.04, tz);
+          targetRing.visible = true;
+        }
+      });
+
+      // 投影 3D 世界座標到螢幕 2D 座標
+      const projVec = new THREE.Vector3();
+      function updateProjectedLabels() {
+        const w = viewport.clientWidth;
+        const h = viewport.clientHeight;
+        if (!w || !h) return;
+
+        for (const ent of dynamicEntities) {
+          projVec.set(ent.group.position.x, ent.labelHeight, ent.group.position.z);
+          projVec.project(camera);
+          if (projVec.z > 1) {
+            ent.labelEl.style.display = 'none';
+          } else {
+            ent.labelEl.style.display = 'flex';
+            const sx = (projVec.x * 0.5 + 0.5) * w;
+            const sy = (-projVec.y * 0.5 + 0.5) * h;
+            ent.labelEl.style.left = `${sx}px`;
+            ent.labelEl.style.top = `${sy}px`;
+          }
+        }
+
+        if (sceneProps.playerLabel) {
+          projVec.set(playerPos.x, 2.75, playerPos.z);
+          projVec.project(camera);
+          const sx = (projVec.x * 0.5 + 0.5) * w;
+          const sy = (-projVec.y * 0.5 + 0.5) * h;
+          sceneProps.playerLabel.style.left = `${sx}px`;
+          sceneProps.playerLabel.style.top = `${sy}px`;
+          const tag = document.getElementById('w3dPlayerTag');
+          if (tag) tag.textContent = playerState.name || '見習冒險者';
+        }
+      }
+
+      // 視窗尺寸自適應
+      const resizeWorld = () => {
+        const w = Math.max(200, viewport.clientWidth);
+        const h = Math.max(200, viewport.clientHeight);
+        renderer.setSize(w, h, false);
+        camera.aspect = w / h;
+        camera.updateProjectionMatrix();
+      };
+      resizeWorld();
+      const worldRO = 'ResizeObserver' in window ? new ResizeObserver(resizeWorld) : null;
+      worldRO.observe(viewport);
+
+      // 每幀更新 (由主物理迴圈呼叫)
+      function step(dt, now, moveVec) {
+        idleClock += dt;
+        const speed = 5.2; // 3D 世界移動速度 (公尺/秒)
+        let vx = moveVec.x * speed;
+        let vz = moveVec.z * speed;
+
+        // 若有手動鍵盤或搖桿輸入，取消自動點擊尋路
+        if (Math.hypot(moveVec.x, moveVec.z) > 0.05) {
+          walkTarget = null;
+          targetRing.visible = false;
+        } else if (walkTarget) {
+          const dx = walkTarget.x - playerPos.x;
+          const dz = walkTarget.z - playerPos.z;
+          const dist = Math.hypot(dx, dz);
+          if (dist < 0.18) {
+            const doneObj = walkTarget.autoInteractObj;
+            walkTarget = null;
+            targetRing.visible = false;
+            if (doneObj) {
+              activeHotspot = doneObj;
+              currentHotspotId = doneObj.id;
+              triggerActiveInteraction();
+            }
+          } else {
+            vx = (dx / dist) * speed;
+            vz = (dz / dist) * speed;
+          }
+        }
+
+        const moving = Math.hypot(vx, vz) > 0.05;
+        if (moving) {
+          playerPos.x = Math.max(-11.5, Math.min(11.5, playerPos.x + vx * dt));
+          playerPos.z = Math.max(-3.6, Math.min(5.2, playerPos.z + vz * dt));
+          playerState.x = map3Dto2DX(playerPos.x);
+
+          const targetYaw = Math.atan2(vx, vz);
+          let diff = targetYaw - playerYaw;
+          while (diff > Math.PI) diff -= Math.PI * 2;
+          while (diff < -Math.PI) diff += Math.PI * 2;
+          playerYaw += diff * Math.min(1, dt * 12);
+          walkCycle += dt * 11;
+        } else {
+          walkCycle = 0;
+        }
+
+        if (playerRig) {
+          playerRig.root.position.copy(playerPos);
+          playerRig.root.rotation.y = playerYaw;
+          if (moving) {
+            playerRig.hero.position.y = Math.abs(Math.sin(walkCycle)) * 0.12;
+            playerRig.leftLeg.rotation.x = Math.sin(walkCycle) * 0.65;
+            playerRig.rightLeg.rotation.x = -Math.sin(walkCycle) * 0.65;
+            playerRig.leftArm.rotation.x = -Math.sin(walkCycle) * 0.55;
+            playerRig.rightArm.rotation.x = Math.sin(walkCycle) * 0.55;
+          } else {
+            playerRig.hero.position.y = Math.sin(idleClock * 2.4) * 0.025;
+            playerRig.leftLeg.rotation.x *= 0.8;
+            playerRig.rightLeg.rotation.x *= 0.8;
+            playerRig.leftArm.rotation.x *= 0.8;
+            playerRig.rightArm.rotation.x *= 0.8;
+          }
+          const blinking = idleClock > nextBlink && idleClock < nextBlink + 0.13;
+          playerRig.eyes.forEach(e => { e.scale.y = 0.14 * (blinking ? 0.12 : 1); });
+          if (idleClock > nextBlink + 0.2) nextBlink = idleClock + 2.3 + Math.random() * 3.2;
+        }
+
+        // 目標光圈動畫
+        if (targetRing.visible) {
+          const pulse = 1 + Math.sin(idleClock * 8) * 0.14;
+          targetRing.scale.setScalar(pulse);
+        }
+
+        // NPC 巡邏、轉向與裝置動畫
+        for (const ent of dynamicEntities) {
+          if (ent.obj.isNpc && ent.rig) {
+            const distToPlayer = Math.hypot(ent.group.position.x - playerPos.x, ent.group.position.z - playerPos.z);
+            if (ent.obj.baseSpeed && distToPlayer > 2.2) {
+              ent.group.position.x = ent.baseX + Math.sin(idleClock * 1.1) * 0.9;
+              ent.obj.x = map3Dto2DX(ent.group.position.x);
+              ent.rig.root.rotation.y = Math.cos(idleClock * 1.1) >= 0 ? Math.PI / 2 : -Math.PI / 2;
+              ent.rig.leftLeg.rotation.x = Math.sin(idleClock * 6) * 0.35;
+              ent.rig.rightLeg.rotation.x = -Math.sin(idleClock * 6) * 0.35;
+            } else {
+              // 玩家靠近時轉向面向玩家
+              const lookYaw = Math.atan2(playerPos.x - ent.group.position.x, playerPos.z - ent.group.position.z);
+              ent.rig.root.rotation.y = lookYaw;
+              ent.rig.leftLeg.rotation.x *= 0.85;
+              ent.rig.rightLeg.rotation.x *= 0.85;
+            }
+            // 排隊歌迷若遇票券消失災難則驚慌跳動
+            if (ent.obj.isFans && playerState.currentScene === 5 && playerState.stability < 100) {
+              ent.rig.hero.position.y = Math.abs(Math.sin(idleClock * 14)) * 0.28;
+              ent.rig.leftArm.rotation.z = -0.8 + Math.sin(idleClock * 16) * 0.4;
+              ent.rig.rightArm.rotation.z = 0.8 - Math.sin(idleClock * 16) * 0.4;
+            } else {
+              ent.rig.hero.position.y = Math.sin(idleClock * 2.5 + ent.baseX) * 0.03;
+            }
+          }
+          if (ent.animatedPart) {
+            ent.animatedPart.rotation.y += dt * 1.3;
+            ent.animatedPart.position.y += Math.sin(idleClock * 3) * 0.0018;
+          }
+          if (ent.halo) {
+            const s = 1 + Math.sin(idleClock * 3.5) * 0.06;
+            ent.halo.scale.set(s, s, 1);
+          }
+        }
+
+        // 故障煙霧粒子更新
+        for (let i = smokeParticles.length - 1; i >= 0; i--) {
+          const p = smokeParticles[i];
+          p.life -= dt;
+          p.mesh.position.y += dt * 1.4;
+          p.mesh.scale.addScalar(dt * 0.65);
+          p.mesh.material.opacity = Math.max(0, p.life / p.maxLife) * 0.55;
+          if (p.life <= 0) {
+            fxGroup.remove(p.mesh);
+            p.mesh.geometry.dispose();
+            p.mesh.material.dispose();
+            smokeParticles.splice(i, 1);
+          }
+        }
+
+        // 攝影機平滑跟隨（對話時稍微拉近特寫）
+        const inDialogue = document.getElementById('ms-dialogue-modal')?.classList.contains('active');
+        const camOffsetY = inDialogue ? 5.2 : 7.0;
+        const camOffsetZ = inDialogue ? 6.8 : 9.4;
+        const desiredCamX = playerPos.x * 0.82;
+        const desiredCamY = camOffsetY;
+        const desiredCamZ = playerPos.z + camOffsetZ;
+        camera.position.x += (desiredCamX - camera.position.x) * Math.min(1, dt * 6);
+        camera.position.y += (desiredCamY - camera.position.y) * Math.min(1, dt * 6);
+        camera.position.z += (desiredCamZ - camera.position.z) * Math.min(1, dt * 6);
+        camera.lookAt(playerPos.x * 0.88, 1.15, playerPos.z - 0.8);
+
+        updateProjectedLabels();
+        renderer.render(scene, camera);
+      }
+
+      return {
+        loadScene(sceneId) {
+          playerPos.set(map2Dto3DX(playerState.x || 300), 0, 2.2);
+          walkTarget = null;
+          targetRing.visible = false;
+          buildEnvironmentForScene(sceneId);
+          buildEntitiesForScene(sceneId);
+        },
+        syncAvatar() {
+          rebuildPlayerMesh();
+        },
+        setGuideArrow(targetId) {
+          guideTargetId = targetId;
+          dynamicEntities.forEach(e => {
+            e.questEl.classList.toggle('guide-highlight', e.obj.id === targetId);
+          });
+        },
+        findNearestHotspot() {
+          let best = null;
+          let bestDist = 2.25;
+          for (const ent of dynamicEntities) {
+            const d = Math.hypot(ent.group.position.x - playerPos.x, ent.group.position.z - playerPos.z);
+            if (d <= bestDist) {
+              bestDist = d;
+              best = ent.obj;
+            }
+          }
+          return best;
+        },
+        triggerDisasterVisuals() {
+          // 第一關售票水晶轉紅並冒煙
+          if (sceneProps.ticketCrystalMat) {
+            sceneProps.ticketCrystalMat.color.setHex(0xef4444);
+            sceneProps.ticketCrystalMat.emissive.setHex(0xdc2626);
+          }
+          if (sceneProps.ticketCrystal) {
+            const worldPos = new THREE.Vector3();
+            sceneProps.ticketCrystal.getWorldPosition(worldPos);
+            for (let i = 0; i < 12; i++) {
+              const puff = new THREE.Mesh(
+                new THREE.SphereGeometry(0.24, 10, 10),
+                new THREE.MeshBasicMaterial({ color: 0x64748b, transparent: true, opacity: 0.55 })
+              );
+              puff.position.set(
+                worldPos.x + (Math.random() - 0.5) * 0.8,
+                worldPos.y + Math.random() * 0.5,
+                worldPos.z + (Math.random() - 0.5) * 0.8
+              );
+              fxGroup.add(puff);
+              smokeParticles.push({ mesh: puff, life: 1.8 + Math.random(), maxLife: 2.5 });
+            }
+          }
+          // 第二關警戒石柱轉紅警報
+          if (sceneProps.alertOrbs) {
+            sceneProps.alertOrbs.forEach(m => {
+              m.color.setHex(0xef4444);
+              m.emissive.setHex(0xdc2626);
+              m.emissiveIntensity = 1.1;
+            });
+          }
+        },
+        triggerRepairVisuals() {
+          if (sceneProps.ticketCrystalMat) {
+            sceneProps.ticketCrystalMat.color.setHex(0x10b981);
+            sceneProps.ticketCrystalMat.emissive.setHex(0x059669);
+          }
+          if (sceneProps.dbPipeMat) {
+            sceneProps.dbPipeMat.color.setHex(0x10b981);
+            sceneProps.dbPipeMat.emissive.setHex(0x059669);
+            sceneProps.dbPipeMat.emissiveIntensity = 0.7;
+          }
+          if (sceneProps.alertOrbs) {
+            sceneProps.alertOrbs.forEach(m => {
+              m.color.setHex(0xfacc15);
+              m.emissive.setHex(0xd97706);
+              m.emissiveIntensity = 0.8;
+            });
+          }
+          if (sceneProps.shieldDome) {
+            sceneProps.shieldDome.visible = true;
+          }
+        },
+        step
+      };
+    }
+
+    // 掛載全域模組介面
+    window.mountAvatarPreview = mountAvatarPreview;
+    window.initTalkingHeadCharacter = async () => {
+      const area = document.getElementById('threejs-canvas-wrapper');
+      window.disposeV5AvatarPreview?.();
+      const instance = await mountAvatarPreview(area, () => window.getDraftAvatarConfig?.());
+      window.v5PreviewInstance = instance;
+      window.disposeV5AvatarPreview = () => { instance?.dispose?.(); window.v5PreviewInstance = null; };
+      window.refreshV5AvatarPreview = () => instance?.update?.(window.getDraftAvatarConfig?.());
+    };
+
+    window.addEventListener('DOMContentLoaded', async () => {
+      const world3d = await initAdventureWorld3D();
+      if (world3d) {
+        window.v5World3D = world3d;
+        world3d.loadScene(playerState.currentScene);
+      }
+      if (document.getElementById('character-creator')?.classList.contains('active')) {
+        window.initTalkingHeadCharacter();
+      }
+    });
   </script>
 
   <script>
@@ -1613,7 +2933,7 @@ body:has(#player-hud) {background:#96cfa7 url('data:image/svg+xml;charset=utf-8,
       playerState.avatarConfig={...structuredClone(avatarDraft),nickname:name,updatedAt:new Date().toISOString()};
       playerState.color=({'outfit-01':0x50764B,'outfit-02':0x7955A9,'outfit-03':0x337bb7})[avatarDraft.appearance.outfit];
       saveGameState();document.getElementById('character-creator').classList.remove('active');
-      window.disposeV5AvatarPreview?.();updateHudUI();drawFallbackHud('neutral');
+      window.disposeV5AvatarPreview?.();updateHudUI();drawFallbackHud('neutral');window.v5World3D?.syncAvatar();
       void syncCreatedCharacter('建立角色後同步');
       window.soundEngine.playSuccess();
       if(!wasExisting)openSkillTreeModal();else window.showGameToast('造型已保存，學習進度不受影響！','success');
@@ -1818,6 +3138,7 @@ body:has(#player-hud) {background:#96cfa7 url('data:image/svg+xml;charset=utf-8,
 
       activeStageObjects = getStageObjects(sceneId);
       renderStageHotspots();
+      window.v5World3D?.loadScene(sceneId);
     }
 
     function renderStageHotspots() {
@@ -1849,82 +3170,175 @@ body:has(#player-hud) {background:#96cfa7 url('data:image/svg+xml;charset=utf-8,
       document.querySelectorAll('.hotspot-guide-arrow').forEach(el => el.style.display = 'none');
       const arrow = document.getElementById(`arrow-${targetId}`);
       if (arrow) arrow.style.display = 'block';
+      window.v5World3D?.setGuideArrow(targetId);
     }
 
     // ----------------------------------------------------
-    // 物理移動引擎
+    // 3D / 2.5D 雙模式物理移動引擎 (支援鍵盤方向鍵 + WSAD 與手機左下角圓形操作桿)
     // ----------------------------------------------------
     let activeHotspot = null;
     let currentHotspotId = null;
-    const inputState = { left: false, right: false };
+    const inputState = { up: false, down: false, left: false, right: false };
+    const joyInput = { x: 0, y: 0, active: false, touchId: null };
 
-    const btnL = document.getElementById('btnMoveLeft');
-    const btnR = document.getElementById('btnMoveRight');
-    btnL.addEventListener('touchstart', (e) => { e.preventDefault(); inputState.left = true; });
-    btnL.addEventListener('touchend', () => { inputState.left = false; });
-    btnL.addEventListener('mousedown', () => { inputState.left = true; });
-    btnL.addEventListener('mouseup', () => { inputState.left = false; });
+    // 自動偵測是否為手機／觸控裝置，若為手機則顯示左下角圓形操作桿
+    function detectMobileDevice() {
+      const coarse = window.matchMedia && window.matchMedia('(pointer: coarse)').matches;
+      const touchCapable = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+      const mobileUA = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+      return Boolean(coarse || mobileUA || (touchCapable && window.innerWidth <= 1024));
+    }
+    function applyDeviceControlMode() {
+      document.body.classList.toggle('is-mobile-device', detectMobileDevice());
+    }
+    applyDeviceControlMode();
+    window.addEventListener('resize', applyDeviceControlMode);
+    window.addEventListener('touchstart', () => {
+      document.body.classList.add('is-mobile-device');
+    }, { once: true, passive: true });
 
-    btnR.addEventListener('touchstart', (e) => { e.preventDefault(); inputState.right = true; });
-    btnR.addEventListener('touchend', () => { inputState.right = false; });
-    btnR.addEventListener('mousedown', () => { inputState.right = true; });
-    btnR.addEventListener('mouseup', () => { inputState.right = false; });
+    // 左下角圓形類比操作桿觸控邏輯
+    (function setupMobileCircularJoystick() {
+      const joyBase = document.getElementById('joyBase');
+      const joyStick = document.getElementById('joyStick');
+      if (!joyBase || !joyStick) return;
+      const maxRadius = 36;
+
+      function updateStickFromClient(clientX, clientY) {
+        const rect = joyBase.getBoundingClientRect();
+        const cx = rect.left + rect.width / 2;
+        const cy = rect.top + rect.height / 2;
+        let dx = clientX - cx;
+        let dy = clientY - cy;
+        const dist = Math.hypot(dx, dy);
+        if (dist > maxRadius) {
+          dx = (dx / dist) * maxRadius;
+          dy = (dy / dist) * maxRadius;
+        }
+        joyStick.style.transform = `translate(${dx}px, ${dy}px)`;
+        const nx = dx / maxRadius;
+        const ny = dy / maxRadius;
+        const deadzone = 0.12;
+        joyInput.x = Math.abs(nx) < deadzone ? 0 : nx;
+        joyInput.y = Math.abs(ny) < deadzone ? 0 : ny;
+      }
+
+      function resetStick() {
+        joyInput.active = false;
+        joyInput.touchId = null;
+        joyInput.x = 0;
+        joyInput.y = 0;
+        joyStick.style.transform = 'translate(0px, 0px)';
+        joyStick.classList.remove('active');
+      }
+
+      joyBase.addEventListener('touchstart', e => {
+        e.preventDefault();
+        const t = e.changedTouches[0];
+        if (!t) return;
+        joyInput.active = true;
+        joyInput.touchId = t.identifier;
+        joyStick.classList.add('active');
+        updateStickFromClient(t.clientX, t.clientY);
+      }, { passive: false });
+
+      joyBase.addEventListener('touchmove', e => {
+        if (!joyInput.active) return;
+        for (let i = 0; i < e.changedTouches.length; i++) {
+          const t = e.changedTouches[i];
+          if (t.identifier === joyInput.touchId) {
+            e.preventDefault();
+            updateStickFromClient(t.clientX, t.clientY);
+            break;
+          }
+        }
+      }, { passive: false });
+
+      const onTouchEnd = e => {
+        if (!joyInput.active) return;
+        for (let i = 0; i < e.changedTouches.length; i++) {
+          if (e.changedTouches[i].identifier === joyInput.touchId) {
+            resetStick();
+            break;
+          }
+        }
+      };
+      joyBase.addEventListener('touchend', onTouchEnd);
+      joyBase.addEventListener('touchcancel', onTouchEnd);
+    })();
+
+    // 鍵盤支援：同時支援上下左右方向鍵 + W/S/A/D（含輸入法開啟時的 e.code 偵測）
+    function setKeyDirection(e, isDown) {
+      const k = (e.key || '').toLowerCase();
+      const c = e.code || '';
+      if (k === 'arrowup' || k === 'w' || c === 'ArrowUp' || c === 'KeyW') { inputState.up = isDown; return true; }
+      if (k === 'arrowdown' || k === 's' || c === 'ArrowDown' || c === 'KeyS') { inputState.down = isDown; return true; }
+      if (k === 'arrowleft' || k === 'a' || c === 'ArrowLeft' || c === 'KeyA') { inputState.left = isDown; return true; }
+      if (k === 'arrowright' || k === 'd' || c === 'ArrowRight' || c === 'KeyD') { inputState.right = isDown; return true; }
+      return false;
+    }
 
     window.addEventListener('keydown', (e) => {
-      if (['INPUT','TEXTAREA','SELECT'].includes(document.activeElement?.tagName)) return;
-      if (e.key === 'ArrowLeft' || e.key === 'a') inputState.left = true;
-      if (e.key === 'ArrowRight' || e.key === 'd') inputState.right = true;
-      if (e.key === ' ' || e.key === 'Enter') triggerActiveInteraction();
+      if (['INPUT', 'TEXTAREA', 'SELECT'].includes(document.activeElement?.tagName)) return;
+      if (setKeyDirection(e, true)) {
+        e.preventDefault();
+        return;
+      }
+      if (e.key === ' ' || e.key === 'Enter') {
+        const dlgActive = document.getElementById('ms-dialogue-modal')?.classList.contains('active');
+        const drawerActive = document.getElementById('inspector-drawer')?.classList.contains('active');
+        const modalActive = document.getElementById('globalMobileModal')?.classList.contains('active');
+        if (!dlgActive && !drawerActive && !modalActive) {
+          triggerActiveInteraction();
+        }
+      }
     });
     window.addEventListener('keyup', (e) => {
-      if (e.key === 'ArrowLeft' || e.key === 'a') inputState.left = false;
-      if (e.key === 'ArrowRight' || e.key === 'd') inputState.right = false;
+      setKeyDirection(e, false);
+    });
+    window.addEventListener('blur', () => {
+      inputState.up = inputState.down = inputState.left = inputState.right = false;
     });
 
     let patrolClock = 0;
     function startPhysicsLoop() {
       let lastTime = performance.now();
       function loop(now) {
-        const dt = (now - lastTime) / 1000;
+        const dt = Math.min(0.05, (now - lastTime) / 1000);
         lastTime = now;
         patrolClock += dt;
 
-        let vx = 0;
-        if (inputState.left) vx -= 180;
-        if (inputState.right) vx += 180;
+        // 計算標準化移動向量 (鍵盤上下左右/WSAD + 手機圓形搖桿)
+        let mx = (inputState.right ? 1 : 0) - (inputState.left ? 1 : 0) + joyInput.x;
+        let mz = (inputState.down ? 1 : 0) - (inputState.up ? 1 : 0) + joyInput.y;
+        const mag = Math.hypot(mx, mz);
+        if (mag > 1) { mx /= mag; mz /= mag; }
 
-        if (vx !== 0) {
-          playerState.x = Math.max(60, Math.min(1340, playerState.x + vx * dt));
-          if (now-lastPositionSave>1500) {saveGameState();lastPositionSave=now;}
+        if (window.v5World3D) {
+          window.v5World3D.step(dt, now, { x: mx, z: mz });
+          if (mag > 0.05 && now - lastPositionSave > 1500) {
+            saveGameState();
+            lastPositionSave = now;
+          }
+        } else {
+          // 2.5D 備援移動邏輯
+          if (mx !== 0) {
+            playerState.x = Math.max(60, Math.min(1340, playerState.x + mx * 200 * dt));
+            if (now - lastPositionSave > 1500) { saveGameState(); lastPositionSave = now; }
+          }
+          const viewportWidth = window.innerWidth;
+          const stageEl = document.getElementById('world-stage');
+          let camX = viewportWidth / 2 - playerState.x;
+          camX = Math.min(0, Math.max(viewportWidth - 1400, camX));
+          stageEl.style.transform = `translateX(${camX}px)`;
+          const pSprite = document.getElementById('player-sprite');
+          pSprite.style.left = `${playerState.x}px`;
         }
 
-        const viewportWidth = window.innerWidth;
-        const stageEl = document.getElementById('world-stage');
-        let camX = viewportWidth / 2 - playerState.x;
-        camX = Math.min(0, Math.max(viewportWidth - 1400, camX));
-        stageEl.style.transform = `translateX(${camX}px)`;
-
-        const pSprite = document.getElementById('player-sprite');
-        pSprite.style.left = `${playerState.x}px`;
-
-        // NPC 巡邏與面向玩家
-        activeStageObjects.forEach(obj => {
-          if (obj.isNpc && obj.baseSpeed) {
-            const el = document.getElementById(`hotspot-${obj.id}`);
-            const dist = Math.abs(obj.x - playerState.x);
-            if (dist > 70) {
-              obj.x += Math.sin(patrolClock * 1.5) * obj.baseSpeed * dt;
-              if (el) el.style.left = `${obj.x}px`;
-            } else {
-              if (el) {
-                const faceLeft = playerState.x < obj.x;
-                el.style.transform = `translateX(-50%) scaleX(${faceLeft ? -1 : 1})`;
-              }
-            }
-          }
-        });
-
-        const found = activeStageObjects.find(o => Math.abs(o.x - playerState.x) <= 65);
+        // 偵測靠近的可互動 NPC 或 3D 設備
+        const found = window.v5World3D
+          ? window.v5World3D.findNearestHotspot()
+          : activeStageObjects.find(o => Math.abs(o.x - playerState.x) <= 65);
         const foundId = found ? found.id : null;
 
         if (foundId !== currentHotspotId) {
@@ -1932,12 +3346,15 @@ body:has(#player-hud) {background:#96cfa7 url('data:image/svg+xml;charset=utf-8,
           activeHotspot = found;
 
           const ind = document.getElementById('interact-indicator');
+          const actBtn = document.getElementById('btnActionInteract');
           if (activeHotspot) {
             ind.classList.add('active');
             ind.querySelector('.indicator-title').textContent = activeHotspot.isNpc ? `交談: ${activeHotspot.name}` : `檢視: ${activeHotspot.name}`;
+            if (actBtn) actBtn.textContent = activeHotspot.isNpc ? '交談' : '檢視';
             window.soundEngine.playHotspot();
           } else {
             ind.classList.remove('active');
+            if (actBtn) actBtn.textContent = '檢查';
           }
         }
         requestAnimationFrame(loop);
@@ -2588,6 +4005,7 @@ body:has(#player-hud) {background:#96cfa7 url('data:image/svg+xml;charset=utf-8,
       updateHudUI();
       window.soundEngine.playDamage();
       if (window.setAvatarEmotion) window.setAvatarEmotion('fear');
+      window.v5World3D?.triggerDisasterVisuals();
       window.showGameModal("💥 觸發架構災難！", `${escapeHtml(alertMsg)}<br>你的系統穩定度下降 <b>${penalty}%</b>！`);
       sendProgress();
     }
@@ -2598,6 +4016,7 @@ body:has(#player-hud) {background:#96cfa7 url('data:image/svg+xml;charset=utf-8,
       updateHudUI();
       window.soundEngine.playRepair();
       if (window.setAvatarEmotion) window.setAvatarEmotion('happy');
+      window.v5World3D?.triggerRepairVisuals();
       window.showGameToast(`✔ ${msg} 系統穩定度回補至 100%！`, "success");
       sendEvent('player:action', { isRepaired: true, penalty: 0, stability:playerState.stability });
       sendProgress();
