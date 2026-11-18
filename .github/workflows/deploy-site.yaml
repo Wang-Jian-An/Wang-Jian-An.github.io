@@ -41,6 +41,7 @@ jobs:
         run: |
           hugo mod npm pack
           npm ci
+          npm install -g sass
 
       - name: Build site
         run: hugo --minify
