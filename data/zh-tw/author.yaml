@@ -2,7 +2,7 @@
 name: "王健安"
 nickname: "王健安"
 # greeting message before your name. it will default to "Hi! I am" if not provided
-greeting: "大家好，我是健安。"
+greeting: "大家好，我是"
 image: "images/author/王健安_半身照.jpg"
 # give your some contact information. they will be used in the footer
 contactInfo:
@@ -11,4 +11,8 @@ contactInfo:
 
 # some summary about what you do
 summary:
-  - 我是AI工程師
+  - 我是一名 AI 架構師
+  - AI、資料與安全三位一體
+  - 橫跨醫療、公衛、法律與金融多領域合作經驗
+  - 同時也是一名講師
+  - 歡迎開發合作與教育訓練邀約
