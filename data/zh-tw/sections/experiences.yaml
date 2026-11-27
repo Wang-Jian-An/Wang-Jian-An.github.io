@@ -17,15 +17,14 @@ experiences:
     location: 台北市南港區
     logo: /images/sections/experiences/medigen-logo.png
     # company overview
-    overview: Example Co. হচ্ছে ক্লাউড নেটিভ ডেভেলপমেন্টের জন্যে একটি স্বীকৃত প্রতিষ্ঠান । এটি Kubernetes এর জন্যে বিভিন্ন সফটওয়্যার বানায়।
+    overview: 基亞生物科技（Medigen Biotechnology）是一家專注於新藥研發、細胞治療與基因分子檢測的台灣生技醫藥公司。
   positions:
   - designation: AI工程師
     start: May 2025
-    # don't provide end date if you are currently working there. It will be replaced by "Present"
-    # end: Dec 2020
-    # give some points about what was your responsibilities at the company.
     responsibilities:
-    - 項目一
+    - 主責大陸市場疾病風險評估系統之建置與開發，已完成內部大規模測試並進行推廣階段。
+    - 打造地端版會議錄影軟體搭配大語言模型摘要生成，精簡人力與時間成本。
+    - 因應主管與同仁需求，持續開發出多個小型平台與系統，諸如：AI輔助專案管理、實驗室機台行程管理等。
 
 - company:
     name: 衛生福利部疾病管制署

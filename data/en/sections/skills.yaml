@@ -35,60 +35,60 @@ skills:
   categories: ["programming"]
   url: "https://golang.org/"
 
-- name: SQL
+- name: PostgreSQL
   logo: ""
-  summary: ""
-  categories: ["programming"]
+  summary: "Experienced in relational schema design, indexing, and backend transaction concurrency control. Capable of managing database backups, restoration, and routine maintenance."
+  categories: ["programming", "ai-data"]
   url: ""
 
 - name: AWS Cloud Architecture
   logo: /images/sections/skills/aws-logo.png
-  summary: "Experienced with AWS core services, including compute, networking, storage, and AI application deployment. Capable of designing scalable and reliable cloud architectures."
+  summary: "Experienced in deploying containerized services, relational databases, and AI applications on AWS using ECS, RDS, S3, and CloudFront. Capable of configuring VPC networking, IAM permissions, and scalable cloud infrastructure."
   categories: ["cloud", "system"]
-  url: https://aws.amazon.com/cn/free/webapps/?trk=9d5c4709-8a98-47b7-ab9b-b09c92e9ee25&sc_channel=ps&ef_id=EAIaIQobChMImJbd26q5lQMVuOUWBR0lex6GEAAYASAAEgLLJvD_BwE&gads_camp=23533257979&gads_ag=198422390531&gads_ad=795925071305&gads_kw=aws%20cloud&gads_matchtype=e&gads_network=g&gads_device=c&gads_geo=9198554&gad_campaignid=23533257979&gbraid=0AAAAADjHtp8oDhkcEFLEVe_1huyOukYsL&gclid=EAIaIQobChMImJbd26q5lQMVuOUWBR0lex6GEAAYASAAEgLLJvD_BwE
+  url: "https://aws.amazon.com/"
 
 - name: Azure Cloud Architecture
   logo: "/images/sections/skills/Microsoft_Azure.png"
-  summary: ""
+  summary: "Familiar with core Microsoft Azure cloud services, including virtual machines, storage accounts, and virtual networking. Capable of configuring cloud environments and deploying web and data applications."
   categories: ["cloud", "system"]
 
 - name: Docker
   logo: /images/sections/skills/docker.svg
-  summary: "Write most of the programs as dockerized container. Experienced with multi-stage, multi-arch build process."
+  summary: "Capable of containerizing microservices, orchestrating multi-container applications, and deploying across on-premise servers and cloud platforms like AWS ECS."
   categories: ["devops"]
   url: "https://www.docker.com/"
 
 - name: Statistical Analysis
   logo: /images/sections/skills/statistical-logo.jpg
-  summary: "Capable of setup, configure Prometheus metrics. Experienced with PromQL, AlertManager. Also, experienced with writing metric exporters."
+  summary: "Experienced in hypothesis testing, regression modeling, and causal inference for tabular and biomedical datasets. Proficient in exploratory data analysis and statistical validation using Python and R."
   categories: ["ai-data"]
 
 - name: Linux
   logo: /images/sections/skills/linux.png
-  summary: "Using as the main operating system. Capable of writing bash/shell scripts."
+  summary: "Experienced in administering Ubuntu Linux servers for backend and GPU workloads. Proficient in shell scripting, system monitoring, service configuration, and network troubleshooting."
   categories: ["others"]
 
 - name: Git
   logo: /images/sections/skills/git.png
-  summary: "Experienced with git-based development. Mostly, use Github. Also, have experience in working with GitLab."
+  summary: "Proficient in Git version control, branching workflows, and collaborative code reviews across GitHub and GitLab. Experienced in integrating repositories with automated testing and deployment pipelines."
   categories: ["devops"]
   url: "https://git-scm.com/"
 
 - name: Python
   logo: /images/sections/skills/python-logo.jpg
-  summary: "Python"
-  categories: ["programming"]
+  summary: "Proficient in building backend APIs, data pipelines, and AI workflows with Python. Experienced with FastAPI, gRPC, PyTorch, Pandas, and automated browser scraping using Playwright."
+  categories: ["programming", "ai-data"]
 
-- name: Systemic Design
-  summary: Systemic Design
+- name: System Design
+  summary: "Capable of designing modular microservices and event-driven architectures using REST, gRPC, and MQTT. Experienced in integrating caching (Redis), object storage (MinIO), and message queues for reliable throughput."
   categories: ["devops", "system"]
 
 - name: n8n
   logo: /images/sections/skills/n8n-logo.png
-  summary: ""
+  summary: "Experienced in building automated workflows and webhook integrations with n8n. Capable of connecting messaging APIs (LINE), notification services, and LLM pipelines to streamline repetitive tasks."
   categories: ["low-code-tools"]
 
 - name: Google Looker Studio
   logo: /images/sections/skills/ic_data_studio.png
-  summary: 
+  summary: "Capable of connecting SQL databases and spreadsheet data sources to build interactive dashboards, track operational metrics, and automate visual reporting."
   categories: ["low-code-tools", "ai-data"]
